@@ -1,0 +1,33 @@
+:root {
+  --laranja: #ff6b1f;
+  --tinta: #1a1417;
+  --creme: #fff3e0;
+  --violeta: #8b6cf0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--tinta);
+  color: var(--creme);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+a {
+  color: var(--laranja);
+}
+a:hover {
+  color: var(--creme);
+}
+
+button {
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}

@@ -1,0 +1,116 @@
+@keyframes acende {
+  0%, 100% { opacity: .15; }
+  25%, 65% { opacity: 1; }
+}
+@keyframes respira {
+  0%, 100% { opacity: .3; transform: scale(.75); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@keyframes corre {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes listra {
+  from { background-position: 0 0; }
+  to { background-position: 147px 0; }
+}
+@keyframes entra {
+  0% { transform: scale(.5) rotate(-12deg); opacity: 0; }
+  70% { transform: scale(1.06) rotate(-2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); }
+}
+@keyframes flutua {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes pisca {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .2; }
+}
+
+.palco {
+  position: relative;
+  overflow: hidden;
+  width: 1920px;
+  height: 1080px;
+  background: transparent;
+  color: var(--creme);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ---- Começando ---- */
+.comecando { position: absolute; inset: 0; background: var(--tinta); overflow: hidden; }
+.comecando__logoWrap { position: absolute; left: 170px; top: 170px; width: 560px; height: 560px; animation: flutua 6s ease-in-out infinite; }
+.comecando__logo {
+  width: 560px; height: 560px; background: var(--laranja); box-shadow: 26px 26px 0 var(--violeta);
+  display: flex; align-items: center; justify-content: center;
+  font: 600 390px/1 'Barlow Condensed', sans-serif; color: var(--tinta);
+  animation: entra 1.2s cubic-bezier(.2,.9,.3,1.2) both;
+}
+.comecando__info { position: absolute; left: 880px; top: 170px; display: flex; flex-direction: column; gap: 18px; }
+.comecando__label { font: 700 30px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: var(--laranja); }
+.comecando__relogio { font: 600 330px/.82 'Barlow Condensed', sans-serif; font-variant-numeric: tabular-nums; color: var(--creme); }
+.comecando__titulo { font: 600 96px/1 'Barlow Condensed', sans-serif; color: var(--creme); max-width: 940px; text-wrap: balance; }
+.comecando__faixa { position: absolute; left: 0; top: 900px; width: 1920px; height: 110px; background: var(--laranja); overflow: hidden; display: flex; align-items: center; }
+.comecando__faixaTexto { display: flex; white-space: nowrap; animation: corre 30s linear infinite; font: 600 64px/1 'Barlow Condensed', sans-serif; color: var(--tinta); }
+
+/* ---- Intervalo ---- */
+.intervalo { position: absolute; inset: 0; background: var(--tinta); overflow: hidden; }
+.intervalo__logo { position: absolute; left: 80px; top: 70px; width: 150px; height: 150px; background: var(--laranja); display: flex; align-items: center; justify-content: center; font: 600 104px/1 'Barlow Condensed', sans-serif; color: var(--tinta); transform: rotate(-3deg); }
+.intervalo__centro { position: absolute; left: 0; top: 250px; width: 1920px; display: flex; flex-direction: column; align-items: center; gap: 36px; }
+.intervalo__label { font: 700 30px/1 'JetBrains Mono', monospace; letter-spacing: .2em; color: var(--violeta); }
+.intervalo__msg { font: 600 240px/.88 'Barlow Condensed', sans-serif; color: var(--creme); text-align: center; max-width: 1600px; text-wrap: balance; }
+.intervalo__listras { position: absolute; left: 0; top: 960px; width: 1920px; height: 120px; background: repeating-linear-gradient(-45deg, var(--laranja) 0 52px, var(--tinta) 52px 104px); animation: listra 8s linear infinite; }
+
+/* ---- Encerramento ---- */
+.encerramento { position: absolute; inset: 0; background: var(--laranja); overflow: hidden; }
+.encerramento__logo { position: absolute; left: 170px; top: 80px; width: 170px; height: 170px; background: var(--tinta); display: flex; align-items: center; justify-content: center; font: 600 120px/1 'Barlow Condensed', sans-serif; color: var(--laranja); transform: rotate(-3deg); }
+.encerramento__valeu { position: absolute; left: 160px; top: 300px; font: 600 300px/.82 'Barlow Condensed', sans-serif; color: var(--tinta); }
+.encerramento__card { position: absolute; left: 1080px; top: 320px; width: 680px; padding: 48px; box-sizing: border-box; background: var(--tinta); box-shadow: 22px 22px 0 var(--violeta); display: flex; flex-direction: column; gap: 24px; }
+.encerramento__cardLabel { font: 700 26px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: var(--laranja); }
+.encerramento__proximo { font: 400 84px/1.05 'Bungee', sans-serif; color: var(--creme); text-wrap: balance; }
+.encerramento__faixa { position: absolute; left: 0; top: 930px; width: 1920px; height: 100px; background: var(--tinta); overflow: hidden; display: flex; align-items: center; }
+.encerramento__faixaTexto { display: flex; white-space: nowrap; animation: corre 30s linear infinite; font: 600 58px/1 'Barlow Condensed', sans-serif; color: var(--creme); }
+
+/* ---- Jogo ---- */
+.jogo__topoEsquerda { position: absolute; left: 40px; top: 36px; display: flex; align-items: center; gap: 14px; }
+.jogo__logo { width: 96px; height: 96px; background: var(--laranja); display: flex; align-items: center; justify-content: center; font: 600 68px/1 'Barlow Condensed', sans-serif; color: var(--tinta); }
+.jogo__aoVivo { display: flex; align-items: center; gap: 10px; background: var(--tinta); padding: 12px 16px; }
+.jogo__bolinha { width: 14px; height: 14px; border-radius: 50%; background: var(--laranja); animation: pisca 1.4s infinite; }
+.jogo__aoVivoTexto { font: 700 20px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: var(--creme); }
+.jogo__placarWrap { position: absolute; left: 0; top: 36px; width: 1920px; display: flex; flex-direction: column; align-items: center; }
+.jogo__placarLinha { display: flex; height: 96px; }
+.jogo__time { width: 330px; background: var(--tinta); display: flex; align-items: center; justify-content: center; font: 600 58px/1 'Barlow Condensed', sans-serif; color: var(--creme); }
+.jogo__gols { width: 230px; background: var(--laranja); display: flex; align-items: center; justify-content: center; gap: 18px; font: 400 62px/1 'Bungee', sans-serif; color: var(--tinta); }
+.jogo__etiqueta { background: var(--violeta); padding: 8px 20px; font: 700 20px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: var(--tinta); }
+.jogo__noAr { position: absolute; right: 40px; top: 36px; width: 300px; background: var(--tinta); padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; box-shadow: 10px 10px 0 var(--laranja); }
+.jogo__noArLabel { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: var(--laranja); }
+.jogo__noArItem { display: flex; align-items: center; gap: 12px; font: 600 36px/1 'Barlow Condensed', sans-serif; color: var(--creme); }
+.jogo__noArBolinha { width: 12px; height: 12px; border-radius: 50%; background: var(--laranja); flex: none; }
+
+/* ---- React / câmeras ---- */
+.reactCameras__moldura { position: absolute; left: 40px; top: 40px; width: 1320px; height: 742px; box-sizing: border-box; border: 6px solid var(--laranja); box-shadow: 14px 14px 0 var(--violeta); }
+.reactCameras__cam { position: absolute; left: 1400px; width: 480px; height: 270px; box-sizing: border-box; border: 5px solid var(--creme); }
+.reactCameras__camLabel { position: absolute; left: -5px; bottom: -5px; background: var(--tinta); padding: 8px 14px; display: flex; align-items: center; gap: 10px; font: 600 32px/1 'Barlow Condensed', sans-serif; color: var(--creme); }
+.reactCameras__camBolinha { width: 10px; height: 10px; border-radius: 50%; background: var(--laranja); }
+.reactCameras__rodape { position: absolute; left: 40px; top: 910px; width: 1840px; height: 130px; background: var(--tinta); display: flex; align-items: center; gap: 36px; box-sizing: border-box; padding-right: 40px; }
+.reactCameras__rodapeLogo { width: 130px; height: 130px; background: var(--laranja); display: flex; align-items: center; justify-content: center; font: 600 92px/1 'Barlow Condensed', sans-serif; color: var(--tinta); flex: none; }
+.reactCameras__rodapeLabel { font: 700 22px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: var(--laranja); flex: none; }
+.reactCameras__rodapeTitulo { font: 600 64px/1 'Barlow Condensed', sans-serif; color: var(--creme); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- Nome (lower third) ---- */
+.nome { position: absolute; left: 80px; top: 830px; display: flex; transition: transform .6s cubic-bezier(.2,.9,.3,1.1), opacity .4s; }
+.nome__logo { width: 150px; height: 150px; background: var(--laranja); display: flex; align-items: center; justify-content: center; font: 600 100px/1 'Barlow Condensed', sans-serif; color: var(--tinta); flex: none; }
+.nome__caixa { height: 150px; background: var(--tinta); padding: 0 48px 0 36px; display: flex; flex-direction: column; justify-content: center; gap: 12px; box-shadow: 12px 12px 0 var(--violeta); }
+.nome__nome { font: 600 78px/.9 'Barlow Condensed', sans-serif; color: var(--creme); white-space: nowrap; }
+.nome__funcao { font: 700 24px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: var(--laranja); white-space: nowrap; }
+
+/* ---- Alerta (doação) ---- */
+.alerta { position: absolute; left: 660px; top: 830px; display: flex; align-items: center; gap: 0; transition: transform .5s cubic-bezier(.2,.9,.3,1.1), opacity .4s; }
+.alerta__icone { width: 150px; height: 150px; background: var(--violeta); display: flex; align-items: center; justify-content: center; font: 600 90px/1 'Barlow Condensed', sans-serif; color: var(--tinta); flex: none; animation: flutua 2s ease-in-out infinite; }
+.alerta__caixa { min-height: 150px; background: var(--tinta); padding: 20px 48px 20px 36px; display: flex; flex-direction: column; justify-content: center; gap: 8px; box-shadow: 12px 12px 0 var(--laranja); max-width: 900px; }
+.alerta__nome { font: 600 56px/1 'Barlow Condensed', sans-serif; color: var(--creme); white-space: nowrap; }
+.alerta__mensagem { font: 400 28px/1.2 'JetBrains Mono', monospace; color: var(--laranja); text-wrap: balance; }
+
+.dots { display: flex; gap: 22px; margin-top: 18px; }
+.dots__item { border-radius: 50%; }
