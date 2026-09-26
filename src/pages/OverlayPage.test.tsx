@@ -8,6 +8,7 @@ vi.mock('../hooks/useSala', () => ({
   useSala: () => ({ estado: { ...ESTADO_PADRAO, timeA: 'RUBRO' }, status: 'ao_vivo', updatedAt: undefined, updatedByNome: null, atualizar: vi.fn() }),
 }));
 vi.mock('../hooks/useServerClock', () => ({ useServerClock: () => 1_000_000 }));
+vi.mock('../hooks/useEventos', () => ({ useEventos: () => ({ ultimoEvento: null, recebidoEm: null, disparar: vi.fn() }) }));
 
 function renderRota(cena: string) {
   return render(

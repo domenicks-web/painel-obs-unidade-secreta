@@ -10,6 +10,7 @@ vi.mock('../hooks/useSala', () => ({
   useSala: () => ({ estado: ESTADO_PADRAO, status: 'ao_vivo', updatedAt: '2026-01-01T00:00:00Z', updatedByNome: 'FULANO', atualizar }),
 }));
 vi.mock('../hooks/useServerClock', () => ({ useServerClock: () => 1_000_000 }));
+vi.mock('../hooks/useEventos', () => ({ useEventos: () => ({ ultimoEvento: null, recebidoEm: null, disparar: vi.fn() }) }));
 
 function renderPainel() {
   return render(
