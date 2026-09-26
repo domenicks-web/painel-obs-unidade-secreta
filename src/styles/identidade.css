@@ -211,3 +211,27 @@ input {
 .indicador-status__editado {
   color: #8a7f84;
 }
+
+.secao__cabecalhoLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.secao__camLabel {
+  font-size: 13px;
+  width: 52px;
+}
+
+.secao__membroLinha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.secao__botaoVioleta {
+  border: 2px solid var(--violeta) !important;
+}

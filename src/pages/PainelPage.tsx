@@ -7,6 +7,8 @@ import { SecaoComecando } from '../components/painel/SecaoComecando';
 import { SecaoIntervalo } from '../components/painel/SecaoIntervalo';
 import { SecaoEncerramento } from '../components/painel/SecaoEncerramento';
 import { SecaoPlacar } from '../components/painel/SecaoPlacar';
+import { SecaoCameras } from '../components/painel/SecaoCameras';
+import { SecaoMembros } from '../components/painel/SecaoMembros';
 
 export function PainelPage() {
   const [params] = useSearchParams();
@@ -26,6 +28,8 @@ export function PainelPage() {
       <SecaoIntervalo estado={estado} atualizar={atualizar} />
       <SecaoEncerramento estado={estado} atualizar={atualizar} />
       <SecaoPlacar estado={estado} atualizar={atualizar} />
+      <SecaoCameras estado={estado} atualizar={atualizar} />
+      <SecaoMembros estado={estado} atualizar={atualizar} />
     </div>
   );
 }
