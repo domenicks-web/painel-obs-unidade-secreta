@@ -31,3 +31,53 @@ button {
 input {
   font-family: inherit;
 }
+
+.tela-cheia {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-form__logo {
+  width: 56px;
+  height: 56px;
+  background: var(--laranja);
+  color: var(--tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 38px/1 'Barlow Condensed', sans-serif;
+  margin: 0 auto;
+}
+
+.login-form input {
+  background: #2a2226;
+  border: 2px solid #3a3136;
+  color: var(--creme);
+  font: 600 20px 'Barlow Condensed', sans-serif;
+  padding: 12px;
+}
+
+.login-form button {
+  background: var(--laranja);
+  color: var(--tinta);
+  border: 0;
+  padding: 14px;
+  font: 700 13px/1 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+.login-form__erro {
+  color: var(--laranja);
+}
