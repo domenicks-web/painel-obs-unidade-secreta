@@ -81,3 +81,133 @@ input {
 .login-form__erro {
   color: var(--laranja);
 }
+
+.painel {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.painel__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.painel__logo {
+  width: 44px;
+  height: 44px;
+  background: var(--laranja);
+  color: var(--tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 32px/1 'Barlow Condensed', sans-serif;
+}
+
+.painel h1 {
+  font: 600 30px/1 'Barlow Condensed', sans-serif;
+  margin: 0;
+}
+
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.secao h2 {
+  font: 700 12px/1 'JetBrains Mono', monospace;
+  letter-spacing: 0.16em;
+  color: var(--laranja);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.secao input[type='text'],
+.secao input:not([type]) {
+  background: #2a2226;
+  border: 2px solid #3a3136;
+  color: var(--creme);
+  font: 600 22px 'Barlow Condensed', sans-serif;
+  padding: 8px 10px;
+  width: 100%;
+}
+
+.secao input {
+  background: #2a2226;
+  border: 2px solid #3a3136;
+  color: var(--creme);
+  font: 600 22px 'Barlow Condensed', sans-serif;
+  padding: 8px 10px;
+}
+
+.secao button {
+  min-height: 44px;
+  min-width: 44px;
+  background: #2a2226;
+  color: var(--creme);
+  border: 0;
+  padding: 12px 16px;
+  font: 700 13px/1 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+.secao__botaoDestaque {
+  background: var(--laranja) !important;
+  color: var(--tinta) !important;
+}
+
+.secao__botaoSecundario {
+  align-self: flex-start;
+}
+
+.secao__linha {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.secao__numero {
+  width: 80px;
+}
+
+.secao__relogio {
+  font: 600 26px/1 'Barlow Condensed', sans-serif;
+  color: var(--laranja);
+  font-variant-numeric: tabular-nums;
+}
+
+.secao__placarGrade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.secao__golNumero {
+  font: 600 34px/1 'Barlow Condensed', sans-serif;
+  min-width: 40px;
+  text-align: center;
+}
+
+.indicador-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.indicador-status__bolinha {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.indicador-status__editado {
+  color: #8a7f84;
+}
