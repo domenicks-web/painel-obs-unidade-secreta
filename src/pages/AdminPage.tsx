@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../hooks/useAuth';
 
 interface MembroEquipe {
   id: string;
@@ -10,6 +12,7 @@ interface MembroEquipe {
 }
 
 export function AdminPage() {
+  const { papel: papelUsuario } = useAuth();
   const [membros, setMembros] = useState<MembroEquipe[]>([]);
   const [email, setEmail] = useState('');
   const [papel, setPapel] = useState<'admin' | 'editor'>('editor');
@@ -21,8 +24,10 @@ export function AdminPage() {
   }
 
   useEffect(() => {
-    carregar();
-  }, []);
+    if (papelUsuario === 'admin') carregar();
+  }, [papelUsuario]);
+
+  if (papelUsuario !== 'admin') return <Navigate to="/painel" replace />;
 
   async function convidar(e: FormEvent) {
     e.preventDefault();
