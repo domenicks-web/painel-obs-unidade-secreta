@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { OverlayPage } from './pages/OverlayPage';
 import { LoginPage } from './pages/LoginPage';
 import { PainelPage } from './pages/PainelPage';
+import { AdminPage } from './pages/AdminPage';
 import { RotaProtegida } from './components/RotaProtegida';
 
 export default function App() {
@@ -14,6 +15,14 @@ export default function App() {
         element={
           <RotaProtegida>
             <PainelPage />
+          </RotaProtegida>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <RotaProtegida>
+            <AdminPage />
           </RotaProtegida>
         }
       />
