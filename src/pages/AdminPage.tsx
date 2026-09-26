@@ -12,7 +12,7 @@ interface MembroEquipe {
 }
 
 export function AdminPage() {
-  const { papel: papelUsuario } = useAuth();
+  const { carregando, papel: papelUsuario } = useAuth();
   const [membros, setMembros] = useState<MembroEquipe[]>([]);
   const [email, setEmail] = useState('');
   const [papel, setPapel] = useState<'admin' | 'editor'>('editor');
@@ -27,6 +27,7 @@ export function AdminPage() {
     if (papelUsuario === 'admin') carregar();
   }, [papelUsuario]);
 
+  if (carregando) return <div className="tela-cheia">Carregando…</div>;
   if (papelUsuario !== 'admin') return <Navigate to="/painel" replace />;
 
   async function convidar(e: FormEvent) {

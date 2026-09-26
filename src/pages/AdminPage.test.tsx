@@ -52,4 +52,21 @@ describe('AdminPage', () => {
     expect(screen.queryByText('ADMIN · EQUIPE')).not.toBeInTheDocument();
     await waitFor(() => expect(supabase.from).not.toHaveBeenCalled());
   });
+
+  it('não redireciona nem consulta membros_equipe enquanto o papel ainda está carregando', async () => {
+    // Simula o próprio useAuth() de AdminPage no primeiro render: como ele não
+    // compartilha estado com o useAuth() de RotaProtegida (não há contexto),
+    // seu papel local começa null/carregando mesmo quando RotaProtegida já
+    // liberou a rota. A página não pode tratar esse null inicial como "não é
+    // admin" e redirecionar antes da checagem real terminar.
+    useAuthMock.mockReturnValue({ carregando: true, sessao: null, papel: null });
+    render(
+      <MemoryRouter initialEntries={['/admin']}>
+        <AdminPage />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Carregando…')).toBeInTheDocument();
+    expect(screen.queryByText('ADMIN · EQUIPE')).not.toBeInTheDocument();
+    await waitFor(() => expect(supabase.from).not.toHaveBeenCalled());
+  });
 });
