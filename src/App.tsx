@@ -3,12 +3,14 @@ import { OverlayPage } from './pages/OverlayPage';
 import { LoginPage } from './pages/LoginPage';
 import { PainelPage } from './pages/PainelPage';
 import { AdminPage } from './pages/AdminPage';
+import { PreviewPage } from './pages/PreviewPage';
 import { RotaProtegida } from './components/RotaProtegida';
 
 export default function App() {
   return (
     <Routes>
       <Route path="/overlay/:cena" element={<OverlayPage />} />
+      <Route path="/preview" element={<PreviewPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/painel"

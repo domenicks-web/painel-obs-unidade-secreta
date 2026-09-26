@@ -235,3 +235,44 @@ input {
 .secao__botaoVioleta {
   border: 2px solid var(--violeta) !important;
 }
+
+.preview {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.preview__grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.preview__label {
+  font: 700 13px/1 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+  color: var(--laranja);
+  margin-bottom: 8px;
+}
+
+.preview__palcoMini {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+  background: #241d21;
+}
+
+.preview__palcoMini .palco {
+  width: 1920px;
+  height: 1080px;
+  transform: scale(0.1875);
+  transform-origin: 0 0;
+}
+
+.preview__url {
+  font-size: 11px;
+  color: #8a7f84;
+  word-break: break-all;
+  margin-top: 6px;
+}
