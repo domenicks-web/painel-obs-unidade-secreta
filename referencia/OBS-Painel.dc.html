@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#1A1417}a{color:#FF6B1F}a:hover{color:#FFF3E0}</style></helmet>
+<div style="min-height:100vh;background:#1A1417;color:#FFF3E0;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px;font-family:'JetBrains Mono',monospace;max-width:760px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:44px;height:44px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 32px/1 'Barlow Condensed',sans-serif;color:#1A1417">US</div>
+<div style="font:600 30px/1 'Barlow Condensed',sans-serif">PAINEL AO VIVO</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">COMEÇANDO</div>
+<input value="{{ d.titulo }}" onChange="{{ on.titulo }}" placeholder="Título da live" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:100%;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<input type="number" min="1" value="{{ d.minutos }}" onChange="{{ on.minutos }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:80px;box-sizing:border-box;outline:none">
+<div style="font-size:13px">min</div>
+<button onClick="{{ on.iniciar }}" style="background:#FF6B1F;color:#1A1417;border:0;padding:12px 16px;font:700 13px/1 'JetBrains Mono',monospace;letter-spacing:.1em;cursor:pointer">INICIAR CONTAGEM</button>
+<button onClick="{{ on.parar }}" style="background:#2A2226;color:#FFF3E0;border:0;padding:12px 16px;font:700 13px/1 'JetBrains Mono',monospace;letter-spacing:.1em;cursor:pointer">ZERAR</button>
+<div style="font:600 26px/1 'Barlow Condensed',sans-serif;color:#FF6B1F;font-variant-numeric:tabular-nums">{{ relogio }}</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">INTERVALO · MENSAGEM</div>
+<input value="{{ d.msg }}" onChange="{{ on.msg }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:100%;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F">
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">ENCERRAMENTO · PRÓXIMO EPISÓDIO</div>
+<input value="{{ d.proximo }}" onChange="{{ on.proximo }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:100%;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F">
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">PLACAR</div>
+<input value="{{ d.jogo }}" onChange="{{ on.jogo }}" placeholder="Etiqueta (ex: FIFA · RODADA 3)" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:100%;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:8px;align-items:center">
+<input value="{{ d.timeA }}" onChange="{{ on.timeA }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:100%;box-sizing:border-box;outline:none">
+<button onClick="{{ on.aMenos }}" style="width:44px;height:44px;background:#2A2226;color:#FFF3E0;border:0;font:700 22px/1 'JetBrains Mono',monospace;cursor:pointer">−</button>
+<div style="font:600 34px/1 'Barlow Condensed',sans-serif;min-width:40px;text-align:center">{{ d.golsA }}</div>
+<button onClick="{{ on.aMais }}" style="width:44px;height:44px;background:#FF6B1F;color:#1A1417;border:0;font:700 22px/1 'JetBrains Mono',monospace;cursor:pointer">+</button>
+<input value="{{ d.timeB }}" onChange="{{ on.timeB }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;width:100%;box-sizing:border-box;outline:none">
+<button onClick="{{ on.bMenos }}" style="width:44px;height:44px;background:#2A2226;color:#FFF3E0;border:0;font:700 22px/1 'JetBrains Mono',monospace;cursor:pointer">−</button>
+<div style="font:600 34px/1 'Barlow Condensed',sans-serif;min-width:40px;text-align:center">{{ d.golsB }}</div>
+<button onClick="{{ on.bMais }}" style="width:44px;height:44px;background:#FF6B1F;color:#1A1417;border:0;font:700 22px/1 'JetBrains Mono',monospace;cursor:pointer">+</button>
+</div>
+<button onClick="{{ on.zerarPlacar }}" style="align-self:flex-start;background:#2A2226;color:#FFF3E0;border:0;padding:10px 14px;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.1em;cursor:pointer">ZERAR PLACAR</button>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">CÂMERAS DO REACT</div>
+<sc-for list="{{ cams }}" as="c" hint-placeholder-count="3">
+<div style="display:flex;gap:8px;align-items:center"><div style="font-size:13px;width:52px">CAM {{ c.num }}</div>
+<input value="{{ c.n }}" onChange="{{ c.on }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 22px 'Barlow Condensed',sans-serif;padding:8px 10px;flex:1;min-width:0;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F"></div>
+</sc-for>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">GALERA · NO AR E NOME NA TELA</div>
+<button onClick="{{ on.esconder }}" style="background:#2A2226;color:#FFF3E0;border:0;padding:10px 14px;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.1em;cursor:pointer">ESCONDER NOME</button>
+</div>
+<sc-for list="{{ membros }}" as="m" hint-placeholder-count="10">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto auto;gap:6px;align-items:center">
+<input value="{{ m.n }}" onChange="{{ m.onN }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 20px 'Barlow Condensed',sans-serif;padding:6px 8px;width:100%;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F">
+<input value="{{ m.f }}" onChange="{{ m.onF }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:400 13px 'JetBrains Mono',monospace;padding:10px 8px;width:100%;box-sizing:border-box;outline:none" style-focus="border-color:#FF6B1F">
+<button onClick="{{ m.toggle }}" style="height:40px;padding:0 10px;border:2px solid #FF6B1F;background:{{ m.noArBg }};color:{{ m.noArFg }};font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;cursor:pointer">NO AR</button>
+<button onClick="{{ m.show }}" style="height:40px;padding:0 10px;border:2px solid #8B6CF0;background:{{ m.ltBg }};color:{{ m.ltFg }};font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;cursor:pointer">MOSTRAR</button>
+</div>
+</sc-for>
+<div style="display:flex;gap:8px;align-items:center;font-size:13px">Nome fica na tela por
+<input type="number" min="2" value="{{ d.ltSeg }}" onChange="{{ on.ltSeg }}" style="background:#2A2226;border:2px solid #3a3136;color:#FFF3E0;font:600 20px 'Barlow Condensed',sans-serif;padding:4px 8px;width:64px;box-sizing:border-box;outline:none"> segundos</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY='us-obs';
+const DEF={titulo:'RESENHA AO VIVO',minutos:5,fim:0,msg:'VOLTAMOS JÁ',proximo:'SEXTA, 21H',timeA:'CASA',timeB:'FORA',golsA:0,golsB:0,jogo:'AO VIVO',membros:Array.from({length:10},(_,i)=>({n:'NOME '+String(i+1).padStart(2,'0'),f:'UNIDADE SECRETA'})),noAr:[0,1,2],cams:['NOME 01','NOME 02','NOME 03'],lt:-1,ltAte:0,ltSeg:6};
+function load(){try{return {...DEF,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...DEF}}}
+class Component extends DCLogic{
+  state={d:load(),now:Date.now()};
+  componentDidMount(){try{this.bc=new BroadcastChannel(KEY)}catch(e){};this.t=setInterval(()=>this.setState({now:Date.now()}),500)}
+  componentWillUnmount(){clearInterval(this.t);this.bc&&this.bc.close()}
+  upd(p){const d={...this.state.d,...p};localStorage.setItem(KEY,JSON.stringify(d));try{this.bc.postMessage(1)}catch(e){};this.setState({d})}
+  renderVals(){
+    const {d,now}=this.state;const v=k=>e=>this.upd({[k]:e.target.value});const num=k=>e=>this.upd({[k]:Math.max(1,parseInt(e.target.value)||1)});
+    const gol=(k,x)=>()=>this.upd({[k]:Math.max(0,(d[k]||0)+x)});
+    const rest=d.fim?Math.max(0,d.fim-now):d.minutos*60000;
+    const relogio=String(Math.floor(rest/60000)).padStart(2,'0')+':'+String(Math.floor(rest/1000)%60).padStart(2,'0');
+    return {d,relogio:d.fim?relogio:'',
+      on:{titulo:v('titulo'),msg:v('msg'),proximo:v('proximo'),jogo:v('jogo'),timeA:v('timeA'),timeB:v('timeB'),minutos:num('minutos'),ltSeg:num('ltSeg'),
+        iniciar:()=>this.upd({fim:Date.now()+d.minutos*60000}),parar:()=>this.upd({fim:0}),
+        aMais:gol('golsA',1),aMenos:gol('golsA',-1),bMais:gol('golsB',1),bMenos:gol('golsB',-1),zerarPlacar:()=>this.upd({golsA:0,golsB:0}),
+        esconder:()=>this.upd({ltAte:0})},
+      cams:[0,1,2].map(i=>({num:i+1,n:d.cams[i]||'',on:e=>{const c=[...d.cams];c[i]=e.target.value;this.upd({cams:c})}})),
+      membros:d.membros.map((m,i)=>{const on=d.noAr.includes(i);const lt=d.lt===i&&now<d.ltAte;return {n:m.n,f:m.f,
+        noArBg:on?'#FF6B1F':'transparent',noArFg:on?'#1A1417':'#FFF3E0',ltBg:lt?'#8B6CF0':'transparent',ltFg:lt?'#1A1417':'#FFF3E0',
+        onN:e=>{const ms=[...d.membros];ms[i]={...m,n:e.target.value};this.upd({membros:ms})},
+        onF:e=>{const ms=[...d.membros];ms[i]={...m,f:e.target.value};this.upd({membros:ms})},
+        toggle:()=>this.upd({noAr:on?d.noAr.filter(x=>x!==i):[...d.noAr,i]}),
+        show:()=>this.upd({lt:i,ltAte:Date.now()+d.ltSeg*1000})}})
+    };
+  }
+}
+</script>
+</body>
+</html>

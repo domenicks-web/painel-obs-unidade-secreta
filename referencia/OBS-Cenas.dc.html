@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:transparent;overflow-x:hidden}
+a{color:#FF6B1F}a:hover{color:#FFF3E0}
+@keyframes acende{0%,100%{opacity:.15}25%,65%{opacity:1}}
+@keyframes respira{0%,100%{opacity:.3;transform:scale(.75)}50%{opacity:1;transform:scale(1)}}
+@keyframes corre{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes listra{from{background-position:0 0}to{background-position:147px 0}}
+@keyframes entra{0%{transform:scale(.5) rotate(-12deg);opacity:0}70%{transform:scale(1.06) rotate(-2deg);opacity:1}100%{transform:scale(1) rotate(-3deg)}}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.2}}
+</style></helmet>
+<div style="min-height:{{ pageMinH }};background:{{ pageBg }};padding:{{ pagePad }};box-sizing:border-box;font-family:'JetBrains Mono',monospace;color:#FFF3E0">
+<sc-if value="{{ preview }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:20px;max-width:1600px">
+<div style="font:600 40px/1 'Barlow Condensed',sans-serif;margin-right:16px">OBS · UNIDADE SECRETA</div>
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+<button onClick="{{ t.go }}" style="font:700 14px/1 'JetBrains Mono',monospace;letter-spacing:.08em;padding:10px 14px;border:2px solid #FF6B1F;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer">{{ t.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+<div style="position:relative;overflow:hidden;width:{{ stageW }}px;height:{{ stageH }}px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:1080px;transform:scale({{ scale }});transform-origin:0 0;overflow:hidden">
+
+<sc-if value="{{ backdrop }}">
+<div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,#3a3236 0 40px,#342c30 40px 80px);display:flex;align-items:center;justify-content:center;font:700 32px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#8a7f84">SEU JOGO / TRANSMISSÃO AQUI</div>
+</sc-if>
+
+<sc-if value="{{ isComecando }}">
+<div style="position:absolute;inset:0;background:#1A1417;overflow:hidden">
+<div style="position:absolute;left:170px;top:170px;width:560px;height:560px;animation:flutua 6s ease-in-out infinite">
+<div style="width:560px;height:560px;background:#FF6B1F;box-shadow:26px 26px 0 #8B6CF0;display:flex;align-items:center;justify-content:center;font:600 390px/1 'Barlow Condensed',sans-serif;color:#1A1417;animation:entra 1.2s cubic-bezier(.2,.9,.3,1.2) both">US</div>
+</div>
+<div style="position:absolute;left:880px;top:170px;display:flex;flex-direction:column;gap:18px">
+<div style="font:700 30px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">{{ contaLabel }}</div>
+<div style="font:600 330px/.82 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;color:#FFF3E0">{{ relogio }}</div>
+<div style="font:600 96px/1 'Barlow Condensed',sans-serif;color:#FFF3E0;max-width:940px;text-wrap:balance">{{ d.titulo }}</div>
+<div style="display:flex;gap:22px;margin-top:18px">
+<sc-for list="{{ dots }}" as="p" hint-placeholder-count="10">
+<div style="width:30px;height:30px;border-radius:50%;background:{{ p.cor }};animation:{{ p.acende }}"></div>
+</sc-for>
+</div>
+</div>
+<div style="position:absolute;left:0;top:900px;width:1920px;height:110px;background:#FF6B1F;overflow:hidden;display:flex;align-items:center">
+<div style="display:flex;white-space:nowrap;animation:corre 30s linear infinite;font:600 64px/1 'Barlow Condensed',sans-serif;color:#1A1417">
+<span>UNIDADE SECRETA ● RESENHA ● AO VIVO ● UNIDADE SECRETA ● RESENHA ● AO VIVO ● UNIDADE SECRETA ● RESENHA ● AO VIVO ● </span>
+<span>UNIDADE SECRETA ● RESENHA ● AO VIVO ● UNIDADE SECRETA ● RESENHA ● AO VIVO ● UNIDADE SECRETA ● RESENHA ● AO VIVO ● </span>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isIntervalo }}">
+<div style="position:absolute;inset:0;background:#1A1417;overflow:hidden">
+<div style="position:absolute;left:80px;top:70px;width:150px;height:150px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 104px/1 'Barlow Condensed',sans-serif;color:#1A1417;transform:rotate(-3deg)">US</div>
+<div style="position:absolute;left:0;top:250px;width:1920px;display:flex;flex-direction:column;align-items:center;gap:36px">
+<div style="font:700 30px/1 'JetBrains Mono',monospace;letter-spacing:.2em;color:#8B6CF0">INTERVALO</div>
+<div style="font:600 240px/.88 'Barlow Condensed',sans-serif;color:#FFF3E0;text-align:center;max-width:1600px;text-wrap:balance">{{ d.msg }}</div>
+<div style="display:flex;gap:26px;margin-top:20px">
+<sc-for list="{{ dots }}" as="p" hint-placeholder-count="10">
+<div style="width:30px;height:30px;border-radius:50%;background:#FF6B1F;animation:{{ p.respira }}"></div>
+</sc-for>
+</div>
+</div>
+<div style="position:absolute;left:0;top:960px;width:1920px;height:120px;background:repeating-linear-gradient(-45deg,#FF6B1F 0 52px,#1A1417 52px 104px);animation:listra 8s linear infinite"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEncerramento }}">
+<div style="position:absolute;inset:0;background:#FF6B1F;overflow:hidden">
+<div style="position:absolute;left:170px;top:80px;width:170px;height:170px;background:#1A1417;display:flex;align-items:center;justify-content:center;font:600 120px/1 'Barlow Condensed',sans-serif;color:#FF6B1F;transform:rotate(-3deg)">US</div>
+<div style="position:absolute;left:160px;top:300px;font:600 300px/.82 'Barlow Condensed',sans-serif;color:#1A1417">VALEU,<br>GALERA</div>
+<div style="position:absolute;left:1080px;top:320px;width:680px;padding:48px;box-sizing:border-box;background:#1A1417;box-shadow:22px 22px 0 #8B6CF0;display:flex;flex-direction:column;gap:24px">
+<div style="font:700 26px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">PRÓXIMO EPISÓDIO</div>
+<div style="font:400 84px/1.05 'Bungee',sans-serif;color:#FFF3E0;text-wrap:balance">{{ d.proximo }}</div>
+<div style="display:flex;gap:18px">
+<sc-for list="{{ dots }}" as="p" hint-placeholder-count="10">
+<div style="width:22px;height:22px;border-radius:50%;background:#FF6B1F;animation:{{ p.acende }}"></div>
+</sc-for>
+</div>
+</div>
+<div style="position:absolute;left:0;top:930px;width:1920px;height:100px;background:#1A1417;overflow:hidden;display:flex;align-items:center">
+<div style="display:flex;white-space:nowrap;animation:corre 30s linear infinite;font:600 58px/1 'Barlow Condensed',sans-serif;color:#FFF3E0">
+<span>SE INSCREVE ● ENTRA PRA RESENHA ● SE INSCREVE ● ENTRA PRA RESENHA ● SE INSCREVE ● ENTRA PRA RESENHA ● </span>
+<span>SE INSCREVE ● ENTRA PRA RESENHA ● SE INSCREVE ● ENTRA PRA RESENHA ● SE INSCREVE ● ENTRA PRA RESENHA ● </span>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isJogo }}">
+<div style="position:absolute;left:40px;top:36px;display:flex;align-items:center;gap:14px">
+<div style="width:96px;height:96px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 68px/1 'Barlow Condensed',sans-serif;color:#1A1417">US</div>
+<div style="display:flex;align-items:center;gap:10px;background:#1A1417;padding:12px 16px">
+<div style="width:14px;height:14px;border-radius:50%;background:#FF6B1F;animation:pisca 1.4s infinite"></div>
+<div style="font:700 20px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FFF3E0">AO VIVO</div>
+</div>
+</div>
+<div style="position:absolute;left:0;top:36px;width:1920px;display:flex;flex-direction:column;align-items:center;gap:0">
+<div style="display:flex;height:96px">
+<div style="width:330px;background:#1A1417;display:flex;align-items:center;justify-content:center;font:600 58px/1 'Barlow Condensed',sans-serif;color:#FFF3E0">{{ d.timeA }}</div>
+<div style="width:230px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;gap:18px;font:400 62px/1 'Bungee',sans-serif;color:#1A1417"><span>{{ d.golsA }}</span><span>–</span><span>{{ d.golsB }}</span></div>
+<div style="width:330px;background:#1A1417;display:flex;align-items:center;justify-content:center;font:600 58px/1 'Barlow Condensed',sans-serif;color:#FFF3E0">{{ d.timeB }}</div>
+</div>
+<div style="background:#8B6CF0;padding:8px 20px;font:700 20px/1 'JetBrains Mono',monospace;letter-spacing:.12em;color:#1A1417">{{ d.jogo }}</div>
+</div>
+<div style="position:absolute;right:40px;top:36px;width:300px;background:#1A1417;padding:20px 22px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;box-shadow:10px 10px 0 #FF6B1F">
+<div style="font:700 18px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F">NO AR · {{ noArQtd }}</div>
+<sc-for list="{{ noAr }}" as="m" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;font:600 36px/1 'Barlow Condensed',sans-serif;color:#FFF3E0"><div style="width:12px;height:12px;border-radius:50%;background:#FF6B1F;flex:none"></div>{{ m.n }}</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReact }}">
+<div style="position:absolute;left:40px;top:40px;width:1320px;height:742px;box-sizing:border-box;border:6px solid #FF6B1F;box-shadow:14px 14px 0 #8B6CF0"></div>
+<sc-for list="{{ cams }}" as="c" hint-placeholder-count="3">
+<div style="position:absolute;left:1400px;top:{{ c.top }}px;width:480px;height:270px;box-sizing:border-box;border:5px solid #FFF3E0">
+<div style="position:absolute;left:-5px;bottom:-5px;background:#1A1417;padding:8px 14px;display:flex;align-items:center;gap:10px;font:600 32px/1 'Barlow Condensed',sans-serif;color:#FFF3E0"><div style="width:10px;height:10px;border-radius:50%;background:#FF6B1F"></div>{{ c.n }}</div>
+</div>
+</sc-for>
+<div style="position:absolute;left:40px;top:910px;width:1840px;height:130px;background:#1A1417;display:flex;align-items:center;gap:36px;box-sizing:border-box;padding-right:40px">
+<div style="width:130px;height:130px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 92px/1 'Barlow Condensed',sans-serif;color:#1A1417;flex:none">US</div>
+<div style="font:700 22px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FF6B1F;flex:none">REACT</div>
+<div style="font:600 64px/1 'Barlow Condensed',sans-serif;color:#FFF3E0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.titulo }}</div>
+<div style="display:flex;gap:14px;flex:none">
+<sc-for list="{{ dots }}" as="p" hint-placeholder-count="10">
+<div style="width:18px;height:18px;border-radius:50%;background:#FF6B1F;animation:{{ p.acende }}"></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isNome }}">
+<div style="position:absolute;left:80px;top:830px;display:flex;transform:{{ ltTransform }};opacity:{{ ltOpacity }};transition:transform .6s cubic-bezier(.2,.9,.3,1.1),opacity .4s">
+<div style="width:150px;height:150px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 100px/1 'Barlow Condensed',sans-serif;color:#1A1417;flex:none">US</div>
+<div style="height:150px;background:#1A1417;padding:0 48px 0 36px;display:flex;flex-direction:column;justify-content:center;gap:12px;box-shadow:12px 12px 0 #8B6CF0">
+<div style="font:600 78px/.9 'Barlow Condensed',sans-serif;color:#FFF3E0;white-space:nowrap">{{ lt.n }}</div>
+<div style="font:700 24px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FF6B1F;white-space:nowrap">{{ lt.f }}</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<sc-if value="{{ preview }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:1000px;margin-top:40px;display:flex;flex-direction:column;gap:22px;font:400 16px/1.6 'JetBrains Mono',monospace;color:#FFF3E0">
+<div style="font:600 44px/1 'Barlow Condensed',sans-serif">COMO CONFIGURAR NO OBS</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div><b style="color:#FF6B1F">1.</b> Baixe a pasta com <b>OBS-Cenas.dc.html</b>, <b>OBS-Painel.dc.html</b> e <b>support.js</b>. Os três precisam ficar juntos, na mesma pasta.</div>
+<div><b style="color:#FF6B1F">2.</b> No OBS, crie uma cena para cada tela e adicione uma fonte <b>Navegador</b>. Desmarque "Arquivo local", cole a URL abaixo trocando o caminho pelo da sua pasta, e use largura 1920, altura 1080.</div>
+<div><b style="color:#FF6B1F">3.</b> Marque "Atualizar navegador quando a cena ficar ativa", para a animação de entrada rodar sempre.</div>
+<div><b style="color:#FF6B1F">4.</b> Painel: Docks → Docks de navegador personalizados → nome "Painel US" e a URL do painel. Tudo que você mudar ali aparece ao vivo nas telas.</div>
+<div><b style="color:#FF6B1F">5.</b> A fonte "Nome" fica transparente até alguém clicar em MOSTRAR no painel. Adicione ela no topo de todas as cenas (copie e use "Colar referência").</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;background:#1A1417;padding:20px;font-size:14px">
+<sc-for list="{{ urls }}" as="u" hint-placeholder-count="7">
+<div style="display:flex;gap:16px;flex-wrap:wrap"><span style="color:#FF6B1F;min-width:190px">{{ u.label }}</span><span style="word-break:break-all">{{ u.url }}</span></div>
+</sc-for>
+</div>
+<div>Precisa de internet ligada no PC (fontes e motor da página carregam online).</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY='us-obs';
+const DEF={titulo:'RESENHA AO VIVO',minutos:5,fim:0,msg:'VOLTAMOS JÁ',proximo:'SEXTA, 21H',timeA:'CASA',timeB:'FORA',golsA:0,golsB:0,jogo:'AO VIVO',membros:Array.from({length:10},(_,i)=>({n:'NOME '+String(i+1).padStart(2,'0'),f:'UNIDADE SECRETA'})),noAr:[0,1,2],cams:['NOME 01','NOME 02','NOME 03'],lt:-1,ltAte:0,ltSeg:6};
+const CENAS=[['comecando','Começando'],['intervalo','Intervalo'],['encerramento','Encerramento'],['jogo','Jogo + painel'],['react','React / câmeras'],['nome','Nome (lower third)']];
+function load(){try{return {...DEF,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...DEF}}}
+class Component extends DCLogic{
+  state={cena:new URLSearchParams(location.search).get('cena')||'',sel:'comecando',d:load(),now:Date.now(),w:window.innerWidth};
+  componentDidMount(){
+    this.raw=localStorage.getItem(KEY);
+    this.t=setInterval(()=>{const raw=localStorage.getItem(KEY);const ch=raw!==this.raw;this.raw=raw;this.setState(ch?{now:Date.now(),d:load()}:{now:Date.now()})},250);
+    try{this.bc=new BroadcastChannel(KEY);this.bc.onmessage=()=>this.setState({d:load()})}catch(e){}
+    this.onR=()=>this.setState({w:window.innerWidth});window.addEventListener('resize',this.onR);this.onR();try{this.ro=new ResizeObserver(this.onR);this.ro.observe(document.documentElement)}catch(e){}
+  }
+  componentWillUnmount(){clearInterval(this.t);this.bc&&this.bc.close();window.removeEventListener('resize',this.onR)}
+  renderVals(){
+    const {d,now}=this.state;const preview=!this.state.cena;const cena=this.state.cena||this.state.sel;
+    const stageW=preview?Math.max(320,Math.min(window.innerWidth-48,1600)):1920;const scale=stageW/1920;
+    const rest=d.fim?Math.max(0,d.fim-now):d.minutos*60000;const acabou=!!d.fim&&rest===0;
+    const relogio=acabou?'JÁ':String(Math.floor(rest/60000)).padStart(2,'0')+':'+String(Math.floor(rest/1000)%60).padStart(2,'0');
+    const dots=Array.from({length:10},(_,i)=>({cor:i===0?'#FF6B1F':'#FFF3E0',acende:`acende 3s ${(i*0.25).toFixed(2)}s infinite`,respira:`respira 5s ${(i*0.2).toFixed(1)}s infinite ease-in-out`}));
+    const noAr=(d.noAr||[]).map(i=>d.membros[i]).filter(Boolean);
+    const ltOn=preview?true:(!!d.membros[d.lt]&&now<d.ltAte);
+    const lt=d.membros[d.lt]||d.membros[0];
+    const base=location.href.split('?')[0].split('#')[0];
+    const pasta='file:///C:/SUA-PASTA/';
+    return {
+      d,preview,stageW,stageH:Math.round(stageW*9/16),scale,
+      pageBg:preview?'#241d21':'transparent',pagePad:preview?'24px':'0',pageMinH:preview?'100vh':'0',
+      isComecando:cena==='comecando',isIntervalo:cena==='intervalo',isEncerramento:cena==='encerramento',isJogo:cena==='jogo',isReact:cena==='react',isNome:cena==='nome',
+      backdrop:preview&&['jogo','react','nome'].includes(cena),
+      relogio,contaLabel:acabou?'VAI COMEÇAR':'A TRANSMISSÃO COMEÇA EM',dots,
+      noAr,noArQtd:noAr.length,
+      cams:(d.cams||[]).slice(0,3).map((n,i)=>({n,top:40+i*286})),
+      lt,ltTransform:ltOn?'translateX(0)':'translateX(-1100px)',ltOpacity:ltOn?1:0,
+      tabs:CENAS.map(([k,l])=>({label:l.toUpperCase(),go:()=>this.setState({sel:k}),bg:k===cena?'#FF6B1F':'transparent',fg:k===cena?'#1A1417':'#FFF3E0'})),
+      urls:[...CENAS.map(([k,l])=>({label:l,url:pasta+'OBS-Cenas.dc.html?cena='+k})),{label:'Painel (dock)',url:pasta+'OBS-Painel.dc.html'}]
+    };
+  }
+}
+</script>
+</body>
+</html>
