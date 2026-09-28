@@ -46,7 +46,18 @@ Há também 11 achados **menores**, não bloqueantes, listados no relatório (it
 - "Lembrar neste PC" usa storage customizado em `src/lib/supabase.ts` (localStorage vs sessionStorage).
 - Próximo: usuário vai mandar o novo painel em `referencia/`. Nada disso foi commitado ainda.
 
-## Próximo passo ao retomar (plano antigo, antes do redesign)
+## Telas novas (2026-09-28, ~19:30) — ONDE PARAMOS
+
+Usuário mandou `TELAS-NOVAS.md` + referências novas em `referencia/`. Dividido em 3 partes: **1) estado + PIX manual + 9 telas + /alerta + painel**, 2) LivePix, 3) chat Social Stream Ninja.
+
+- Backup do estado anterior: branch `antes-telas-novas`.
+- Parte 1: design aprovado pelo usuário, **spec e plano escritos, nada implementado ainda** (usuário teve que sair):
+  - Spec: `docs/superpowers/specs/2026-09-28-telas-novas-parte-1-design.md` (tem todas as decisões tomadas com ele)
+  - Plano: `docs/superpowers/plans/2026-09-28-telas-novas-parte-1.md` (14 tarefas)
+- **Próximo passo ao retomar:** executar o plano direto, em ordem, commit por tarefa. O usuário pediu para NÃO apresentar mais seções/plano nem fazer rodada de perguntas: só parar se algo bloquear ou mudar o visual. No fim, mandar a lista de URLs, print do /alerta e prints das 9 telas lado a lado com a referência (mesmos dados nas duas). Partes 2 e 3 seguem no mesmo ritmo, só resumo no final.
+- A migration 0005 só vai para o Supabase de produção na Task 14, com OK do usuário.
+
+## Próximo passo ao retomar (plano antigo, antes do redesign — SUBSTITUÍDO pelas telas novas)
 
 Estava no meio do fluxo `superpowers:subagent-driven-development`. Regra da skill: correção final é **UMA única rodada** — um subagente implementador recebendo a lista completa de achados (não um por achado), depois **uma** re-revisão focada, depois eu decido o que fica pendente ("parked") vs. o que precisa de nova rodada.
 
