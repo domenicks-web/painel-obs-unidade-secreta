@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { AuthError } from '@supabase/supabase-js';
 import { CHAVE_LEMBRAR, supabase } from '../lib/supabase';
+import { LogoBolinhas } from '../components/LogoBolinhas';
 import '../styles/login.css';
 
 const FAIXAS = [
@@ -57,23 +58,11 @@ export function LoginPage() {
   const [carregando, setCarregando] = useState(false);
   const [ok, setOk] = useState(false);
   const [modal, setModal] = useState(false);
-  const [aceso, setAceso] = useState(0);
 
   useEffect(() => {
-    const iv = setInterval(
-      () =>
-        setAceso((atual) => {
-          let n;
-          do n = Math.floor(Math.random() * 10);
-          while (n === atual);
-          return n;
-        }),
-      1500,
-    );
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setModal(false);
     window.addEventListener('keydown', onKey);
     return () => {
-      clearInterval(iv);
       window.removeEventListener('keydown', onKey);
     };
   }, []);
@@ -137,11 +126,7 @@ export function LoginPage() {
           <div className="login__sub">Entra pra mexer nas telas, no placar e nos PIX da live.</div>
           <div className="login__logo">
             <div className="login__logo-us">US</div>
-            <div className="login__logo-grade">
-              {Array.from({ length: 10 }, (_, i) => (
-                <div key={i} style={{ background: i === aceso || ok ? cor(i) : '#3a3035' }} />
-              ))}
-            </div>
+            <LogoBolinhas acesas={ok} />
           </div>
         </div>
 
