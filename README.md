@@ -12,9 +12,9 @@ Painel web para controlar os overlays de OBS da Unidade Secreta em tempo real, d
 ## 1. Criar o projeto no Supabase
 
 1. Crie uma conta grátis em supabase.com e um novo projeto.
-2. Em SQL Editor, rode nesta ordem os arquivos de `supabase/migrations/`: `0001_schema.sql`, `0002_funcoes.sql`, `0003_realtime.sql`.
-3. Em Authentication → Providers, confirme que "Email" está habilitado (magic link já vem ligado por padrão).
-4. Em Authentication → URL Configuration, adicione a URL do seu deploy na Vercel (passo 3) em "Redirect URLs".
+2. Em SQL Editor, rode nesta ordem os arquivos de `supabase/migrations/`: `0001_schema.sql`, `0002_funcoes.sql`, `0003_realtime.sql`, `0004_corrige_login.sql`. Se você já tinha rodado as três primeiras antes, rode só a `0004`.
+3. Em Authentication → Sign In / Providers: deixe o provedor **Email ligado** (é ele que faz o login com senha) e **desligue "Allow new users to sign up"**. Não existe tela de cadastro: as contas são criadas pelo admin no Supabase (passos 2 e 5).
+4. (Opcional) Em Authentication → URL Configuration, coloque a URL do deploy na Vercel como "Site URL".
 5. Em Project Settings → API, copie a "Project URL" e a "anon public key".
 
 ## 2. Virar admin pela primeira vez
@@ -25,7 +25,7 @@ Antes de existir alguém no `/admin`, você precisa se cadastrar manualmente com
 insert into public.membros_equipe (email, nome, papel) values ('seu-email@exemplo.com', 'SEU NOME', 'admin');
 ```
 
-Depois, faça login normalmente pelo `/login` do site com esse e-mail — o vínculo com sua conta acontece automaticamente no primeiro login.
+Depois crie o login: Authentication → Users → **Add user → Create new user**, com o mesmo e-mail, uma senha e **"Auto Confirm User" marcado**. Pronto, é só entrar em `/login` com esse e-mail e senha. O vínculo com o cadastro acima é automático.
 
 ## 3. Subir no GitHub e importar na Vercel
 
@@ -33,7 +33,6 @@ Depois, faça login normalmente pelo `/login` do site com esse e-mail — o vín
 2. Em vercel.com, "Add New Project", importe o repositório.
 3. Em Environment Variables, adicione `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (os valores copiados no passo 1.5).
 4. Deploy. Anote a URL gerada (ex: `https://unidade-secreta-live.vercel.app`).
-5. Volte no Supabase (passo 1.4) e confirme essa URL está nas Redirect URLs.
 
 ## 4. Configurar no OBS
 
@@ -44,13 +43,14 @@ Depois, faça login normalmente pelo `/login` do site com esse e-mail — o vín
 
 ## 5. Convidar o resto da galera
 
-Em `/admin`, cadastre o e-mail e o papel (editor ou admin) de cada um. Assim que a pessoa fizer login pelo `/login` com aquele e-mail, o acesso já libera.
+Para cada pessoa: cadastre o e-mail e o papel (editor ou admin) em `/admin` e crie o login dela no Supabase (Authentication → Users → Add user → Create new user, com "Auto Confirm User" marcado). Passe o e-mail e a senha pra ela. A ordem dos dois passos não importa, o vínculo é automático.
 
 ## Desenvolvimento local
 
 ```bash
 npm install
 cp .env.example .env.local # preencha com as chaves do seu projeto Supabase
+# as variáveis VITE_* entram no build: mudou na Vercel, precisa fazer redeploy
 npm run dev
 ```
 

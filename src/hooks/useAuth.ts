@@ -8,6 +8,7 @@ export function useAuth() {
   const [carregando, setCarregando] = useState(true);
   const [sessao, setSessao] = useState<Session | null>(null);
   const [papel, setPapel] = useState<Papel>(null);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     let ativo = true;
@@ -17,14 +18,16 @@ export function useAuth() {
         if (ativo) {
           setSessao(null);
           setPapel(null);
+          setErro(null);
           setCarregando(false);
         }
         return;
       }
-      const { data } = await supabase.from('membros_equipe').select('papel').eq('user_id', sessaoAtual.user.id).single();
+      const { data, error } = await supabase.from('membros_equipe').select('papel').eq('user_id', sessaoAtual.user.id).maybeSingle();
       if (!ativo) return;
       setSessao(sessaoAtual);
       setPapel((data?.papel as Papel) ?? null);
+      setErro(error ? error.message : null);
       setCarregando(false);
     }
 
@@ -41,5 +44,5 @@ export function useAuth() {
     };
   }, []);
 
-  return { carregando, sessao, papel };
+  return { carregando, sessao, papel, erro };
 }

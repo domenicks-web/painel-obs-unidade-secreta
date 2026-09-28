@@ -7,4 +7,19 @@ if (!url || !anonKey) {
   throw new Error('VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY precisam estar definidos (veja .env.example)');
 }
 
-export const supabase = createClient(url, anonKey);
+// "Lembrar neste PC" desligado guarda a sessão só na aba (sessionStorage): fechou o navegador, sai.
+export const CHAVE_LEMBRAR = 'us:lembrar';
+const lembrar = () => localStorage.getItem(CHAVE_LEMBRAR) !== '0';
+
+export const supabase = createClient(url, anonKey, {
+  auth: {
+    storage: {
+      getItem: (k) => localStorage.getItem(k) ?? sessionStorage.getItem(k),
+      setItem: (k, v) => (lembrar() ? localStorage : sessionStorage).setItem(k, v),
+      removeItem: (k) => {
+        localStorage.removeItem(k);
+        sessionStorage.removeItem(k);
+      },
+    },
+  },
+});
