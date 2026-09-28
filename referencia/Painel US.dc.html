@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#120e10;color:#FFF3E0}
+a{color:#FF6B1F}a:hover{color:#d4530f}
+*::-webkit-scrollbar{width:8px}*::-webkit-scrollbar-thumb{background:#3a3035}
+@keyframes pBlink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes pStripe{from{background-position:0 0}to{background-position:56px 0}}
+@keyframes pIn{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+</style></helmet>
+<div style="height:100vh;min-width:1280px;display:grid;grid-template-rows:64px minmax(0,1fr);background:#120e10;font-family:'Barlow Condensed',sans-serif;color:#FFF3E0">
+
+<div style="display:flex;align-items:center;gap:20px;padding:0 20px 0 0;background:#1A1417;border-bottom:4px solid #FF6B1F">
+<div style="height:64px;width:64px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 44px/1 'Barlow Condensed',sans-serif;color:#1A1417">US</div>
+<div style="font:400 22px/1 'Bungee',sans-serif;color:#FFF3E0">PAINEL DA LIVE</div>
+<div style="width:2px;height:28px;background:#3a3035"></div>
+<div style="font:700 13px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#8a7f84">INFOS DAS TELAS · A TROCA DE CENA É NO OBS</div>
+<div style="margin-left:auto;display:flex;gap:8px">
+<sc-for list="{{ status }}" as="s" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#241d21">
+<div style="width:8px;height:8px;border-radius:50%;background:{{ s.cor }}"></div>
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FFF3E0">{{ s.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:230px minmax(0,1fr) 400px;min-height:0">
+
+<div style="background:#1A1417;border-right:2px solid #2A2226;padding:18px 14px;display:flex;flex-direction:column;gap:6px;overflow:auto">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84;padding:0 4px 10px">TELAS</div>
+<sc-for list="{{ cenas }}" as="c" hint-placeholder-count="9">
+<button onClick="{{ c.go }}" style="display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:10px;padding:0 12px;height:52px;border:0;cursor:pointer;text-align:left;background:{{ c.bg }};color:{{ c.fg }};box-shadow:{{ c.sh }}" style-hover="filter:brightness(1.15)">
+<span style="font:700 22px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em">{{ c.label }}</span>
+</button>
+</sc-for>
+<div style="flex:1"></div>
+<div style="font:400 12px/1.5 'JetBrains Mono',monospace;color:#6d6368;padding:4px">Escolhe a tela pra editar. O que muda aqui aparece no OBS na hora, mesmo se a tela não estiver no ar.</div>
+</div>
+
+<div style="min-width:0;overflow:auto;padding:22px 26px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px">
+<div style="font:400 30px/1 'Bungee',sans-serif;color:#FFF3E0">{{ telaLabel }}</div>
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#8a7f84">PRÉVIA · NÃO É O QUE ESTÁ NO AR</div>
+</div>
+<div style="box-shadow:0 0 0 3px #FF6B1F,10px 10px 0 3px #8B6CF0;background:#000">
+<dc-import name="Telas Live" embed="{{ true }}" tela="{{ tela }}" titulo="{{ titulo }}" ticker="{{ ticker }}" nomes="{{ nomesStr }}" minutos="{{ minutos }}" reset-key="{{ resetKey }}" host-cams="{{ hostCams }}" time-a="{{ timeA }}" time-b="{{ timeB }}" gols-a="{{ golsA }}" gols-b="{{ golsB }}" relogio="{{ relogioMin }}" jogo="{{ jogo }}" filme="{{ filme }}" episodio="{{ episodio }}" proximo="{{ proximo }}" msg="{{ msg }}" funcao="{{ funcao }}" meta-atual="{{ metaAtual }}" meta-total="{{ metaTotal }}" meta-desc="{{ metaDesc }}" pix-nome="{{ ultimo.nome }}" pix-valor="{{ ultimo.valor }}" top-nome="{{ top.nome }}" top-valor="{{ top.valor }}" style="display:block;width:100%" hint-size="100%,420px"></dc-import>
+</div>
+</div>
+
+<div style="background:#1A1417;padding:22px 24px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="background:#FF6B1F;color:#1A1417;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;padding:8px 10px">INFOS DA TELA</div>
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#8a7f84">ATUALIZA NO OBS NA HORA</div>
+</div>
+
+<sc-if value="{{ isFutebol }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 260px minmax(0,1fr);gap:18px;align-items:stretch">
+<div style="background:#241d21;padding:16px;display:flex;flex-direction:column;gap:12px">
+<input value="{{ timeA }}" onChange="{{ onTimeA }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 24px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F">
+<div style="display:grid;grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;gap:10px">
+<button onClick="{{ menosA }}" style="height:64px;border:2px solid #3a3035;background:transparent;color:#FFF3E0;font:400 34px/1 'Bungee',sans-serif;cursor:pointer" style-hover="border-color:#FFF3E0">−</button>
+<div style="text-align:center;font:400 72px/1 'Bungee',sans-serif;color:#FF6B1F">{{ golsA }}</div>
+<button onClick="{{ maisA }}" style="height:64px;border:0;background:#FF6B1F;color:#1A1417;font:400 34px/1 'Bungee',sans-serif;cursor:pointer" style-active="transform:translateY(2px)">+</button>
+</div>
+</div>
+<div style="background:#241d21;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:stretch">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84;text-align:center">RELÓGIO</div>
+<div style="text-align:center;font:700 48px/1 'JetBrains Mono',monospace;color:#FFF3E0">{{ clockTxt }}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button onClick="{{ toggleClock }}" style="height:44px;border:0;background:{{ clockBtnBg }};color:#1A1417;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.12em;cursor:pointer">{{ clockBtn }}</button>
+<button onClick="{{ zeraClock }}" style="height:44px;border:2px solid #3a3035;background:transparent;color:#FFF3E0;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.12em;cursor:pointer" style-hover="border-color:#FFF3E0">ZERAR</button>
+</div>
+</div>
+<div style="background:#241d21;padding:16px;display:flex;flex-direction:column;gap:12px">
+<input value="{{ timeB }}" onChange="{{ onTimeB }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 24px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#8B6CF0">
+<div style="display:grid;grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;gap:10px">
+<button onClick="{{ menosB }}" style="height:64px;border:2px solid #3a3035;background:transparent;color:#FFF3E0;font:400 34px/1 'Bungee',sans-serif;cursor:pointer" style-hover="border-color:#FFF3E0">−</button>
+<div style="text-align:center;font:400 72px/1 'Bungee',sans-serif;color:#8B6CF0">{{ golsB }}</div>
+<button onClick="{{ maisB }}" style="height:64px;border:0;background:#8B6CF0;color:#1A1417;font:400 34px/1 'Bungee',sans-serif;cursor:pointer" style-active="transform:translateY(2px)">+</button>
+</div>
+</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ tempos }}" as="t" hint-placeholder-count="4">
+<button onClick="{{ t.go }}" style="padding:12px 16px;border:0;cursor:pointer;background:{{ t.bg }};color:{{ t.fg }};font:700 13px/1 'JetBrains Mono',monospace;letter-spacing:.12em">{{ t.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ camsCena }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ isHost }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:14px">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">CÂMERAS</div>
+<div style="display:flex;gap:4px">
+<sc-for list="{{ camOpts }}" as="o" hint-placeholder-count="3">
+<button onClick="{{ o.go }}" style="width:56px;height:44px;border:0;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};font:400 20px/1 'Bungee',sans-serif">{{ o.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<sc-for list="{{ camNomes }}" as="n" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">CÂMERA {{ n.num }}</div>
+<input value="{{ n.val }}" onChange="{{ n.on }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F">
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFilme }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">EM CARTAZ</div><input value="{{ filme }}" onChange="{{ onFilme }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">EPISÓDIO</div><input value="{{ episodio }}" onChange="{{ onEpisodio }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ comTimer }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ isIntervalo }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">FRASE NA TELA</div><input value="{{ msg }}" onChange="{{ onMsg }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+</sc-if>
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<div style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">CONTAGEM</div>
+<div style="display:flex;gap:4px">
+<sc-for list="{{ minOpts }}" as="o" hint-placeholder-count="5">
+<button onClick="{{ o.go }}" style="padding:0 16px;height:44px;border:0;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};font:700 15px/1 'JetBrains Mono',monospace">{{ o.label }}</button>
+</sc-for>
+</div>
+<button onClick="{{ reiniciar }}" style="height:44px;padding:0 16px;border:2px solid #3a3035;background:transparent;color:#FFF3E0;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.12em;cursor:pointer" style-hover="border-color:#FF6B1F;color:#FF6B1F">↻ REINICIAR</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLower }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">QUEM TÁ FALANDO</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<sc-for list="{{ ltOpts }}" as="o" hint-placeholder-count="6">
+<button onClick="{{ o.go }}" style="padding:12px 16px;border:0;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};font:700 20px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em">{{ o.label }}</button>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">FUNÇÃO / LEGENDA</div><input value="{{ funcao }}" onChange="{{ onFuncao }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+</sc-if>
+
+<sc-if value="{{ isFim }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">PRÓXIMA LIVE</div><input value="{{ proximo }}" onChange="{{ onProximo }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+</sc-if>
+
+<sc-if value="{{ isTecnico }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 22px/1.3 'Barlow Condensed',sans-serif;color:#b3a9ad">Essa tela não tem infos pra editar.</div>
+</sc-if>
+
+<div style="height:2px;background:#2A2226"></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:12px">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">TÍTULO DA LIVE · TODAS AS CENAS</div><input value="{{ titulo }}" onChange="{{ onTitulo }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">LETREIRO · SEPARA COM ●</div><input value="{{ ticker }}" onChange="{{ onTicker }}" style="width:100%;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 22px/1 'Barlow Condensed',sans-serif;padding:10px 12px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F"></div>
+</div>
+</div>
+</div>
+
+<div style="background:#1A1417;border-left:2px solid #2A2226;display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0">
+
+<div style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;border-bottom:2px solid #2A2226">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="font:400 20px/1 'Bungee',sans-serif;color:#FFF3E0">PIX</div>
+<div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#1A1417;background:#FFF3E0;padding:5px 8px">AUTO · LIVEPIX</div>
+</div>
+<div style="background:#FF6B1F;padding:14px 16px;display:flex;flex-direction:column;gap:10px;color:#1A1417">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em">META · {{ metaDesc }}</div><div style="font:700 13px/1 'JetBrains Mono',monospace">{{ metaPct }}</div></div>
+<div style="display:flex;align-items:baseline;gap:10px"><div style="font:400 36px/1 'Bungee',sans-serif">R$ {{ metaAtual }}</div><div style="font:700 16px/1 'JetBrains Mono',monospace">/ R$ {{ metaTotal }}</div></div>
+<div style="height:12px;background:#1A1417"><div style="height:12px;width:{{ metaPct }};background:#FFF3E0;transition:width .6s"></div></div>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 100px 110px;gap:8px">
+<input value="{{ metaDesc }}" onChange="{{ onMetaDesc }}" placeholder="OBJETIVO" style="min-width:0;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 17px/1 'Barlow Condensed',sans-serif;padding:8px 10px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F">
+<input value="{{ metaTotal }}" onChange="{{ onMetaTotal }}" type="number" style="min-width:0;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 15px/1 'JetBrains Mono',monospace;padding:8px 10px;outline:none" style-focus="border-color:#FF6B1F">
+<input value="{{ ajuste }}" onChange="{{ onAjuste }}" type="number" title="Ajuste manual somado à meta" style="min-width:0;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 15px/1 'JetBrains Mono',monospace;padding:8px 10px;outline:none" style-focus="border-color:#FF6B1F">
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 100px 110px;gap:8px;margin-top:-8px;font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#6d6368"><div>OBJETIVO</div><div>META R$</div><div>AJUSTE R$</div></div>
+<div style="display:flex;flex-direction:column;gap:4px;max-height:196px;overflow:auto">
+<sc-for list="{{ pixList }}" as="x" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto 30px;align-items:center;gap:10px;padding:8px 10px;background:{{ x.bg }};opacity:{{ x.op }};animation:pIn .4s both">
+<div style="min-width:0;display:flex;flex-direction:column;gap:3px">
+<div style="display:flex;align-items:center;gap:8px"><div style="font:700 18px/1 'Barlow Condensed',sans-serif;text-transform:uppercase;text-decoration:{{ x.deco }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ x.nome }}</div><div style="font:700 9px/1 'JetBrains Mono',monospace;letter-spacing:.12em;color:#8a7f84">{{ x.origem }}</div></div>
+<div style="font:500 15px/1.2 'Barlow Condensed',sans-serif;color:#b3a9ad;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ x.msg }}</div>
+</div>
+<div style="font:400 18px/1 'Bungee',sans-serif;color:#FF6B1F">R$ {{ x.valor }}</div>
+<button onClick="{{ x.toggle }}" title="{{ x.tip }}" style="width:30px;height:30px;border:2px solid #3a3035;background:transparent;color:#FFF3E0;cursor:pointer;font:700 13px/1 'JetBrains Mono',monospace" style-hover="border-color:#FF6B1F;color:#FF6B1F">{{ x.icon }}</button>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:8px">
+<input value="{{ novoNome }}" onChange="{{ onNovoNome }}" placeholder="NOME (PIX MANUAL)" style="min-width:0;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 17px/1 'Barlow Condensed',sans-serif;padding:8px 10px;outline:none;text-transform:uppercase" style-focus="border-color:#FF6B1F">
+<input value="{{ novoValor }}" onChange="{{ onNovoValor }}" placeholder="R$" type="number" style="min-width:0;box-sizing:border-box;background:#120e10;border:2px solid #3a3035;color:#FFF3E0;font:700 15px/1 'JetBrains Mono',monospace;padding:8px 10px;outline:none" style-focus="border-color:#FF6B1F">
+<button onClick="{{ addPix }}" style="border:0;background:#FFF3E0;color:#1A1417;padding:0 12px;cursor:pointer;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.12em">+ ADD</button>
+</div>
+</div>
+
+<div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-height:0">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="font:400 20px/1 'Bungee',sans-serif;color:#FFF3E0">CHAT</div>
+<div style="display:flex;gap:4px;margin-left:auto">
+<sc-for list="{{ fontes }}" as="f" hint-placeholder-count="3">
+<button onClick="{{ f.go }}" style="padding:6px 9px;border:0;cursor:pointer;background:{{ f.bg }};color:{{ f.fg }};font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em">{{ f.label }}</button>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{ temPin }}" hint-placeholder-val="{{ false }}">
+<div style="background:#8B6CF0;color:#1A1417;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center">
+<div style="min-width:0"><div style="font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.14em;margin-bottom:5px">NA TELA · {{ pin.autor }}</div><div style="font:600 17px/1.2 'Barlow Condensed',sans-serif">{{ pin.txt }}</div></div>
+<button onClick="{{ unpin }}" style="border:2px solid #1A1417;background:transparent;color:#1A1417;cursor:pointer;padding:6px 8px;font:700 11px/1 'JetBrains Mono',monospace">TIRAR</button>
+</div>
+</sc-if>
+<div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ chatList }}" as="m" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 6px;animation:pIn .35s both" style-hover="background:#241d21">
+<div style="font:700 10px/1 'JetBrains Mono',monospace;padding:4px 0;text-align:center;background:{{ m.tagBg }};color:#1A1417">{{ m.tag }}</div>
+<div style="min-width:0;font:500 17px/1.25 'Barlow Condensed',sans-serif;color:#e8ddd0"><span style="font-weight:700;color:{{ m.cor }}">{{ m.autor }}</span> {{ m.txt }}</div>
+<button onClick="{{ m.pin }}" title="Mostrar na tela" style="border:0;background:transparent;color:#6d6368;cursor:pointer;font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:4px" style-hover="color:#8B6CF0">DESTACAR</button>
+</div>
+</sc-for>
+</div>
+<div style="font:400 11px/1.4 'JetBrains Mono',monospace;color:#6d6368">via Social Stream Ninja · YouTube, Twitch e TikTok juntos</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CENAS = [['inicio','INÍCIO'],['host','HOST'],['futebol','FUTEBOL'],['filme','FILME/SÉRIE'],['mesa','MESA REDONDA'],['intervalo','INTERVALO'],['lower','LOWER THIRD'],['tecnico','TÉCNICO'],['fim','FIM']];
+const LBL = Object.fromEntries(CENAS);
+const FONTE = { yt: ['YT', '#FF6B1F'], tw: ['TW', '#8B6CF0'], tt: ['TT', '#FFF3E0'] };
+const MOCK_CHAT = [['yt','joaozin','GOOOL ou foi impedido?'],['tw','marcela_22','boa noite unidade'],['tt','pedrão','kkkkkkkk o cara caiu'],['yt','LuizFP','manda o placar do outro jogo'],['tw','bia.gg','primeira vez aqui, salve'],['yt','Tiagão','juiz ladrão'],['tt','nanda','cadê o NOME 03?'],['yt','rafa_us','a unidade não para']];
+const MOCK_PIX = [['Tiagão',25,'pra pizza'],['Carol',10,'salve rapaziada'],['anônimo',5,''],['Matheus',50,'lê minha msg ao vivo'],['Duda',15,'mais um gol hein']];
+const CORES = ['#FF6B1F', '#8B6CF0', '#FFF3E0', '#f0a36b'];
+
+class Component extends DCLogic {
+  state = {
+    tela: 'host', prev: 'inicio', t0: Date.now(), now: Date.now(),
+    titulo: 'OPERAÇÃO AO VIVO', ticker: 'SE INSCREVE NO CANAL ● ATIVA O SININHO ● MANDA O PIX NA DESCRIÇÃO ● A UNIDADE NÃO PARA',
+    nomes: ['NOME 01','NOME 02','NOME 03','NOME 04','NOME 05','NOME 06'], hostCams: '1',
+    timeA: 'CASA', timeB: 'FORA', golsA: 0, golsB: 0, clock: 0, running: false, jogo: '1º TEMPO',
+    filme: 'NOME DO FILME', episodio: 'T1 · E3', minutos: 5, resetKey: 0, proximo: 'SEXTA, 21H', msg: 'VOLTAMOS JÁ', ltIdx: 0, funcao: 'UNIDADE SECRETA',
+    metaTotal: 500, metaDesc: 'PIZZA PRA RAPAZIADA', ajuste: 0,
+    pix: [{ id: 1, nome: 'Tiagão', valor: 25, msg: 'pra pizza', auto: true }, { id: 2, nome: 'Carol', valor: 10, msg: 'salve rapaziada', auto: true }],
+    novoNome: '', novoValor: '',
+    chat: MOCK_CHAT.slice(0, 5).map((m, i) => ({ id: i, f: m[0], autor: m[1], txt: m[2] })),
+    fontes: { yt: true, tw: true, tt: true }, pin: null,
+  };
+  componentDidMount() {
+    this.iv = setInterval(() => this.setState((s) => ({ now: Date.now(), clock: s.running ? s.clock + 1 : s.clock })), 1000);
+    let ci = 5, pi = 2;
+    this.ivChat = setInterval(() => { const m = MOCK_CHAT[ci++ % MOCK_CHAT.length]; this.setState((s) => ({ chat: [...s.chat, { id: Date.now(), f: m[0], autor: m[1], txt: m[2] }].slice(-40) })); }, 2600);
+    this.ivPix = setInterval(() => { const x = MOCK_PIX[pi++ % MOCK_PIX.length]; this.setState((s) => ({ pix: [{ id: Date.now(), nome: x[0], valor: x[1], msg: x[2], auto: true }, ...s.pix] })); }, 22000);
+  }
+  componentWillUnmount() { clearInterval(this.iv); clearInterval(this.ivChat); clearInterval(this.ivPix); }
+  go = (id) => this.setState({ tela: id });
+  set = (k, up) => (e) => this.setState({ [k]: up ? e.target.value.toUpperCase() : e.target.value });
+  renderVals() {
+    const s = this.state, tela = s.tela;
+    const up = Math.floor((s.now - s.t0) / 1000);
+    const hh = String(Math.floor(up / 3600)).padStart(2, '0'), mi = String(Math.floor(up / 60) % 60).padStart(2, '0'), se = String(up % 60).padStart(2, '0');
+    const ativos = s.pix.filter((x) => !x.off);
+    const soma = ativos.reduce((a, x) => a + Number(x.valor || 0), 0) + Number(s.ajuste || 0);
+    const metaT = Math.max(1, Number(s.metaTotal) || 1);
+    const ultimo = ativos[0] || { nome: '—', valor: '0' };
+    const top = ativos.reduce((a, x) => (!a || Number(x.valor) > Number(a.valor) ? x : a), null) || { nome: '—', valor: '0' };
+    const nCams = tela === 'mesa' ? 6 : tela === 'filme' ? 4 : tela === 'futebol' ? 2 : Number(s.hostCams);
+    const sel = (on, a = '#FF6B1F') => ({ bg: on ? a : '#241d21', fg: on ? '#1A1417' : '#FFF3E0' });
+    return {
+      tela, telaLabel: LBL[tela],
+      status: [{ label: 'TELAS SINCRONIZADAS', cor: '#FFF3E0' }, { label: 'LIVEPIX', cor: '#FFF3E0' }, { label: 'CHAT', cor: '#FFF3E0' }],
+      cenas: CENAS.map(([id, label], i) => ({ label, key: String(i + 1), go: () => this.go(id), bg: id === tela ? '#FF6B1F' : 'transparent', fg: id === tela ? '#1A1417' : '#FFF3E0', sh: id === tela ? '6px 6px 0 #8B6CF0' : 'inset 0 0 0 2px #2A2226' })),
+      isFutebol: tela === 'futebol', isHost: tela === 'host', isFilme: tela === 'filme', isIntervalo: tela === 'intervalo', isLower: tela === 'lower', isFim: tela === 'fim', isTecnico: tela === 'tecnico',
+      camsCena: ['host', 'mesa', 'futebol', 'filme'].includes(tela), comTimer: tela === 'inicio' || tela === 'intervalo',
+      titulo: s.titulo, ticker: s.ticker, nomesStr: s.nomes.join(','), minutos: s.minutos, resetKey: s.resetKey, hostCams: s.hostCams,
+      timeA: s.timeA, timeB: s.timeB, golsA: s.golsA, golsB: s.golsB, relogioMin: Math.floor(s.clock / 60), jogo: s.jogo,
+      filme: s.filme, episodio: s.episodio, proximo: s.proximo, msg: s.msg, funcao: s.funcao,
+      metaAtual: soma, metaTotal: s.metaTotal, metaDesc: s.metaDesc, metaPct: Math.min(100, Math.round(soma / metaT * 100)) + '%', ajuste: s.ajuste,
+      ultimo, top,
+      onTitulo: this.set('titulo', true), onTicker: this.set('ticker', true), onTimeA: this.set('timeA', true), onTimeB: this.set('timeB', true),
+      onFilme: this.set('filme', true), onEpisodio: this.set('episodio', true), onMsg: this.set('msg', true), onFuncao: this.set('funcao', true), onProximo: this.set('proximo', true),
+      onMetaDesc: this.set('metaDesc', true), onMetaTotal: this.set('metaTotal'), onAjuste: this.set('ajuste'), onNovoNome: this.set('novoNome', true), onNovoValor: this.set('novoValor'),
+      maisA: () => this.setState((x) => ({ golsA: x.golsA + 1 })), menosA: () => this.setState((x) => ({ golsA: Math.max(0, x.golsA - 1) })),
+      maisB: () => this.setState((x) => ({ golsB: x.golsB + 1 })), menosB: () => this.setState((x) => ({ golsB: Math.max(0, x.golsB - 1) })),
+      clockTxt: String(Math.floor(s.clock / 60)).padStart(2, '0') + ':' + String(s.clock % 60).padStart(2, '0'),
+      clockBtn: s.running ? '❚❚ PAUSAR' : '▶ INICIAR', clockBtnBg: s.running ? '#FFF3E0' : '#FF6B1F',
+      toggleClock: () => this.setState((x) => ({ running: !x.running })), zeraClock: () => this.setState({ clock: 0, running: false }),
+      tempos: ['1º TEMPO', 'INTERVALO', '2º TEMPO', 'PRORROGAÇÃO'].map((t) => ({ label: t, go: () => this.setState({ jogo: t }), ...sel(s.jogo === t, '#8B6CF0') })),
+      camOpts: ['1', '2', '3'].map((c) => ({ label: c, go: () => this.setState({ hostCams: c }), ...sel(s.hostCams === c) })),
+      camNomes: s.nomes.slice(0, nCams).map((v, i) => ({ num: String(i + 1).padStart(2, '0'), val: v, on: (e) => { const n = [...this.state.nomes]; n[i] = e.target.value.toUpperCase(); this.setState({ nomes: n }); } })),
+      minOpts: [2, 5, 10, 15, 30].map((m) => ({ label: m + ' MIN', go: () => this.setState({ minutos: m }), ...sel(s.minutos === m) })),
+      reiniciar: () => this.setState((x) => ({ resetKey: x.resetKey + 1 })),
+      ltOpts: s.nomes.map((n, i) => ({ label: n, go: () => { const nn = [...this.state.nomes]; const [a] = nn.splice(i, 1); nn.unshift(a); this.setState({ nomes: nn }); }, ...sel(i === 0) })),
+      pixList: s.pix.map((x) => ({ nome: x.nome, valor: x.valor, msg: x.msg || '—', origem: x.auto ? 'LIVEPIX' : 'MANUAL', bg: '#241d21', op: x.off ? 0.4 : 1, deco: x.off ? 'line-through' : 'none', icon: x.off ? '↺' : '×', tip: x.off ? 'Voltar a contar' : 'Não contar (estorno/teste)', toggle: () => this.setState((st) => ({ pix: st.pix.map((y) => (y.id === x.id ? { ...y, off: !y.off } : y)) })) })),
+      novoNome: s.novoNome, novoValor: s.novoValor,
+      addPix: () => { if (!s.novoNome || !s.novoValor) return; this.setState((st) => ({ pix: [{ id: Date.now(), nome: st.novoNome, valor: Number(st.novoValor), msg: '', auto: false }, ...st.pix], novoNome: '', novoValor: '' })); },
+      fontes: Object.keys(FONTE).map((k) => ({ label: FONTE[k][0], go: () => this.setState((st) => ({ fontes: { ...st.fontes, [k]: !st.fontes[k] } })), bg: s.fontes[k] ? FONTE[k][1] : '#241d21', fg: s.fontes[k] ? '#1A1417' : '#6d6368' })),
+      chatList: s.chat.filter((m) => s.fontes[m.f]).slice(-14).reverse().map((m, i) => ({ tag: FONTE[m.f][0], tagBg: FONTE[m.f][1], autor: m.autor, txt: m.txt, cor: CORES[m.autor.length % CORES.length], pin: () => this.setState({ pin: m }) })),
+      temPin: !!s.pin, pin: s.pin || { autor: '', txt: '' }, unpin: () => this.setState({ pin: null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:relative;width:100%;height:100%;background:#241d21;box-shadow:0 0 0 4px #FF6B1F,12px 12px 0 4px #8B6CF0;display:flex;align-items:center;justify-content:center">
+<div style="font:700 18px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#4a3f44">{{ label }} · {{ w }}×{{ h }}</div>
+<div style="position:absolute;left:-4px;top:calc(100% + 4px);display:flex;align-items:stretch">
+<div style="width:40px;background:#FF6B1F;display:flex;align-items:center;justify-content:center"><div style="width:12px;height:12px;border-radius:50%;background:#1A1417;animation:usBlink 1.4s ease-in-out infinite"></div></div>
+<div style="background:#1A1417;color:#FFF3E0;font:700 26px/1 'Barlow Condensed',sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:9px 16px 8px">{{ nome }}</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:640,&quot;height&quot;:420},&quot;nome&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;NOME 01&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CÂMERA&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;w&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:640,&quot;tsType&quot;:&quot;number&quot;},&quot;h&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:360,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { label: this.props.label ?? 'CÂMERA', nome: this.props.nome ?? 'NOME', w: this.props.w ?? '', h: this.props.h ?? '' };
+  }
+}
+</script>
+</body>
+</html>

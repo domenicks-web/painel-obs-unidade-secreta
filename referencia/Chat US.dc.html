@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f0c0e}
+a{color:#FF6B1F}a:hover{color:#d4530f}
+@keyframes usIn{0%{transform:translateX(-90px) skewX(-16deg);opacity:0}55%{transform:translateX(10px) skewX(3deg);opacity:1}80%{transform:translateX(-3px) skewX(0)}100%{transform:none;opacity:1}}
+@keyframes usWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes usStripe{from{background-position:0 0}to{background-position:52px 0}}
+@keyframes usPop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+</style></helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;gap:24px;padding:28px;box-sizing:border-box;font-family:'Barlow Condensed',sans-serif;color:#FFF3E0">
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+<div style="font:400 30px/1 'Bungee',sans-serif;color:#FF6B1F;margin-right:12px">CHAT US · TESTE</div>
+<button onClick="{{ addRandom }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#FF6B1F;color:#1A1417;cursor:pointer" style-active="transform:translate(2px,2px)">+ MENSAGEM ALEATÓRIA</button>
+<button onClick="{{ addSuper }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#8B6CF0;color:#1A1417;cursor:pointer" style-active="transform:translate(2px,2px)">+ SUPERCHAT</button>
+<button onClick="{{ addMember }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#FFF3E0;color:#1A1417;cursor:pointer" style-active="transform:translate(2px,2px)">+ NOVO MEMBRO</button>
+<button onClick="{{ toggleAuto }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:2px solid #FF6B1F;background:transparent;color:#FF6B1F;cursor:pointer">{{ autoLabel }}</button>
+<button onClick="{{ clear }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#2A2226;color:#FFF3E0;cursor:pointer">LIMPAR</button>
+</div>
+<div style="position:relative;flex:1;min-height:760px;background:#1A1417;overflow:hidden;background-image:radial-gradient(#2A2226 1.6px,transparent 1.8px);background-size:22px 22px">
+<div style="position:absolute;left:40px;top:40px;font:700 18px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#5a4e53">ÁREA DA CENA</div>
+<div style="position:absolute;right:40px;top:40px;bottom:56px;width:460px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;padding:0 8px 12px 0;box-sizing:border-box">
+{{ chatList }}
+</div>
+<div style="position:absolute;right:40px;bottom:40px;width:460px;height:8px;background:repeating-linear-gradient(-45deg,#1A1417 0 10px,#FF6B1F 10px 20px)"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NOMES = ['zeca_do_grau','Lipe10','marinaFC','tio.baiano','ggNoobBR','kakaSemFreio','Dudinha','pedrão_97','RafaTático','o_juiz_ladrão','Bia.gamer','cabeçadecuia','Nando_Rei','LuizaSP','teteu','Gordinho_FF'];
+const MSGS = ['boa noite rapaziada','ESSE JUIZ TA VENDIDO','kkkkkkkkkk morri','manda salve pro pessoal de BH','quando sai o próximo react?','que resenha boa','GOLAÇO','calma que ainda tem segundo tempo','primeira vez aqui, já me inscrevi','esse filme é muito ruim kkkk','alguém mais travou?','voltei, perdi o que?','a unidade não para','quero ver o react do trailer novo','o som ta baixo','bora 1k inscritos','3 a 1 fácil','mito demais','tá lagando aqui','essa foi histórica'];
+const CORES = ['#FF6B1F','#8B6CF0','#FFF3E0'];
+const SUPER = ['R$ 5,00','R$ 10,00','R$ 20,00','R$ 50,00'];
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const h = React.createElement;
+let uid = 0;
+
+class Component extends DCLogic {
+  state = { msgs: [], auto: false };
+  componentDidMount() {
+    [0, 1, 2, 3].forEach((i) => setTimeout(() => this.push(this.make('msg')), 250 + i * 450));
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  make(kind) {
+    const nome = pick(NOMES);
+    return { id: ++uid, kind, nome, msg: pick(MSGS), cor: CORES[nome.length % 3], mod: Math.random() < 0.15, membro: Math.random() < 0.3, valor: pick(SUPER) };
+  }
+  push(m) { this.setState((s) => ({ msgs: [...s.msgs, m].slice(-9) })); }
+  toggleAuto = () => {
+    if (this.state.auto) { clearInterval(this.timer); this.setState({ auto: false }); return; }
+    this.timer = setInterval(() => { const r = Math.random(); this.push(this.make(r < 0.08 ? 'super' : r < 0.12 ? 'membro' : 'msg')); }, 1100);
+    this.setState({ auto: true });
+  };
+  renderMsg(m) {
+    const ink = '#1A1417', cream = '#FFF3E0';
+    const nameTag = h('div', { style: { display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start', background: m.cor, color: ink, padding: '5px 10px 4px', font: "700 20px/1 'Barlow Condensed',sans-serif", letterSpacing: '.04em', textTransform: 'uppercase', animation: 'usWipe .28s cubic-bezier(.2,.8,.2,1) both' } },
+      m.mod && h('span', { style: { background: ink, color: '#8B6CF0', font: "700 11px/1 'JetBrains Mono',monospace", padding: '3px 5px', letterSpacing: '.08em' } }, 'MOD'),
+      m.membro && h('span', { style: { width: 9, height: 9, borderRadius: '50%', background: ink, boxShadow: `0 0 0 2px ${m.cor}, 0 0 0 4px ${ink}`, animation: 'usPop .4s .2s both' } }),
+      m.nome);
+    if (m.kind === 'super') {
+      return h('div', { key: m.id, style: { marginTop: 14, animation: 'usIn .55s cubic-bezier(.2,.8,.2,1) both', filter: 'drop-shadow(6px 6px 0 #8B6CF0)' } },
+        h('div', { style: { height: 12, background: 'repeating-linear-gradient(-45deg,#1A1417 0 13px,#FF6B1F 13px 26px)', backgroundSize: '52px 12px', animation: 'usStripe .6s linear infinite' } }),
+        h('div', { style: { background: '#FF6B1F', padding: '12px 16px 16px', display: 'flex', flexDirection: 'column', gap: 6 } },
+          h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 } },
+            h('div', { style: { font: "700 22px/1 'Barlow Condensed',sans-serif", color: ink, textTransform: 'uppercase', letterSpacing: '.04em' } }, m.nome),
+            h('div', { style: { font: "400 30px/1 'Bungee',sans-serif", color: ink, animation: 'usPop .45s .15s both' } }, m.valor)),
+          h('div', { style: { font: "600 26px/1.15 'Barlow Condensed',sans-serif", color: ink, textWrap: 'pretty' } }, m.msg)));
+    }
+    if (m.kind === 'membro') {
+      return h('div', { key: m.id, style: { marginTop: 14, animation: 'usIn .55s cubic-bezier(.2,.8,.2,1) both', background: '#8B6CF0', color: ink, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: `6px 6px 0 ${cream}` } },
+        h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(5,8px)', gap: 4, flexShrink: 0 } }, ...Array.from({ length: 10 }, (_, k) => h('div', { key: k, style: { width: 8, height: 8, borderRadius: '50%', background: k === 9 ? cream : ink, animation: `usPop .3s ${0.15 + k * 0.03}s both` } }))),
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: 2 } },
+          h('div', { style: { font: "700 13px/1 'JetBrains Mono',monospace", letterSpacing: '.14em' } }, 'NOVO MEMBRO DA UNIDADE'),
+          h('div', { style: { font: "700 26px/1 'Barlow Condensed',sans-serif", textTransform: 'uppercase' } }, m.nome)));
+    }
+    return h('div', { key: m.id, style: { marginTop: 12, display: 'flex', flexDirection: 'column', animation: 'usIn .5s cubic-bezier(.2,.8,.2,1) both' } },
+      nameTag,
+      h('div', { style: { background: ink, color: cream, padding: '10px 14px 11px', font: "500 25px/1.15 'Barlow Condensed',sans-serif", boxShadow: `5px 5px 0 ${m.cor}`, border: `2px solid ${m.cor}`, textWrap: 'pretty', animation: 'usWipe .35s .08s cubic-bezier(.2,.8,.2,1) both' } }, m.msg));
+  }
+  renderVals() {
+    return {
+      chatList: this.state.msgs.map((m) => this.renderMsg(m)),
+      addRandom: () => this.push(this.make('msg')),
+      addSuper: () => this.push(this.make('super')),
+      addMember: () => this.push(this.make('membro')),
+      clear: () => this.setState({ msgs: [] }),
+      toggleAuto: this.toggleAuto,
+      autoLabel: this.state.auto ? '■ PARAR AUTO' : '▶ AUTO',
+    };
+  }
+}
+</script>
+</body>
+</html>

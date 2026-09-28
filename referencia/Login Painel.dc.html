@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#FF6B1F"/><rect x="30" y="30" width="40" height="40" fill="#1A1417"/><text x="50" y="58" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="22" fill="#FF6B1F">US</text></svg></template>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FF6B1F}
+a{color:#FF6B1F}a:hover{color:#d4530f}
+input::placeholder{color:#5e5358}
+@keyframes lMarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes lMarqR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes lStripe{from{background-position:0 0}to{background-position:104px 0}}
+@keyframes lFloat{0%,100%{transform:rotate(-5deg) translateY(0)}50%{transform:rotate(2deg) translateY(-16px)}}
+@keyframes lIn{0%{transform:translateX(-120px) skewX(-14deg);opacity:0}60%{transform:translateX(10px) skewX(2deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes lCard{0%{transform:translateY(60px) rotate(3deg);opacity:0}70%{transform:translateY(-6px) rotate(-.5deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes lPop{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes lShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-14px)}40%{transform:translateX(12px)}60%{transform:translateX(-8px)}80%{transform:translateX(6px)}}
+@keyframes lSweep{0%{transform:translateX(-130%) rotate(-12deg)}100%{transform:translateX(0) rotate(-12deg)}}
+@keyframes lBlink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes lFade{from{opacity:0}to{opacity:1}}
+@keyframes lModal{0%{transform:translateY(40px) rotate(-3deg) scale(.9);opacity:0}70%{transform:translateY(-6px) rotate(.6deg) scale(1.01);opacity:1}100%{transform:none;opacity:1}}
+@keyframes lScan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+</style></helmet>
+<div style="position:relative;min-height:100vh;background:#FF6B1F;overflow:hidden;font-family:'Barlow Condensed',sans-serif;display:flex;align-items:center;justify-content:center;padding:60px 5vw 110px;box-sizing:border-box">
+
+<div style="position:absolute;left:-10%;top:-8%;width:130%;transform:rotate(-8deg);display:flex;flex-direction:column;gap:6px;pointer-events:none">
+<div style="display:flex;white-space:nowrap;font:400 150px/1 'Bungee',sans-serif;color:#F2601A;animation:lMarq 30s linear infinite;width:max-content"><span>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span><span>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></div>
+<div style="display:flex;white-space:nowrap;font:400 150px/1 'Bungee',sans-serif;color:#F2601A;animation:lMarqR 34s linear infinite;width:max-content"><span>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span><span>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></div>
+<div style="display:flex;white-space:nowrap;font:400 150px/1 'Bungee',sans-serif;color:#F2601A;animation:lMarq 26s linear infinite;width:max-content"><span>QG DA UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>QG DA UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>QG DA UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span><span>QG DA UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>QG DA UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>QG DA UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></div>
+<div style="display:flex;white-space:nowrap;font:400 150px/1 'Bungee',sans-serif;color:#F2601A;animation:lMarqR 30s linear infinite;width:max-content"><span>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span><span>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ÁREA RESTRITA<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></div>
+<div style="display:flex;white-space:nowrap;font:400 150px/1 'Bungee',sans-serif;color:#F2601A;animation:lMarq 32s linear infinite;width:max-content"><span>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span><span>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>SÓ A UNIDADE<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></div>
+</div>
+
+<div style="position:relative;width:100%;max-width:1180px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:60px">
+
+<div style="flex:1 1 420px;display:flex;flex-direction:column;align-items:flex-start;gap:26px;animation:lIn .9s cubic-bezier(.2,.8,.2,1) both">
+<div style="display:flex;align-items:center;gap:12px;background:#1A1417;padding:10px 16px">
+<div style="width:10px;height:10px;border-radius:50%;background:#FF6B1F;animation:lBlink 1.2s infinite"></div>
+<div style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.2em;color:#FF6B1F">PAINEL ADM</div>
+</div>
+<div style="font:400 clamp(64px,8.5vw,128px)/.92 'Bungee',sans-serif;color:#1A1417;margin-left:-.04em">QG DA<br>UNIDADE</div>
+<div style="font:700 clamp(18px,1.6vw,24px)/1.35 'JetBrains Mono',monospace;letter-spacing:.06em;color:#1A1417;max-width:460px;text-wrap:pretty">Entra pra mexer nas telas, no placar e nos PIX da live.</div>
+<div style="width:220px;height:220px;background:#1A1417;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;box-shadow:12px 12px 0 #FFF3E0;animation:lFloat 6s ease-in-out infinite;margin-top:14px">
+<div style="font:600 146px/.74 'Barlow Condensed',sans-serif;color:#FF6B1F;padding-top:.04em">US</div>
+<div style="display:grid;grid-template-columns:repeat(5,12px);gap:7px">
+<sc-for list="{{ logoDots }}" as="d" hint-placeholder-count="10">
+<div style="width:12px;height:12px;border-radius:50%;background:{{ d.bg }};transition:background .7s ease"></div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="flex:0 1 460px;width:100%;animation:lCard .9s .15s cubic-bezier(.2,.8,.2,1) both">
+<form onSubmit="{{ entrar }}" style="position:relative;background:#1A1417;padding:40px 38px 34px;box-shadow:16px 16px 0 #8B6CF0;display:flex;flex-direction:column;gap:22px;overflow:hidden;animation:{{ shake }}">
+<div style="position:absolute;left:0;top:0;right:0;height:14px;background:repeating-linear-gradient(-45deg,#FF6B1F 0 13px,#1A1417 13px 26px);background-size:104px 14px;animation:lStripe 1.4s linear infinite"></div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+<div style="font:400 38px/1 'Bungee',sans-serif;color:#FFF3E0">IDENTIFICA AÍ</div>
+<div style="font:700 13px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:#8a7f84">ACESSO SÓ PRA QUEM É DA UNIDADE</div>
+</div>
+
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.18em;color:#FF6B1F">E-MAIL</span>
+<input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="voce@email.com" autocomplete="username" style="width:100%;box-sizing:border-box;background:#120e10;border:0;box-shadow:inset 0 0 0 2px #3a3035;color:#FFF3E0;font:600 24px/1 'Barlow Condensed',sans-serif;letter-spacing:.02em;padding:15px 16px;outline:none;transition:box-shadow .2s" style-focus="box-shadow:inset 0 0 0 3px #FF6B1F">
+</label>
+
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.18em;color:#FF6B1F">SENHA</span><button type="button" onClick="{{ toggleVer }}" style="border:0;background:transparent;cursor:pointer;padding:0;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#8a7f84" style-hover="color:#FFF3E0">{{ verLabel }}</button></span>
+<input type="{{ tipoSenha }}" value="{{ senha }}" onChange="{{ onSenha }}" placeholder="••••••••" autocomplete="current-password" style="width:100%;box-sizing:border-box;background:#120e10;border:0;box-shadow:inset 0 0 0 2px #3a3035;color:#FFF3E0;font:600 24px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;padding:15px 16px;outline:none;transition:box-shadow .2s" style-focus="box-shadow:inset 0 0 0 3px #FF6B1F">
+<span style="display:flex;justify-content:space-between;margin-top:6px">
+<sc-for list="{{ dots }}" as="d" hint-placeholder-count="10">
+<span style="width:20px;height:20px;box-sizing:border-box;border-radius:50%;border:3px solid {{ d.bd }};background:{{ d.bg }};animation:{{ d.anim }};transition:background .2s,border-color .2s"></span>
+</sc-for>
+</span>
+</label>
+
+<sc-if value="{{ temErro }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px;background:#FFF3E0;padding:12px 14px">
+<div style="width:10px;height:10px;border-radius:50%;background:#FF6B1F;animation:lBlink .6s infinite"></div>
+<div style="font:700 13px/1.3 'JetBrains Mono',monospace;letter-spacing:.1em;color:#1A1417">{{ erro }}</div>
+</div>
+</sc-if>
+
+<button type="submit" style="position:relative;height:68px;border:0;cursor:pointer;background:#FF6B1F;color:#1A1417;font:400 26px/1 'Bungee',sans-serif;letter-spacing:.02em;box-shadow:6px 6px 0 #FFF3E0;transition:transform .12s,box-shadow .12s;overflow:hidden" style-hover="transform:translate(-2px,-2px);box-shadow:8px 8px 0 #FFF3E0" style-active="transform:translate(4px,4px);box-shadow:2px 2px 0 #FFF3E0">{{ btnLabel }}</button>
+
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+<label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+<button type="button" onClick="{{ toggleLembrar }}" style="width:22px;height:22px;border:0;padding:0;cursor:pointer;box-shadow:inset 0 0 0 2px #FF6B1F;background:{{ lembrarBg }}"></button>
+<span style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FFF3E0">LEMBRAR NESTE PC</span>
+</label>
+<a href="#" onClick="{{ esqueci }}" style="font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#8a7f84;text-decoration:none" style-hover="color:#FF6B1F">ESQUECI A SENHA</a>
+</div>
+</form>
+</div>
+</div>
+
+<div style="position:absolute;left:0;bottom:0;width:100%;height:56px;background:repeating-linear-gradient(-45deg,#1A1417 0 26px,#FF6B1F 26px 52px);background-size:104px 56px;animation:lStripe 1.2s linear infinite"></div>
+
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ fechar }}" style="position:fixed;inset:0;z-index:20;background:rgba(26,20,23,.72);display:flex;align-items:center;justify-content:center;padding:24px;animation:lFade .25s both">
+<div onClick="{{ parar }}" style="position:relative;width:100%;max-width:520px;background:#FFF3E0;box-shadow:14px 14px 0 #FF6B1F;padding:44px 36px 32px;display:flex;flex-direction:column;gap:22px;overflow:hidden;animation:lModal .5s cubic-bezier(.2,.8,.2,1) both">
+<div style="position:absolute;left:0;top:0;right:0;height:14px;background:repeating-linear-gradient(-45deg,#1A1417 0 13px,#FF6B1F 13px 26px);background-size:104px 14px;animation:lStripe 1.4s linear infinite"></div>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="background:#1A1417;color:#FF6B1F;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.18em;padding:8px 10px">ESQUECI A SENHA</div>
+</div>
+<div style="font:700 36px/1.1 'Barlow Condensed',sans-serif;color:#1A1417;text-wrap:pretty">É tudo hospedagem e banco de graça, rei.<br>Se esqueceu a senha, fala com o Under.</div>
+<button type="button" onClick="{{ fechar }}" style="align-self:flex-start;height:58px;padding:0 28px;border:0;cursor:pointer;background:#1A1417;color:#FF6B1F;font:400 22px/1 'Bungee',sans-serif;box-shadow:5px 5px 0 #8B6CF0;transition:transform .12s,box-shadow .12s" style-hover="transform:translate(-2px,-2px);box-shadow:7px 7px 0 #8B6CF0" style-active="transform:translate(3px,3px);box-shadow:2px 2px 0 #8B6CF0">FECHOU</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ ok }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;pointer-events:none;z-index:10">
+<div style="position:absolute;left:-20%;top:28%;width:140%;height:240px;background:#1A1417;box-shadow:0 0 0 10px #FFF3E0;display:flex;align-items:center;overflow:hidden;animation:lSweep .6s cubic-bezier(.7,0,.2,1) both">
+<div style="display:flex;white-space:nowrap;font:400 130px/1 'Bungee',sans-serif;color:#FF6B1F;animation:lMarq 6s linear infinite;width:max-content"><span>ACESSO LIBERADO<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ACESSO LIBERADO<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span><span>ACESSO LIBERADO<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i>ACESSO LIBERADO<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></div>
+</div>
+<div style="position:absolute;left:-20%;top:calc(28% + 270px);width:140%;height:90px;background:repeating-linear-gradient(-45deg,#1A1417 0 26px,#8B6CF0 26px 52px);background-size:104px 90px;animation:lSweep .6s .12s cubic-bezier(.7,0,.2,1) both,lStripe 1s linear infinite"></div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lit: 0, modal: false, email: '', senha: '', ver: false, lembrar: true, erro: '', shakeN: 0, ok: false, loading: false };
+  componentDidMount() {
+    this.iv = setInterval(() => this.setState((s) => { let n; do { n = Math.floor(Math.random() * 10); } while (n === s.lit); return { lit: n }; }), 1500);
+    this.onKey = (e) => { if (e.key === 'Escape') this.setState({ modal: false }); };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); clearInterval(this.iv); window.removeEventListener('keydown', this.onKey); }
+  entrar = (e) => {
+    e.preventDefault();
+    const { email, senha } = this.state;
+    if (!email.includes('@') || senha.length < 4) {
+      this.setState((s) => ({ erro: !email.includes('@') ? 'E-MAIL INVÁLIDO' : 'SENHA ERRADA. TENTA DE NOVO', shakeN: s.shakeN + 1 }));
+      return;
+    }
+    this.setState({ erro: '', loading: true });
+    this.t1 = setTimeout(() => this.setState({ ok: true, loading: false }), 700);
+    this.t2 = setTimeout(() => { location.href = './Painel US.dc.html'; }, 2400);
+  };
+  renderVals() {
+    const s = this.state, n = Math.min(10, s.senha.length);
+    return {
+      email: s.email, senha: s.senha,
+      onEmail: (e) => this.setState({ email: e.target.value, erro: '' }),
+      onSenha: (e) => this.setState({ senha: e.target.value, erro: '' }),
+      tipoSenha: s.ver ? 'text' : 'password', verLabel: s.ver ? 'ESCONDER' : 'VER',
+      toggleVer: () => this.setState((x) => ({ ver: !x.ver })),
+      lembrarBg: s.lembrar ? '#FF6B1F' : 'transparent', toggleLembrar: () => this.setState((x) => ({ lembrar: !x.lembrar })),
+      esqueci: (e) => { e.preventDefault(); this.setState({ modal: true }); },
+      modal: s.modal, fechar: () => this.setState({ modal: false }), parar: (e) => e.stopPropagation(),
+      dots: Array.from({ length: 10 }, (_, i) => ({ bg: i < n ? (i === 9 ? '#FFF3E0' : '#FF6B1F') : 'transparent', bd: i < n ? (i === 9 ? '#FFF3E0' : '#FF6B1F') : '#3a3035', anim: i === n - 1 ? 'lPop .3s ease-out' : 'none' })),
+      logoDots: Array.from({ length: 10 }, (_, i) => ({ bg: i === s.lit || s.ok ? (i === 9 ? '#FFF3E0' : '#FF6B1F') : '#3a3035' })),
+      temErro: !!s.erro, erro: s.erro,
+      shake: s.shakeN ? (s.shakeN % 2 ? 'lShake .45s' : 'lShake .451s') : 'none',
+      btnLabel: s.loading ? 'VERIFICANDO…' : s.ok ? 'BEM-VINDO' : 'ENTRAR NO QG',
+      entrar: this.entrar, ok: s.ok,
+    };
+  }
+}
+</script>
+</body>
+</html>
