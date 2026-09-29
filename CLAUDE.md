@@ -92,3 +92,11 @@ Estava no meio do fluxo `superpowers:subagent-driven-development`. Regra da skil
 - Alerta de doação é só um botão de teste manual (nome+mensagem) — doações reais vêm de plataforma externa (tipo pix.gg), sem integração de pagamento no projeto.
 - Bootstrap do primeiro admin: passo manual de SQL no guia final (README), sem seed automático com e-mail fixo.
 - Execução do plano via subagentes: um implementador + um revisor por tarefa, revisão final de branch inteiro no fim (já rodada, ver acima).
+
+## Parte 3 — chat (2026-09-29, noite)
+
+- `/alerta` removido (alerta fica com o widget nativo do LivePix). FUTEBOL sem enquete: etiqueta de nome dentro da câmera.
+- Chat feito (spec `docs/superpowers/specs/2026-09-29-chat-parte-3-design.md`): `src/chat/*` (WebSocket `wss://io.socialstream.ninja/join/<sessao>/4`, normalização, modo teste), `/chat?sessao=ID` e `/chat?teste=1`, painel com filtros/DESTACAR/TIRAR (`chatPin`), selo CHAT. Prints: `docs/prints/chat-lado-a-lado.png`, `chat-destaque.png`, `painel-chat.png`.
+- ID da sessão só em `.env.local` (`VITE_SSN_SESSAO`, só dev; build de produção não inclui) e no localStorage do painel. Nunca no estado da live nem no código.
+- Na extensão, só precisa "Send chat messages to API server" (dashboard: "Chat to External Apps (ch 3/4)"); Remote Control API fica desligado.
+- Pendente: teste real com mensagens de verdade quando o usuário ligar a opção e abrir uma live.

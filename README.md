@@ -5,6 +5,7 @@ Painel web para controlar os overlays de OBS da Unidade Secreta em tempo real, d
 ## Como funciona
 
 - `/tela/:id` — as 9 telas (`inicio`, `host`, `futebol`, `filme`, `mesa`, `intervalo`, `lower`, `tecnico`, `fim`). É a URL que entra na fonte Navegador do OBS. Fundo transparente.
+- `/chat?sessao=ID` — o chat (YouTube, Twitch e TikTok juntos, via Social Stream Ninja), fonte Navegador acima das telas. Fundo transparente. `/chat?teste=1` abre a página de teste com mensagens fictícias.
 - `/painel` — onde a galera edita as infos das telas, o PIX manual e a galera (precisa de login). A troca de cena é no OBS.
 - `/admin` — convidar gente nova e definir o papel (admin/editor).
 - `/login` — entrada com e-mail e senha.
@@ -67,6 +68,16 @@ As chamadas passam por `api/livepix/<comando>` (funções da Vercel): o servidor
 
 LIMPAR FILA pede confirmação ("LIMPAR FILA?") antes de apagar a fila.
 
+## 4.2 Chat (Social Stream Ninja)
+
+1. Instale a extensão do Social Stream Ninja e abra os chats da live (YouTube, Twitch, TikTok) no navegador, como ela pede. Anote o **ID da sessão** que ela mostra.
+2. No popup da extensão, em **⚙️ Mechanics - Connections & Integrations**, ligue **"📡 Send chat messages to API server (for external listeners)"**. No dashboard da extensão ela aparece como "Chat to External Apps (ch 3/4)" e deve ficar *Connected*. Não precisa ligar o "Remote Control API" (controle remoto da extensão): deixe desligado.
+   - Com essa opção ligada, a extensão para de mandar o chat para o dock/overlay próprio do Social Stream Ninja. Se usar os dois, ligue também a opção logo abaixo ("also send API-routed chat to normal dock/overlay connections").
+3. No OBS, fonte **Navegador** `https://SEU-DOMINIO.vercel.app/chat?sessao=ID`, no tamanho da área do chat de cada cena (440×800 no Host, 440×910 no Futebol, 440×750 no Filme). As mensagens empilham de baixo pra cima.
+4. No painel, na primeira vez em cada navegador, cole o mesmo ID no bloco CHAT e clique CONECTAR (fica guardado só naquele navegador; TROCAR no rodapé muda). DESTACAR fixa a mensagem no topo do chat no OBS até alguém clicar TIRAR.
+
+O ID da sessão fica só na URL do OBS e no navegador de quem usa o painel, nunca no estado da live (que as telas leem sem login) nem no código. Não mostre a URL da fonte na live. O servidor do Social Stream Ninja não guarda histórico: quem abre agora vê só o que chegar dali em diante.
+
 ## 5. Convidar o resto da galera
 
 Para cada pessoa: cadastre o e-mail e o papel (editor ou admin) em `/admin` e crie o login dela no Supabase (Authentication → Users → Add user → Create new user, com "Auto Confirm User" marcado). Passe o e-mail e a senha pra ela. A ordem dos dois passos não importa, o vínculo é automático.
@@ -80,6 +91,8 @@ cp .env.example .env.local # preencha com as chaves do seu projeto Supabase
 npm run dev
 ```
 
+Em dev, `VITE_SSN_SESSAO` no `.env.local` já preenche a sessão do chat no painel e no `/chat` (no build de produção ela é ignorada: não crie na Vercel).
+
 ## Testes
 
 ```bash
@@ -92,5 +105,6 @@ Comparação visual com a referência (com `npm run dev` rodando; precisa do Chr
 ```bash
 (cd scripts && npm install)
 node scripts/comparar-telas.mjs   # 9 prints lado a lado em docs/prints/
-node scripts/print-painel.mjs     # painel com o banco simulado
+node scripts/print-painel.mjs     # painel com o banco simulado (chat em modo teste)
+node scripts/print-chat.mjs       # /chat?teste=1 lado a lado com a referência, com as mesmas mensagens
 ```
