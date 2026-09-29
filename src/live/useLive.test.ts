@@ -43,6 +43,49 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 
+describe('useLive · estado guardado no navegador (telas do OBS)', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('desenha na hora com o último estado salvo e troca quando o banco responde', async () => {
+    localStorage.setItem('us-live:principal', JSON.stringify({ titulo: 'SALVO', golsA: 3 }));
+    let responder!: (v: unknown) => void;
+    const single = vi.fn(() => new Promise((r) => (responder = r)));
+    vi.mocked(supabase.from).mockReturnValue({ select: () => ({ eq: () => ({ single }) }) } as never);
+
+    const { result } = renderHook(() => useLive({ guardarLocal: true }));
+    // antes de qualquer resposta: já é o salvo (e o que faltar vem do padrão)
+    expect(result.current.estado.titulo).toBe('SALVO');
+    expect(result.current.estado.golsA).toBe(3);
+    expect(result.current.estado.timeA).toBe(ESTADO_PADRAO.timeA);
+
+    await act(async () => responder({ data: linha({ titulo: 'DO BANCO' }), error: null }));
+    expect(result.current.estado.titulo).toBe('DO BANCO');
+    expect(JSON.parse(localStorage.getItem('us-live:principal')!).titulo).toBe('DO BANCO');
+  });
+
+  it('o Realtime também atualiza o salvo', async () => {
+    const { result } = renderHook(() => useLive({ guardarLocal: true }));
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    act(() => handlerUpdate!({ new: linha({ titulo: 'AO VIVO' }) }));
+    expect(JSON.parse(localStorage.getItem('us-live:principal')!).titulo).toBe('AO VIVO');
+  });
+
+  it('salvo corrompido ou ausente: abre com o padrão', () => {
+    localStorage.setItem('us-live:principal', '{quebrado');
+    vi.mocked(supabase.from).mockReturnValue({ select: () => ({ eq: () => ({ single: () => new Promise(() => {}) }) }) } as never);
+    const { result } = renderHook(() => useLive({ guardarLocal: true }));
+    expect(result.current.estado.titulo).toBe(ESTADO_PADRAO.titulo);
+  });
+
+  it('sem guardarLocal (painel) não lê nem grava', async () => {
+    localStorage.setItem('us-live:principal', JSON.stringify({ titulo: 'SALVO' }));
+    vi.mocked(supabase.from).mockReturnValue({ select: () => ({ eq: () => ({ single: () => new Promise(() => {}) }) }) } as never);
+    const { result } = renderHook(() => useLive());
+    expect(result.current.estado.titulo).toBe(ESTADO_PADRAO.titulo);
+    expect(JSON.parse(localStorage.getItem('us-live:principal')!).titulo).toBe('SALVO');
+  });
+});
+
 describe('useLive', () => {
   it('carrega o estado e quem editou', async () => {
     const { result } = renderHook(() => useLive());

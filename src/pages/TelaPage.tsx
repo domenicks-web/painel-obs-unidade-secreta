@@ -19,7 +19,7 @@ export function TelaPage() {
 
 function TelaAoVivo({ id, fixture }: { id?: TelaId; fixture?: EstadoLive }) {
   usarFundoTransparente();
-  const { estado } = useLive({ fixture });
+  const { estado } = useLive({ fixture, guardarLocal: true });
   const Tela = id ? TELA_COMPONENTE[id] : undefined;
   return <Palco>{Tela && <Tela estado={estado} />}</Palco>;
 }

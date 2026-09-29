@@ -13,9 +13,32 @@ interface Linha {
   updated_by_nome: string | null;
 }
 
-export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
+// Último estado recebido, guardado no navegador (a fonte do OBS guarda entre cenas e sessões):
+// a tela desenha na hora com ele e só depois troca pelo que vier do Supabase.
+const CHAVE_LOCAL = `us-live:${SLUG}`;
+
+function lerLocal(): EstadoLive | null {
+  try {
+    const bruto = localStorage.getItem(CHAVE_LOCAL);
+    const salvo = bruto ? (JSON.parse(bruto) as Partial<EstadoLive>) : null;
+    return salvo && typeof salvo === 'object' ? { ...ESTADO_PADRAO, ...salvo } : null;
+  } catch {
+    return null;
+  }
+}
+
+function gravarLocal(estado: Partial<EstadoLive>) {
+  try {
+    localStorage.setItem(CHAVE_LOCAL, JSON.stringify(estado));
+  } catch {
+    // sem localStorage (modo privado, cota): a tela só não abre adiantada
+  }
+}
+
+export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean } = {}) {
   const { fixture } = opcoes;
-  const [servidor, setServidor] = useState<EstadoLive>(fixture ?? ESTADO_PADRAO);
+  const guardarLocal = !!opcoes.guardarLocal && !fixture;
+  const [servidor, setServidor] = useState<EstadoLive>(() => fixture ?? ((guardarLocal && lerLocal()) || ESTADO_PADRAO));
   const [editado, setEditado] = useState<{ por: string | null; em: string | null }>({ por: null, em: null });
   const [status, setStatus] = useState<StatusConexao>(fixture ? 'ao_vivo' : 'conectando');
   // valores locais ainda não confirmados: sobrepõem o eco do Realtime
@@ -25,10 +48,14 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
   const aguardando = useRef(new Map<string, unknown>());
   const ultimos = useRef(new Map<string, unknown>());
 
-  const aplicar = useCallback((l: Linha) => {
-    setServidor({ ...ESTADO_PADRAO, ...l.estado });
-    setEditado({ por: l.updated_by_nome, em: l.updated_at });
-  }, []);
+  const aplicar = useCallback(
+    (l: Linha) => {
+      setServidor({ ...ESTADO_PADRAO, ...l.estado });
+      setEditado({ por: l.updated_by_nome, em: l.updated_at });
+      if (guardarLocal) gravarLocal(l.estado);
+    },
+    [guardarLocal],
+  );
 
   useEffect(() => {
     if (fixture) return;
