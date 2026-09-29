@@ -53,3 +53,66 @@
 
 /* Letreiro de fundo (texto gigante repetido) */
 .t-linha { display: flex; white-space: nowrap; width: max-content; }
+
+/* ===== Início (Telas Live linhas 46-74) ===== */
+.t-inicio { position: absolute; inset: 0; background: #FF6B1F; overflow: hidden; }
+.t-inicio__fundo { position: absolute; left: -200px; top: -120px; width: 2400px; transform: rotate(-8deg); display: flex; flex-direction: column; gap: 10px; }
+.t-inicio__linha { display: flex; white-space: nowrap; font: 400 190px/1 'Bungee', sans-serif; color: #F2601A; width: max-content; }
+.t-inicio__conteudo { position: absolute; left: 140px; right: 150px; top: 0; bottom: 70px; display: flex; align-items: center; justify-content: space-between; gap: 60px; }
+.t-inicio__texto { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; animation: usIn .9s cubic-bezier(.2,.8,.2,1) both; }
+.t-inicio__chamada { font: 700 30px/1 'JetBrains Mono', monospace; letter-spacing: .2em; color: #1A1417; }
+.t-inicio__titulo { font: 400 140px/.92 'Bungee', sans-serif; color: #1A1417; max-width: 1100px; text-wrap: balance; margin-left: -.04em; }
+.t-inicio__contagem { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
+.t-inicio__relogio { background: #1A1417; color: #FFF3E0; font: 700 170px/1 'JetBrains Mono', monospace; padding: 18px 36px 14px; box-shadow: 14px 14px 0 #8B6CF0; }
+.t-inicio__bolinhas { display: flex; justify-content: space-between; }
+.t-inicio__bolinha { width: 34px; height: 34px; box-sizing: border-box; border-radius: 50%; border: 4px solid #1A1417; }
+.t-inicio__logo { flex-shrink: 0; width: 500px; height: 500px; background: #1A1417; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; animation: usFloat 6s ease-in-out infinite; box-shadow: 18px 18px 0 #FFF3E0; }
+.t-inicio__us { font: 600 330px/.74 'Barlow Condensed', sans-serif; color: #FF6B1F; padding-top: .04em; }
+.t-inicio__grade { display: grid; grid-template-columns: repeat(5, 28px); gap: 16px; }
+.t-inicio__grade > div { width: 28px; height: 28px; border-radius: 50%; background: #FF6B1F; }
+.t-inicio__grade > div:last-child { background: #FFF3E0; }
+.t-inicio__listra { position: absolute; left: 0; bottom: 0; width: 100%; height: 70px; background: repeating-linear-gradient(-45deg, #1A1417 0 26px, #FF6B1F 26px 52px); background-size: 104px 70px; animation: usStripe 1.2s linear infinite; }
+
+/* ===== Fim (Telas Live linhas 78-100) ===== */
+.t-fim { position: absolute; inset: 0; background: #FF6B1F; overflow: hidden; }
+.t-fim__faixa { position: absolute; left: -300px; top: 600px; width: 2600px; height: 170px; background: #1A1417; transform: rotate(-10deg); display: flex; align-items: center; overflow: hidden; box-shadow: 0 0 0 8px #FFF3E0; }
+.t-fim__letreiro { display: flex; white-space: nowrap; font: 400 110px/1 'Bungee', sans-serif; color: #FF6B1F; animation: usMarq 14s linear infinite; width: max-content; }
+.t-fim__listra { position: absolute; left: -300px; top: 790px; width: 2600px; height: 120px; transform: rotate(-10deg); background: repeating-linear-gradient(-45deg, #1A1417 0 26px, #8B6CF0 26px 52px); background-size: 104px 120px; animation: usStripe 1.6s linear infinite; }
+.t-fim__conteudo { position: absolute; left: 140px; right: 140px; top: 100px; display: flex; align-items: flex-start; justify-content: space-between; gap: 60px; }
+.t-fim__texto { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; animation: usIn .9s cubic-bezier(.2,.8,.2,1) both; }
+.t-fim__valeu { font: 700 30px/1 'JetBrains Mono', monospace; letter-spacing: .2em; color: #1A1417; }
+.t-fim__ate { font: 400 180px/1 'Bungee', sans-serif; color: #1A1417; margin-left: -.04em; }
+.t-fim__cartao { flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; background: #1A1417; padding: 34px 40px; box-shadow: 14px 14px 0 #FFF3E0; animation: usIn .9s .2s cubic-bezier(.2,.8,.2,1) both; }
+.t-fim__rotulo { font: 700 24px/1 'JetBrains Mono', monospace; letter-spacing: .18em; color: #8B6CF0; }
+.t-fim__proximo { font: 400 72px/1 'Bungee', sans-serif; color: #FF6B1F; }
+.t-fim__inscreve { font: 600 34px/1 'Barlow Condensed', sans-serif; letter-spacing: .06em; color: #FFF3E0; }
+.t-fim__bolinhas { display: flex; gap: 14px; margin-top: 10px; }
+.t-fim__bolinha { width: 22px; height: 22px; border-radius: 50%; background: #FF6B1F; animation: usDotOff 10s ease-in-out infinite; }
+.t-fim__bolinha:last-child { background: #FFF3E0; }
+
+/* ===== Intervalo (Telas Live linhas 217-233) ===== */
+.t-intervalo { position: absolute; inset: 0; background: #FF6B1F; overflow: hidden; }
+.t-intervalo__giro { position: absolute; left: 960px; top: 540px; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%; background: repeating-conic-gradient(#F2601A 0 10deg, #FF6B1F 10deg 20deg); animation: usSpin 60s linear infinite; }
+.t-intervalo__listra { position: absolute; left: 0; width: 100%; height: 60px; background: repeating-linear-gradient(-45deg, #1A1417 0 26px, #FF6B1F 26px 52px); background-size: 104px 60px; animation: usStripe 1.6s linear infinite; }
+.t-intervalo__listra--topo { top: 0; }
+.t-intervalo__listra--base { bottom: 0; animation-direction: reverse; }
+.t-intervalo__centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; }
+.t-intervalo__selo { background: #1A1417; color: #FF6B1F; font: 700 26px/1 'JetBrains Mono', monospace; letter-spacing: .2em; padding: 14px 22px; }
+.t-intervalo__frase { display: flex; font: 400 220px/1 'Bungee', sans-serif; color: #1A1417; text-shadow: 10px 10px 0 #FFF3E0; }
+.t-intervalo__letra { display: inline-block; animation: usWave 2.2s ease-in-out infinite; }
+.t-intervalo__volta { display: flex; align-items: center; gap: 20px; }
+.t-intervalo__volta-rotulo { font: 700 34px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: #1A1417; }
+.t-intervalo__relogio { background: #1A1417; color: #FFF3E0; font: 700 64px/1 'JetBrains Mono', monospace; padding: 12px 22px; box-shadow: 8px 8px 0 #8B6CF0; }
+
+/* ===== Técnico (Telas Live linhas 253-267) ===== */
+.t-tecnico { position: absolute; inset: 0; background: #FF6B1F; overflow: hidden; }
+.t-tecnico__listra { position: absolute; left: -300px; top: 420px; width: 2600px; height: 130px; transform: rotate(18deg); background: repeating-linear-gradient(-45deg, #1A1417 0 30px, #FFF3E0 30px 60px); background-size: 120px 130px; animation: usStripe 1.4s linear infinite; }
+.t-tecnico__faixa { position: absolute; left: -300px; top: 420px; width: 2600px; height: 130px; transform: rotate(-18deg); background: #1A1417; display: flex; align-items: center; overflow: hidden; }
+.t-tecnico__letreiro { display: flex; white-space: nowrap; font: 400 80px/1 'Bungee', sans-serif; color: #FF6B1F; animation: usMarq 12s linear infinite; width: max-content; }
+.t-tecnico__cartao { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); background: #1A1417; padding: 50px 80px; box-shadow: 18px 18px 0 #8B6CF0; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.t-tecnico__glitch { position: relative; font: 400 210px/1 'Bungee', sans-serif; white-space: nowrap; }
+.t-tecnico__glitch-a { position: absolute; inset: 0; color: #8B6CF0; animation: usGlA .35s steps(2) infinite; }
+.t-tecnico__glitch-b { position: absolute; inset: 0; color: #FFF3E0; animation: usGlB .45s steps(2) infinite; }
+.t-tecnico__glitch-c { position: relative; color: #FF6B1F; }
+.t-tecnico__volta { font: 700 28px/1 'JetBrains Mono', monospace; letter-spacing: .2em; color: #FFF3E0; }
+.t-tecnico__scan { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(26,20,23,.12) 0 2px, transparent 2px 6px); background-size: 100% 12px; animation: usScan .4s linear infinite; pointer-events: none; }
