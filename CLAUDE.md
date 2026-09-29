@@ -102,3 +102,9 @@ Estava no meio do fluxo `superpowers:subagent-driven-development`. Regra da skil
 - Usuário ligou a opção: mensagens de teste do SSN chegaram no /chat (chips e superchat ok). Destaque violeta e chip dentro da etiqueta aprovados.
 - Serrilhado das caixas giradas: corrigido com SVG (`eea5836`); falta o usuário confirmar no OBS.
 - Pendente: teste com mensagens reais quando o usuário abrir uma live de teste com chat em pop-up (ele avisa).
+
+## Deploy (2026-09-29, ~19:40)
+
+- `main` pushado para `github.com:domenicks-web/painel-obs-unidade-secreta` (primeiro push; histórico varrido: nenhum segredo). Pendências futuras em `PENDENCIAS.md`.
+- Vercel: sem CLI/login nesta máquina; o usuário importa o repo no painel da Vercel e cria as variáveis (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, LIVEPIX_URL_{PAUSAR,RETOMAR,PULAR,REPETIR,LIMPAR}). Depois: conferir /tela/inicio, /painel, /chat?teste=1 na URL de produção.
+- PIX TESTE%: tabela `pix` de produção estava vazia (0 linhas), nada a apagar.
