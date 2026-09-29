@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { PainelPage } from './pages/PainelPage';
 import { AdminPage } from './pages/AdminPage';
 import { PreviewPage } from './pages/PreviewPage';
+import { TelaPage } from './pages/TelaPage';
 import { RotaProtegida } from './components/RotaProtegida';
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
     <Routes>
       <Route path="/overlay/:cena" element={<OverlayPage />} />
       <Route path="/preview" element={<PreviewPage />} />
+      <Route path="/tela/:id" element={<TelaPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/painel"

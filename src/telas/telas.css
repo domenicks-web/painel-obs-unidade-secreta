@@ -1,0 +1,55 @@
+/* Keyframes copiados de referencia/Telas Live.dc.html (linhas 16-31) */
+@keyframes usBlink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes usMarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes usMarqR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes usStripe{from{background-position:0 0}to{background-position:104px 0}}
+@keyframes usFloat{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(3deg) translateY(-18px)}}
+@keyframes usWave{0%,100%{transform:translateY(0)}30%{transform:translateY(-38px) rotate(-4deg)}60%{transform:translateY(6px)}}
+@keyframes usGlA{0%,100%{transform:translate(0,0)}20%{transform:translate(-14px,6px)}40%{transform:translate(10px,-4px)}60%{transform:translate(-6px,-8px)}80%{transform:translate(12px,4px)}}
+@keyframes usGlB{0%,100%{transform:translate(0,0)}25%{transform:translate(12px,-6px)}50%{transform:translate(-10px,8px)}75%{transform:translate(8px,6px)}}
+@keyframes usScan{from{background-position:0 0}to{background-position:0 12px}}
+@keyframes usGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes usLT{0%{transform:translateX(-120%)}8%{transform:translateX(0)}78%{transform:translateX(0)}88%,100%{transform:translateX(-120%)}}
+@keyframes usLTs{0%{transform:scaleX(0)}6%{transform:scaleX(1)}80%{transform:scaleX(1)}86%,100%{transform:scaleX(0)}}
+@keyframes usDotOff{0%,8%{transform:scale(1)}14%,86%{transform:scale(0)}92%,100%{transform:scale(1)}}
+@keyframes usIn{0%{transform:translateX(-120px) skewX(-14deg);opacity:0}60%{transform:translateX(10px) skewX(2deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes usPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+@keyframes usSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.us-ponto {
+  display: inline-block;
+  width: 0.3em;
+  height: 0.3em;
+  border-radius: 50%;
+  background: currentColor;
+  margin: 0 0.42em;
+  vertical-align: 0.2em;
+}
+
+.us-palco {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform-origin: 0 0;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+/* a referência usa o padrão do navegador; o identidade.css global põe border-box em tudo */
+.us-palco, .us-palco * { box-sizing: content-box; }
+
+/* Slot Camera (referencia/Slot Camera.dc.html, linhas 10-15) */
+.t-slot { position: absolute; background: #241d21; box-shadow: 0 0 0 4px #FF6B1F, 12px 12px 0 4px #8B6CF0; display: flex; align-items: center; justify-content: center; }
+.t-slot__placeholder { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: 0.14em; color: #4a3f44; }
+.t-slot__tag { position: absolute; left: -4px; top: calc(100% + 4px); display: flex; align-items: stretch; }
+.t-slot__led-box { width: 40px; background: #FF6B1F; display: flex; align-items: center; justify-content: center; }
+.t-slot__led { width: 12px; height: 12px; border-radius: 50%; background: #1A1417; animation: usBlink 1.4s ease-in-out infinite; }
+.t-slot__nome { background: #1A1417; color: #FFF3E0; font: 700 26px/1 'Barlow Condensed', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; padding: 9px 16px 8px; }
+
+/* Faixa do ticker (Telas Live linhas 149-152) */
+.t-ticker { position: absolute; left: 0; top: 1000px; width: 1920px; height: 56px; background: #FF6B1F; display: flex; align-items: center; overflow: hidden; }
+.t-ticker__listra { flex-shrink: 0; height: 56px; width: 180px; background: repeating-linear-gradient(-45deg, #1A1417 0 14px, #FF6B1F 14px 28px); background-size: 56px 56px; animation: usStripe 1s linear infinite; }
+.t-ticker__trilho { flex: 1; overflow: hidden; display: flex; align-items: center; height: 56px; }
+.t-ticker__texto { display: flex; white-space: nowrap; font: 700 32px/1 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; color: #1A1417; animation: usMarq 30s linear infinite; width: max-content; }
+
+/* Letreiro de fundo (texto gigante repetido) */
+.t-linha { display: flex; white-space: nowrap; width: max-content; }
