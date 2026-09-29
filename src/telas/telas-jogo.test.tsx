@@ -40,6 +40,15 @@ describe('futebol e filme', () => {
     expect(cams(container)).toEqual(['60px 200px 645px 400px', '735px 200px 645px 400px']);
   });
 
+  it('sem enquete a etiqueta de nome fica dentro da câmera; com enquete, embaixo', () => {
+    const dentro = (c: HTMLElement) => c.querySelectorAll('.t-slot__tag--dentro').length;
+    const semEnquete = { ...ESTADO_PADRAO, enquete: { casa: 0, empate: 0, fora: 0, mostrar: false } };
+    const { container, rerender } = render(<TelaFutebol estado={semEnquete} />);
+    expect(dentro(container)).toBe(2);
+    rerender(<TelaFutebol estado={{ ...semEnquete, enquete: { ...semEnquete.enquete, mostrar: true } }} />);
+    expect(dentro(container)).toBe(0);
+  });
+
   it('Filme mostra 4 câmeras, filme e episódio', () => {
     render(<TelaFilme estado={{ ...ESTADO_PADRAO, filme: 'TITANIC', episodio: 'T2 · E1' }} />);
     expect(screen.getByText('TITANIC')).toBeInTheDocument();

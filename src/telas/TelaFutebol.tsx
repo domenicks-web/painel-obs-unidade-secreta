@@ -35,9 +35,10 @@ export function TelaFutebol({ estado, previa }: PropsTela) {
           </div>
         </div>
       </div>
-      {/* sem a enquete, as câmeras ocupam a área toda até 950 (em pé, não 16:9: decisão do usuário) */}
-      <SlotCamera nome={estado.nomes[0] || 'NOME 01'} w={645} h={alturaCam} x={60} y={200} previa={previa} />
-      <SlotCamera nome={estado.nomes[1] || 'NOME 02'} w={645} h={alturaCam} x={735} y={200} previa={previa} />
+      {/* sem a enquete, as câmeras ocupam a área toda até 950 (em pé, não 16:9: decisão do usuário)
+          e a etiqueta de nome entra no quadro para não encostar no letreiro */}
+      <SlotCamera nome={estado.nomes[0] || 'NOME 01'} w={645} h={alturaCam} x={60} y={200} previa={previa} etiquetaDentro={!enquete.mostrar} />
+      <SlotCamera nome={estado.nomes[1] || 'NOME 02'} w={645} h={alturaCam} x={735} y={200} previa={previa} etiquetaDentro={!enquete.mostrar} />
       {enquete.mostrar && (
         <div className="t-futebol__enquete">
           <div className="t-futebol__enquete-titulo">QUEM GANHA?</div>

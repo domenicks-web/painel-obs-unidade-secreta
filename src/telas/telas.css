@@ -41,6 +41,7 @@
 .t-slot { position: absolute; background: #241d21; box-shadow: 0 0 0 4px #FF6B1F, 12px 12px 0 4px #8B6CF0; display: flex; align-items: center; justify-content: center; }
 .t-slot__placeholder { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: 0.14em; color: #4a3f44; }
 .t-slot__tag { position: absolute; left: -4px; top: calc(100% + 4px); display: flex; align-items: stretch; }
+.t-slot__tag--dentro { left: 0; top: auto; bottom: 0; }
 .t-slot__led-box { width: 40px; background: #FF6B1F; display: flex; align-items: center; justify-content: center; }
 .t-slot__led { width: 12px; height: 12px; border-radius: 50%; background: #1A1417; animation: usBlink 1.4s ease-in-out infinite; }
 .t-slot__nome { background: #1A1417; color: #FFF3E0; font: 700 26px/1 'Barlow Condensed', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; padding: 9px 16px 8px; }
