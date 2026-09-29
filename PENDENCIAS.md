@@ -14,13 +14,13 @@ Vale na hora para todas as telas: o ajuste mexe no relógio do servidor (`clockI
 - Distribuição automática pelo número de câmeras: 1 no centro, 2 lado a lado, 3 em colunas…
 - Modo **câmeras manuais**: as molduras somem da tela e as câmeras são adicionadas direto pelo OBS.
 
-### Parte 4: apoios
-- **Meta automática com PIX**: webhook do LivePix → a meta soma sozinha (hoje o PIX entra manual).
-- **Superchat e super sticker** vindos do Social Stream Ninja, convertidos para BRL.
-- **Membro novo** vindo do Social Stream Ninja.
-- **Tabela única de apoios** no banco (PIX, superchat, sticker, membro), com uma lista **"Apoios"** no painel.
-- **`/alerta` de volta, só para superchat e membro** (o PIX continua no widget do LivePix), pausando o LivePix enquanto o alerta toca, para os dois não se atropelarem.
-- Referência visual: `Alerta YT.dc.html` (o usuário vai mandar para `referencia/`).
+### Parte 4: apoios — feita, falta ligar em produção
+Implementada em 2026-09-29 (spec `docs/superpowers/specs/2026-09-29-parte-4-apoios-design.md`, README 4.3). Para funcionar em produção:
+- rodar `supabase/migrations/0007_apoios.sql` no Supabase de produção **antes** do deploy do front novo;
+- criar na Vercel `LIVEPIX_CLIENT_ID`, `LIVEPIX_CLIENT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALERTA_CHAVE`;
+- criar o app no LivePix (escopos `messages:read` e `webhooks`) e cadastrar o webhook (`node scripts/livepix-webhook.mjs …`);
+- fonte `/alerta?sessao=…&chave=…` no OBS;
+- testes reais: um PIX de verdade somando na meta, um superchat e um membro numa live de teste.
 
 ### Kit OBS
 Pasta `kit-obs/` com:

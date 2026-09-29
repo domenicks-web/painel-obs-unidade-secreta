@@ -108,3 +108,12 @@ Estava no meio do fluxo `superpowers:subagent-driven-development`. Regra da skil
 - `main` pushado para `github.com:domenicks-web/painel-obs-unidade-secreta` (primeiro push; histórico varrido: nenhum segredo). Pendências futuras em `PENDENCIAS.md`.
 - Vercel: projeto importado pelo usuário, variáveis criadas em Production. **No ar em https://painel-obs-unidade-secreta.vercel.app** (deploy automático a cada push no `main`). Conferido: /tela/inicio, /tela/host, /painel (→ /login), /chat?teste=1 sem erros; /api/livepix/* respondem 401 sem login. Corrigido no deploy: imports com `.js` em `api/` (ESM no Node).
 - PIX TESTE%: tabela `pix` de produção estava vazia (0 linhas), nada a apagar.
+
+## Parte 4 — apoios e /alerta (2026-09-29, noite)
+
+- Implementada em `main` local (commits `5d4a36d`..), **não pushada**: o front novo lê a tabela `apoios`, que só existe depois da migration 0007. Ordem: usuário roda 0007 em produção → push → deploy.
+- Spec: `docs/superpowers/specs/2026-09-29-parte-4-apoios-design.md`. README 4.3.
+- Banco 0007: `pix` → `apoios` (tipo, valor_texto); meta soma tudo em BRL; último PIX só PIX; top qualquer apoio pago. Funções service_role: `registrar_pix_livepix`, `alerta_livepix`.
+- Servidor: `/api/livepix/webhook` (OAuth client_credentials, confere na API), `/api/cambio`, `/api/livepix/alerta` (ALERTA_CHAVE). Script `scripts/livepix-webhook.mjs`.
+- Painel grava superchat/sticker/membro novo do YouTube (SSN) via `registrar_apoio_youtube`; lista APOIOS. `/alerta` idêntico à referência (prints `docs/prints/alerta-*-lado-a-lado.png`).
+- Envs novas na Vercel: LIVEPIX_CLIENT_ID, LIVEPIX_CLIENT_SECRET, SUPABASE_SERVICE_ROLE_KEY, ALERTA_CHAVE.
