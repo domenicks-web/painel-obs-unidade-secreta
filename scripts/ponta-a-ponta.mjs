@@ -56,8 +56,6 @@ try {
 
 const host = await ctx.newPage();
 await host.goto(`${BASE}/tela/host`);
-const alerta = await ctx.newPage();
-await alerta.goto(`${BASE}/alerta`);
 await host.waitForTimeout(2500);
 
 // 1. título chega na tela
@@ -66,7 +64,7 @@ await campoTitulo.fill(novoTitulo);
 const t1 = await esperarTexto(host, '.t-topo__titulo', (t) => t === novoTitulo);
 registrar('título do painel aparece na /tela/host', t1.ms != null, t1.ms != null ? `${t1.ms} ms depois de digitar (inclui os 400 ms de espera)` : `tela mostra "${t1.txt}"`);
 
-// 2. PIX manual: meta, último e alerta
+// 2. PIX manual: meta e último
 const metaAntes = (await host.locator('.t-host__meta-atual').textContent()).trim();
 const nomePix = `TESTE PIX ${Date.now() % 1000}`;
 await painel.getByPlaceholder('NOME (PIX MANUAL)').fill(nomePix);
@@ -76,8 +74,6 @@ const ult = await esperarTexto(host, '.t-host__card--ultimo .t-host__card-nome',
 registrar('PIX manual vira "último PIX" no Host', ult.ms != null, ult.ms != null ? `${ult.ms} ms` : `mostra "${ult.txt}"`);
 const metaDepois = (await host.locator('.t-host__meta-atual').textContent()).trim();
 registrar('meta soma R$ 7,50', metaDepois !== metaAntes, `${metaAntes} → ${metaDepois}`);
-const al = await esperarTexto(alerta, '.a-alerta__nome', (t) => t === nomePix, 4000);
-registrar('/alerta mostra o cartão do PIX', al.ms != null, al.ms != null ? `${al.ms} ms` : `mostra "${al.txt}"`);
 
 // 3. não contar → meta volta
 const linhaPix = painel.locator('.p-pix__item', { hasText: nomePix });

@@ -5,7 +5,6 @@ Painel web para controlar os overlays de OBS da Unidade Secreta em tempo real, d
 ## Como funciona
 
 - `/tela/:id` — as 9 telas (`inicio`, `host`, `futebol`, `filme`, `mesa`, `intervalo`, `lower`, `tecnico`, `fim`). É a URL que entra na fonte Navegador do OBS. Fundo transparente.
-- `/alerta` — o alerta de PIX, por cima de tudo. Mostra um PIX por vez (6 s cada), na ordem em que chegaram.
 - `/painel` — onde a galera edita as infos das telas, o PIX manual e a galera (precisa de login). A troca de cena é no OBS.
 - `/admin` — convidar gente nova e definir o papel (admin/editor).
 - `/login` — entrada com e-mail e senha.
@@ -46,11 +45,11 @@ Depois crie o login: Authentication → Users → **Add user → Create new user
    | Host, 1 câmera | 924×520 em (60,150); QR 214×214 dentro da caixa laranja | 440×800 em (1420,150) |
    | Host, 2 câmeras | 635×520 em (60,150) e (725,150) | 440×800 em (1420,150) |
    | Host, 3 câmeras | 780×520 em (60,150); 490×235 em (870,150) e (870,435) | 440×800 em (1420,150) |
-   | Futebol | 645×400 em (60,200) e (735,200) | 440×910 em (1420,40) |
+   | Futebol | 645×400 em (60,200) e (735,200); sem enquete, 645×750 | 440×910 em (1420,40) |
    | Filme/série | 645×340 em (60,130), (735,130), (60,540), (735,540) | 440×750 em (1420,130) |
    | Mesa redonda | 580×326 em (60,160), (670,160), (1280,160), (60,570), (670,570), (1280,570) | — |
 
-4. **Alerta de PIX:** uma fonte Navegador `https://SEU-DOMINIO.vercel.app/alerta`, 1920×1080, no topo das cenas (ou numa cena usada como fonte em todas). Som opcional: coloque um arquivo `public/alerta.mp3` antes do deploy e ajuste o volume no mixer do OBS.
+4. **Alerta de PIX:** é o widget do próprio LivePix (fonte Navegador com o link do LivePix), no topo das cenas. O painel só controla ele (ver 4.1).
 5. **Lower third** (`/tela/lower`): entra uma vez e fica; quem mostra/esconde é o OBS (atalho ou Modo Estúdio).
 6. Troca de cena é sempre no OBS (transição Fita/stinger, Modo Estúdio). O painel só muda as infos.
 7. Dá pra usar o painel dentro do OBS: Docks → Docks de navegador personalizados → `https://SEU-DOMINIO.vercel.app/painel`.
@@ -93,6 +92,5 @@ Comparação visual com a referência (com `npm run dev` rodando; precisa do Chr
 ```bash
 (cd scripts && npm install)
 node scripts/comparar-telas.mjs   # 9 prints lado a lado em docs/prints/
-node scripts/print-alerta.mjs     # docs/prints/alerta.png (usa /alerta?teste=1, só em dev)
 node scripts/print-painel.mjs     # painel com o banco simulado
 ```
