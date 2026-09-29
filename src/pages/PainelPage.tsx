@@ -43,6 +43,7 @@ function Painel() {
         ehAdmin={papel === 'admin'}
         aoAbrirGalera={() => setGaleraAberta(true)}
         livepix={livepix.status}
+        livepixUltimo={livepix.ultimo}
       />
       <div className="p-grade">
         <ListaTelas atual={tela} aoEscolher={setTela} />

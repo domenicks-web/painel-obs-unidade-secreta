@@ -11,24 +11,23 @@ function apiLivePixDev(): Plugin {
     configureServer(server) {
       const env = loadEnv(server.config.mode, process.cwd(), '');
       server.middlewares.use('/api/livepix', async (req, res) => {
-        const acao = (req.url ?? '').replace(/^\//, '').split('?')[0];
-        if (acao !== 'controls' && acao !== 'skip' && acao !== 'replay') {
-          res.statusCode = 404;
-          return res.end();
-        }
+        const comando = (req.url ?? '').replace(/^\//, '').split('?')[0];
         const partes: Buffer[] = [];
         for await (const p of req) partes.push(p as Buffer);
         const cabecalhos = new Headers();
         for (const [k, v] of Object.entries(req.headers)) if (typeof v === 'string') cabecalhos.set(k, v);
-        const pedido = new Request(`http://localhost/api/livepix/${acao}`, {
+        const pedido = new Request(`http://localhost/api/livepix/${comando}`, {
           method: req.method,
           headers: cabecalhos,
           body: partes.length && req.method !== 'GET' ? Buffer.concat(partes) : undefined,
         });
-        const { tratarControles } = await server.ssrLoadModule('/src/servidor/livepix.ts');
-        const r: Response = await tratarControles(pedido, acao, {
-          LIVEPIX_CLIENT_ID: env.LIVEPIX_CLIENT_ID,
-          LIVEPIX_CLIENT_SECRET: env.LIVEPIX_CLIENT_SECRET,
+        const { tratarComando } = await server.ssrLoadModule('/src/servidor/livepix.ts');
+        const r: Response = await tratarComando(pedido, comando, {
+          LIVEPIX_URL_PAUSAR: env.LIVEPIX_URL_PAUSAR,
+          LIVEPIX_URL_RETOMAR: env.LIVEPIX_URL_RETOMAR,
+          LIVEPIX_URL_PULAR: env.LIVEPIX_URL_PULAR,
+          LIVEPIX_URL_REPETIR: env.LIVEPIX_URL_REPETIR,
+          LIVEPIX_URL_LIMPAR: env.LIVEPIX_URL_LIMPAR,
           SUPABASE_URL: env.VITE_SUPABASE_URL,
           SUPABASE_ANON_KEY: env.VITE_SUPABASE_ANON_KEY,
         });

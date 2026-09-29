@@ -158,7 +158,7 @@
 /* ===== Controles do alerta LivePix (coluna PIX) ===== */
 @keyframes pFalhou { 0%, 100% { border-color: #3a3035; } 50% { border-color: #FF6B1F; } }
 .p-livepix { display: flex; flex-direction: column; gap: 6px; }
-.p-livepix__botoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.p-livepix__botoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .p-livepix__botao { min-height: 44px; min-width: 0; padding: 0 6px; background: #241d21; color: #FFF3E0; border: 2px solid #3a3035; font: 700 12px/1.2 'JetBrains Mono', monospace !important; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
 .p-livepix__botao:hover { border-color: #FFF3E0; }
 .p-livepix__botao--pausado { background: #8B6CF0; color: #1A1417; border-color: #8B6CF0; }
@@ -166,6 +166,12 @@
 .p-livepix__botao--falhou { border-color: #FF6B1F; animation: pFalhou .3s steps(1) 3; }
 .p-livepix__faixa { background: #8B6CF0; color: #1A1417; font: 700 10px/1 'JetBrains Mono', monospace; letter-spacing: .14em; padding: 6px 10px; text-align: center; }
 .p-livepix__faixa--erro { background: #FF6B1F; }
+.p-livepix__botao--confirmando { border-color: #FF6B1F; }
+.p-livepix__confirmar { display: flex; align-items: center; gap: 8px; background: #FF6B1F; padding: 6px 6px 6px 10px; }
+.p-livepix__pergunta { flex: 1; color: #1A1417; font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .14em; }
+.p-livepix__sim, .p-livepix__nao { min-height: 40px; padding: 0 10px; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .12em; cursor: pointer; border: 2px solid #1A1417; }
+.p-livepix__sim { background: #1A1417; color: #FFF3E0; }
+.p-livepix__nao { background: transparent; color: #1A1417; }
 
 /* selo LIVEPIX do topo quando os alertas estão pausados */
 .p-status--violeta { background: #8B6CF0; }

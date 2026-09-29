@@ -55,15 +55,18 @@ Depois crie o login: Authentication → Users → **Add user → Create new user
 6. Troca de cena é sempre no OBS (transição Fita/stinger, Modo Estúdio). O painel só muda as infos.
 7. Dá pra usar o painel dentro do OBS: Docks → Docks de navegador personalizados → `https://SEU-DOMINIO.vercel.app/painel`.
 
-## 4.1 Controles do alerta do LivePix (pausar, pular, repetir)
+## 4.1 Controles do alerta do LivePix (pausar, pular, repetir, limpar fila)
 
-O alerta de PIX com áudio continua sendo o widget do próprio LivePix no OBS. O painel só controla ele (coluna PIX: PAUSAR ALERTAS / RETOMAR, PULAR, REPETIR).
+O alerta de PIX com áudio continua sendo o widget do próprio LivePix no OBS. O painel só controla ele (coluna PIX: PAUSAR ALERTAS / RETOMAR, PULAR, REPETIR, LIMPAR FILA).
 
-1. No LivePix, em Configurações → Aplicações, crie uma aplicação e anote o `client_id` e o `client_secret`. A permissão usada é **controls**.
-2. Na Vercel, em Environment Variables, adicione `LIVEPIX_CLIENT_ID` e `LIVEPIX_CLIENT_SECRET` (**sem** o prefixo `VITE_`: ficam só no servidor, nunca vão pro navegador). Faça redeploy.
-3. Pra testar local, coloque as mesmas duas variáveis no `.env.local`; o `npm run dev` já atende `/api/livepix/*`.
+1. Rode `supabase/migrations/0006_livepix_controle.sql` no SQL Editor do Supabase.
+2. No painel do LivePix, em **Controles de Alertas**, copie os links de pausar, retomar, pular, repetir e limpar.
+3. Na Vercel, em Environment Variables, adicione `LIVEPIX_URL_PAUSAR`, `LIVEPIX_URL_RETOMAR`, `LIVEPIX_URL_PULAR`, `LIVEPIX_URL_REPETIR` e `LIVEPIX_URL_LIMPAR` (**sem** o prefixo `VITE_`: ficam só no servidor, nunca vão pro navegador). Faça redeploy.
+4. Pra testar local, coloque as mesmas cinco variáveis no `.env.local`; o `npm run dev` já atende `/api/livepix/*`.
 
-As chamadas passam por `api/livepix/*` (funções da Vercel): o servidor confere se quem clicou é da equipe, pega o token OAuth do LivePix e guarda até perto de expirar. Com os alertas pausados, o painel mostra a faixa "ALERTAS PAUSADOS · FILA SEGURANDO" e o selo LIVEPIX do topo fica violeta.
+As chamadas passam por `api/livepix/<comando>` (funções da Vercel): o servidor confere se quem clicou é da equipe e chama o link do LivePix. Os links não dizem se o alerta está pausado, então cada comando aceito fica gravado no banco (`livepix_controle`) e toda a equipe vê o mesmo estado. O selo LIVEPIX do topo mostra o último comando dado (quem e quando aparecem ao parar o mouse em cima). Pausado, o selo fica violeta e o painel mostra a faixa "ALERTAS PAUSADOS · FILA SEGURANDO". Se alguém pausar direto no LivePix, o painel não fica sabendo.
+
+LIMPAR FILA pede confirmação ("LIMPAR FILA?") antes de apagar a fila.
 
 ## 5. Convidar o resto da galera
 

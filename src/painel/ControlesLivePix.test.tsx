@@ -6,9 +6,11 @@ import type { ControlesLivePix as Controles } from '../live/useControlesLivePix'
 function controles(extra: Partial<Controles> = {}): Controles {
   return {
     status: 'ativo',
+    ultimo: null,
     alternarPausa: vi.fn().mockResolvedValue(true),
     pular: vi.fn().mockResolvedValue(true),
     repetir: vi.fn().mockResolvedValue(true),
+    limpar: vi.fn().mockResolvedValue(true),
     ...extra,
   };
 }
@@ -16,11 +18,10 @@ function controles(extra: Partial<Controles> = {}): Controles {
 afterEach(() => vi.useRealTimers());
 
 describe('ControlesLivePix', () => {
-  it('ativo: PAUSAR ALERTAS, PULAR, REPETIR e nenhuma faixa', () => {
+  it('ativo: 4 botões e nenhuma faixa', () => {
     render(<ControlesLivePix controles={controles()} />);
-    expect(screen.getByRole('button', { name: 'PAUSAR ALERTAS' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'PULAR' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'REPETIR' })).toBeInTheDocument();
+    const nomes = screen.getAllByRole('button').map((b) => b.textContent);
+    expect(nomes).toEqual(['PAUSAR ALERTAS', 'PULAR', 'REPETIR', 'LIMPAR FILA']);
     expect(screen.queryByText('ALERTAS PAUSADOS · FILA SEGURANDO')).toBeNull();
   });
 
@@ -44,6 +45,28 @@ describe('ControlesLivePix', () => {
     expect(c.repetir).toHaveBeenCalled();
   });
 
+  it('LIMPAR FILA pergunta "Limpar fila?" antes; cancelar não limpa', async () => {
+    const c = controles();
+    render(<ControlesLivePix controles={c} />);
+    fireEvent.click(screen.getByRole('button', { name: 'LIMPAR FILA' }));
+    expect(c.limpar).not.toHaveBeenCalled();
+    expect(screen.getByRole('alertdialog', { name: 'Limpar fila?' })).toHaveTextContent('LIMPAR FILA?');
+    fireEvent.click(screen.getByRole('button', { name: 'CANCELAR' }));
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+    expect(c.limpar).not.toHaveBeenCalled();
+  });
+
+  it('LIMPAR FILA confirmado chama limpar e fecha a pergunta', async () => {
+    const c = controles();
+    render(<ControlesLivePix controles={c} />);
+    fireEvent.click(screen.getByRole('button', { name: 'LIMPAR FILA' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'LIMPAR' }));
+    });
+    expect(c.limpar).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+  });
+
   it('falhou: mostra "FALHOU · TENTA DE NOVO" no lugar da faixa por 3 s', async () => {
     vi.useFakeTimers();
     render(<ControlesLivePix controles={controles({ status: 'pausado', pular: vi.fn().mockResolvedValue(false) })} />);
@@ -58,5 +81,15 @@ describe('ControlesLivePix', () => {
     });
     expect(screen.queryByText('FALHOU · TENTA DE NOVO')).toBeNull();
     expect(screen.getByText('ALERTAS PAUSADOS · FILA SEGURANDO')).toBeInTheDocument();
+  });
+
+  it('limpar que falha marca o botão LIMPAR FILA', async () => {
+    render(<ControlesLivePix controles={controles({ limpar: vi.fn().mockResolvedValue(false) })} />);
+    fireEvent.click(screen.getByRole('button', { name: 'LIMPAR FILA' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'LIMPAR' }));
+    });
+    expect(screen.getByText('FALHOU · TENTA DE NOVO')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'LIMPAR FILA' }).className).toContain('p-livepix__botao--falhou');
   });
 });

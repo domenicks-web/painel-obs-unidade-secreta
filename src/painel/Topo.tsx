@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAgora } from '../live/relogioServidor';
 import { formatarTempoRelativo } from '../live/formatar';
 import type { StatusConexao } from '../live/useLive';
-import type { StatusLivePix } from '../live/useControlesLivePix';
+import type { ComandoLivePix, StatusLivePix, UltimoComando } from '../live/useControlesLivePix';
 
 interface Props {
   status: StatusConexao;
@@ -12,9 +12,26 @@ interface Props {
   ehAdmin: boolean;
   aoAbrirGalera: () => void;
   livepix: StatusLivePix;
+  livepixUltimo?: UltimoComando | null;
 }
 
-export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix }: Props) {
+// Os links do LivePix não dizem o estado real: o selo mostra o último comando dado.
+const ROTULO_COMANDO: Record<ComandoLivePix, string> = {
+  pausar: 'PAUSADO',
+  retomar: 'RETOMADO',
+  pular: 'PULOU',
+  repetir: 'REPETIU',
+  limpar: 'FILA LIMPA',
+};
+
+function extraLivePix(status: StatusLivePix, ultimo: UltimoComando | null | undefined) {
+  if (status === 'erro') return 'SEM CONEXÃO';
+  const rotulo = ultimo ? ROTULO_COMANDO[ultimo.comando] : '';
+  if (status === 'pausado') return rotulo && rotulo !== 'PAUSADO' ? `PAUSADO · ${rotulo}` : 'PAUSADO';
+  return rotulo;
+}
+
+export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix, livepixUltimo }: Props) {
   const agora = useAgora(15000);
   const indicadores = [
     { label: 'TELAS SINCRONIZADAS', aceso: status === 'ao_vivo', extra: status === 'reconectando' ? 'RECONECTANDO…' : '' },
@@ -22,7 +39,10 @@ export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, li
       label: 'LIVEPIX',
       aceso: livepix === 'ativo',
       violeta: livepix === 'pausado',
-      extra: livepix === 'pausado' ? 'PAUSADO' : livepix === 'erro' ? 'SEM CONEXÃO' : '',
+      extra: extraLivePix(livepix, livepixUltimo),
+      dica: livepixUltimo
+        ? `Último comando: ${ROTULO_COMANDO[livepixUltimo.comando]}${livepixUltimo.por ? `, por ${livepixUltimo.por}` : ''}, ${formatarTempoRelativo(Date.parse(livepixUltimo.em), agora)}`
+        : undefined,
     },
     { label: 'CHAT', aceso: false, extra: 'EM BREVE' },
   ];
@@ -40,7 +60,11 @@ export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, li
           </div>
         )}
         {indicadores.map((s) => (
-          <div key={s.label} className={'violeta' in s && s.violeta ? 'p-status p-status--violeta' : s.aceso ? 'p-status' : 'p-status p-status--apagado'}>
+          <div
+            key={s.label}
+            className={'violeta' in s && s.violeta ? 'p-status p-status--violeta' : s.aceso ? 'p-status' : 'p-status p-status--apagado'}
+            title={'dica' in s ? s.dica : undefined}
+          >
             <div className={s.aceso ? 'p-status__led p-status__led--aceso' : 'p-status__led'} />
             <div className="p-status__label">{s.label}</div>
             {s.extra && <div className="p-status__extra">{s.extra}</div>}
