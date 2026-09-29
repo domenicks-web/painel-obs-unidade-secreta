@@ -1,5 +1,5 @@
 // Variáveis do servidor na Vercel. LIVEPIX_* NÃO têm prefixo VITE_: nunca vão pro navegador.
-import type { Ambiente } from '../../src/servidor/livepix';
+import type { Ambiente } from '../../src/servidor/livepix.js';
 
 const env = (globalThis as unknown as { process: { env: Record<string, string | undefined> } }).process.env;
 
