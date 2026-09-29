@@ -14,6 +14,19 @@ Vale na hora para todas as telas: o ajuste mexe no relógio do servidor (`clockI
 - Distribuição automática pelo número de câmeras: 1 no centro, 2 lado a lado, 3 em colunas…
 - Modo **câmeras manuais**: as molduras somem da tela e as câmeras são adicionadas direto pelo OBS.
 
+### Parte 4: apoios
+- **Meta automática com PIX**: webhook do LivePix → a meta soma sozinha (hoje o PIX entra manual).
+- **Superchat e super sticker** vindos do Social Stream Ninja, convertidos para BRL.
+- **Membro novo** vindo do Social Stream Ninja.
+- **Tabela única de apoios** no banco (PIX, superchat, sticker, membro), com uma lista **"Apoios"** no painel.
+- **`/alerta` de volta, só para superchat e membro** (o PIX continua no widget do LivePix), pausando o LivePix enquanto o alerta toca, para os dois não se atropelarem.
+- Referência visual: `Alerta YT.dc.html` (o usuário vai mandar para `referencia/`).
+
+### Kit OBS
+Pasta `kit-obs/` com:
+- a coleção de cenas e o perfil do OBS exportados, **sem caminhos absolutos** e **sem o ID de sessão do chat**;
+- um `LEIA.md` com o passo a passo para outra pessoa configurar do zero.
+
 ## Testes
 
 - **Chat com mensagens reais** numa live de teste (chat em pop-up + Social Stream Ninja). As mensagens de teste do SSN já chegaram no `/chat`; falta YouTube/Twitch/TikTok de verdade, DESTACAR/TIRAR e filtros no painel.
