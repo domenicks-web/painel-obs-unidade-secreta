@@ -8,11 +8,12 @@ import { TelaTecnico } from './TelaTecnico';
 import { TelaHost } from './TelaHost';
 import { TelaMesa } from './TelaMesa';
 import { TelaLower } from './TelaLower';
+import { TelaFutebol } from './TelaFutebol';
+import { TelaFilme } from './TelaFilme';
 
 export type { PropsTela } from './tipos';
 
-// Tela ainda não portada renderiza nada.
-export const TELA_COMPONENTE: Partial<Record<TelaId, (p: PropsTela) => JSX.Element>> = {
+export const TELA_COMPONENTE: Record<TelaId, (p: PropsTela) => JSX.Element> = {
   inicio: TelaInicio,
   intervalo: TelaIntervalo,
   fim: TelaFim,
@@ -20,4 +21,6 @@ export const TELA_COMPONENTE: Partial<Record<TelaId, (p: PropsTela) => JSX.Eleme
   host: TelaHost,
   mesa: TelaMesa,
   lower: TelaLower,
+  futebol: TelaFutebol,
+  filme: TelaFilme,
 };
