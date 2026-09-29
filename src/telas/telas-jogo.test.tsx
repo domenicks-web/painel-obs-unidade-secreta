@@ -30,6 +30,16 @@ describe('futebol e filme', () => {
     expect(screen.queryByText(/VOTA NO CHAT/)).toBeNull();
   });
 
+  it('sem enquete as 2 câmeras ocupam 60,200 a 1380,950; com enquete voltam a 645×400', () => {
+    const cams = (c: HTMLElement) =>
+      [...c.querySelectorAll<HTMLElement>('.t-slot')].map((e) => [e.style.left, e.style.top, e.style.width, e.style.height].join(' '));
+    const semEnquete = { ...ESTADO_PADRAO, enquete: { casa: 0, empate: 0, fora: 0, mostrar: false } };
+    const { container, rerender } = render(<TelaFutebol estado={semEnquete} />);
+    expect(cams(container)).toEqual(['60px 200px 645px 750px', '735px 200px 645px 750px']);
+    rerender(<TelaFutebol estado={{ ...semEnquete, enquete: { ...semEnquete.enquete, mostrar: true } }} />);
+    expect(cams(container)).toEqual(['60px 200px 645px 400px', '735px 200px 645px 400px']);
+  });
+
   it('Filme mostra 4 câmeras, filme e episódio', () => {
     render(<TelaFilme estado={{ ...ESTADO_PADRAO, filme: 'TITANIC', episodio: 'T2 · E1' }} />);
     expect(screen.getByText('TITANIC')).toBeInTheDocument();
