@@ -12,6 +12,7 @@ import { ColunaPix } from '../painel/ColunaPix';
 import { CaixaChat } from '../painel/CaixaChat';
 import { ModalGalera } from '../painel/ModalGalera';
 import { usePix } from '../live/usePix';
+import { useControlesLivePix } from '../live/useControlesLivePix';
 import '../painel/painel.css';
 
 export function PainelPage() {
@@ -25,6 +26,7 @@ export function PainelPage() {
 function Painel() {
   const live = useLive();
   const pix = usePix();
+  const livepix = useControlesLivePix();
   const { papel } = useAuth();
   const [tela, setTela] = useState<TelaId>('host');
   const [galeraAberta, setGaleraAberta] = useState(false);
@@ -40,6 +42,7 @@ function Painel() {
         editadoEm={live.editadoEm}
         ehAdmin={papel === 'admin'}
         aoAbrirGalera={() => setGaleraAberta(true)}
+        livepix={livepix.status}
       />
       <div className="p-grade">
         <ListaTelas atual={tela} aoEscolher={setTela} />
@@ -65,7 +68,7 @@ function Painel() {
           </section>
         </main>
         <aside className="p-direita">
-          <ColunaPix live={live} pix={pix} />
+          <ColunaPix live={live} pix={pix} livepix={livepix} />
           <CaixaChat />
         </aside>
       </div>

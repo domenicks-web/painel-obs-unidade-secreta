@@ -42,8 +42,15 @@ const sessao = { access_token: jwt, refresh_token: 'r', token_type: 'bearer', ex
 
 const browser = await chromium.launch({ executablePath: exe });
 
-async function abrirPainel(largura, altura) {
+async function abrirPainel(largura, altura, autoPlay = true) {
   const ctx = await browser.newContext({ viewport: { width: largura, height: altura } });
+  // controles do LivePix simulados (as rotas /api/livepix/* do servidor)
+  await ctx.route('**/api/livepix/**', (route) => {
+    const u = route.request().url();
+    if (u.endsWith('/controls') && route.request().method() === 'GET')
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ autoPlay }) });
+    return route.fulfill({ status: 204, body: '' });
+  });
   await ctx.addInitScript(([k, v]) => localStorage.setItem(k, v), [`sb-${ref}-auth-token`, JSON.stringify(sessao)]);
   await ctx.route(`${url}/**`, (route) => {
     const u = route.request().url();
@@ -85,10 +92,18 @@ await nossa.getByText('GALERA', { exact: true }).click();
 await nossa.waitForTimeout(500);
 await nossa.screenshot({ path: resolve('docs/prints/painel-galera.png') });
 
+// controles do alerta LivePix: ativo e pausado, recorte da coluna PIX + topo
+const pausado = await abrirPainel(1440, 900, false);
+await pausado.screenshot({ path: resolve('docs/prints/painel-livepix-pausado.png') });
+await pausado.screenshot({ path: resolve('docs/prints/painel-livepix-coluna.png'), clip: { x: 1040, y: 0, width: 400, height: 330 } });
+
 // celular
 const cel = await abrirPainel(390, 844);
 const larguraDoc = await cel.evaluate(() => document.documentElement.scrollWidth);
 await cel.screenshot({ path: resolve('docs/prints/painel-celular.png'), fullPage: true });
+const celP = await abrirPainel(390, 844, false);
+const caixa = await celP.locator('.p-pix').boundingBox();
+await celP.screenshot({ path: resolve('docs/prints/painel-livepix-celular.png'), fullPage: true, clip: { x: 0, y: caixa.y, width: 390, height: 260 } });
 console.log('ok painel; largura no celular =', larguraDoc);
 await browser.close();
 servidor.close();

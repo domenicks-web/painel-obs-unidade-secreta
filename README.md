@@ -55,6 +55,16 @@ Depois crie o login: Authentication → Users → **Add user → Create new user
 6. Troca de cena é sempre no OBS (transição Fita/stinger, Modo Estúdio). O painel só muda as infos.
 7. Dá pra usar o painel dentro do OBS: Docks → Docks de navegador personalizados → `https://SEU-DOMINIO.vercel.app/painel`.
 
+## 4.1 Controles do alerta do LivePix (pausar, pular, repetir)
+
+O alerta de PIX com áudio continua sendo o widget do próprio LivePix no OBS. O painel só controla ele (coluna PIX: PAUSAR ALERTAS / RETOMAR, PULAR, REPETIR).
+
+1. No LivePix, em Configurações → Aplicações, crie uma aplicação e anote o `client_id` e o `client_secret`. A permissão usada é **controls**.
+2. Na Vercel, em Environment Variables, adicione `LIVEPIX_CLIENT_ID` e `LIVEPIX_CLIENT_SECRET` (**sem** o prefixo `VITE_`: ficam só no servidor, nunca vão pro navegador). Faça redeploy.
+3. Pra testar local, coloque as mesmas duas variáveis no `.env.local`; o `npm run dev` já atende `/api/livepix/*`.
+
+As chamadas passam por `api/livepix/*` (funções da Vercel): o servidor confere se quem clicou é da equipe, pega o token OAuth do LivePix e guarda até perto de expirar. Com os alertas pausados, o painel mostra a faixa "ALERTAS PAUSADOS · FILA SEGURANDO" e o selo LIVEPIX do topo fica violeta.
+
 ## 5. Convidar o resto da galera
 
 Para cada pessoa: cadastre o e-mail e o papel (editor ou admin) em `/admin` e crie o login dela no Supabase (Authentication → Users → Add user → Create new user, com "Auto Confirm User" marcado). Passe o e-mail e a senha pra ela. A ordem dos dois passos não importa, o vínculo é automático.

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAgora } from '../live/relogioServidor';
 import { formatarTempoRelativo } from '../live/formatar';
 import type { StatusConexao } from '../live/useLive';
+import type { StatusLivePix } from '../live/useControlesLivePix';
 
 interface Props {
   status: StatusConexao;
@@ -10,13 +11,19 @@ interface Props {
   editadoEm: string | null;
   ehAdmin: boolean;
   aoAbrirGalera: () => void;
+  livepix: StatusLivePix;
 }
 
-export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera }: Props) {
+export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix }: Props) {
   const agora = useAgora(15000);
   const indicadores = [
     { label: 'TELAS SINCRONIZADAS', aceso: status === 'ao_vivo', extra: status === 'reconectando' ? 'RECONECTANDO…' : '' },
-    { label: 'LIVEPIX', aceso: false, extra: 'EM BREVE' },
+    {
+      label: 'LIVEPIX',
+      aceso: livepix === 'ativo',
+      violeta: livepix === 'pausado',
+      extra: livepix === 'pausado' ? 'PAUSADO' : livepix === 'erro' ? 'SEM CONEXÃO' : '',
+    },
     { label: 'CHAT', aceso: false, extra: 'EM BREVE' },
   ];
 
@@ -33,7 +40,7 @@ export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera }: 
           </div>
         )}
         {indicadores.map((s) => (
-          <div key={s.label} className={s.aceso ? 'p-status' : 'p-status p-status--apagado'}>
+          <div key={s.label} className={'violeta' in s && s.violeta ? 'p-status p-status--violeta' : s.aceso ? 'p-status' : 'p-status p-status--apagado'}>
             <div className={s.aceso ? 'p-status__led p-status__led--aceso' : 'p-status__led'} />
             <div className="p-status__label">{s.label}</div>
             {s.extra && <div className="p-status__extra">{s.extra}</div>}

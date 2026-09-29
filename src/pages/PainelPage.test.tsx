@@ -8,6 +8,7 @@ vi.mock('../live/useLive', () => ({
   SLUG: 'principal',
   useLive: () => ({ estado: { ...ESTADO_PADRAO, titulo: 'LIVE' }, status: 'ao_vivo', editadoPor: 'Ana', editadoEm: new Date().toISOString(), salvar: vi.fn(), salvarDepois, reiniciarContagem: vi.fn(), relogio: vi.fn() }),
 }));
+vi.mock('../live/useControlesLivePix', () => ({ useControlesLivePix: () => ({ status: 'ativo', alternarPausa: vi.fn(), pular: vi.fn(), repetir: vi.fn() }) }));
 vi.mock('../live/usePix', () => ({ usePix: () => ({ lista: [], adicionarManual: vi.fn(), alternar: vi.fn() }) }));
 vi.mock('../live/relogioServidor', () => ({ useAgora: () => Date.now(), RelogioServidorProvider: ({ children }: { children: React.ReactNode }) => children }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ papel: 'admin', sessao: {}, carregando: false, erro: null }) }));

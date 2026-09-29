@@ -3,13 +3,15 @@ import type { useLive } from '../live/useLive';
 import type { usePix } from '../live/usePix';
 import { reais } from '../live/formatar';
 import { CampoTexto } from './CampoTexto';
+import { ControlesLivePix } from './ControlesLivePix';
+import type { ControlesLivePix as Controles } from '../live/useControlesLivePix';
 
 type Live = Pick<ReturnType<typeof useLive>, 'estado' | 'salvarDepois'>;
 type PixHook = ReturnType<typeof usePix>;
 
 const numero = (v: string) => Number(v.replace(',', '.'));
 
-export function ColunaPix({ live, pix }: { live: Live; pix: PixHook }) {
+export function ColunaPix({ live, pix, livepix }: { live: Live; pix: PixHook; livepix?: Controles }) {
   const { estado, salvarDepois } = live;
   const pct = Math.min(100, Math.round((estado.metaAtual / Math.max(1, estado.metaTotal)) * 100)) + '%';
   const [nome, setNome] = useState('');
@@ -36,8 +38,10 @@ export function ColunaPix({ live, pix }: { live: Live; pix: PixHook }) {
     <section className="p-pix">
       <div className="p-bloco-cabeca">
         <div className="p-bloco-titulo">PIX</div>
-        <div className="p-bloco-selo">MANUAL · LIVEPIX EM BREVE</div>
+        <div className="p-bloco-selo">MANUAL · ALERTA LIVEPIX</div>
       </div>
+
+      {livepix && <ControlesLivePix controles={livepix} />}
 
       <div className="p-meta">
         <div className="p-meta__topo">
