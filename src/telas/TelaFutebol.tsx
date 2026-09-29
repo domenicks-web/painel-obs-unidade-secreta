@@ -8,7 +8,8 @@ const pct = (v: number) => Math.min(100, Math.max(0, Number(v) || 0)) + '%';
 
 export function TelaFutebol({ estado, previa }: PropsTela) {
   const { enquete } = estado;
-  const alturaCam = enquete.mostrar ? 400 : 750;
+  // câmeras 16:9; sem a enquete ficam centralizadas no espaço que ela deixa
+  const yCam = enquete.mostrar ? 200 : 370;
   const opcoes: [string, number, string, string][] = [
     [estado.timeA, enquete.casa, '#FF6B1F', '0s'],
     ['EMPATE', enquete.empate, '#FFF3E0', '.15s'],
@@ -35,10 +36,8 @@ export function TelaFutebol({ estado, previa }: PropsTela) {
           </div>
         </div>
       </div>
-      {/* sem a enquete, as câmeras ocupam a área toda até 950 (em pé, não 16:9: decisão do usuário)
-          e a etiqueta de nome entra no quadro para não encostar no letreiro */}
-      <SlotCamera nome={estado.nomes[0] || 'NOME 01'} w={645} h={alturaCam} x={60} y={200} previa={previa} etiquetaDentro={!enquete.mostrar} />
-      <SlotCamera nome={estado.nomes[1] || 'NOME 02'} w={645} h={alturaCam} x={735} y={200} previa={previa} etiquetaDentro={!enquete.mostrar} />
+      <SlotCamera nome={estado.nomes[0] || 'NOME 01'} w={640} h={360} x={60} y={yCam} previa={previa} />
+      <SlotCamera nome={estado.nomes[1] || 'NOME 02'} w={640} h={360} x={740} y={yCam} previa={previa} />
       {enquete.mostrar && (
         <div className="t-futebol__enquete">
           <div className="t-futebol__enquete-titulo">QUEM GANHA?</div>
@@ -55,8 +54,8 @@ export function TelaFutebol({ estado, previa }: PropsTela) {
           ))}
         </div>
       )}
-      <div className="t-caixa-chat" style={{ left: 1420, top: 40, width: 440, height: 910 }}>
-        {previa && 'CHAT · 440×910'}
+      <div className="t-caixa-chat" style={{ left: 1420, top: 150, width: 440, height: 800 }}>
+        {previa && 'CHAT · 440×800'}
       </div>
       <FaixaTicker ticker={estado.ticker} />
     </div>

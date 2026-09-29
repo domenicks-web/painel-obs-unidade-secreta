@@ -39,16 +39,16 @@ Depois crie o login: Authentication → Users → **Add user → Create new user
 
 1. Crie uma cena para cada tela e adicione uma fonte **Navegador** com `https://SEU-DOMINIO.vercel.app/tela/ID` (troque ID por `inicio`, `host`, `futebol`, `filme`, `mesa`, `intervalo`, `lower`, `tecnico` ou `fim`).
 2. Largura 1920, altura 1080. Deixe **desmarcado** "Atualizar navegador quando a cena ficar ativa": o que muda no painel chega sozinho, e os relógios seguem a hora do servidor (abrir a fonte no meio da contagem mostra o mesmo tempo das outras).
-3. Câmeras, chat e QR code do PIX entram como fontes **acima** da tela, encaixadas nas molduras. No OBS as molduras aparecem vazias (o texto "CÂMERA · 924×520" só aparece na prévia do painel). Tamanhos e posições (em 1920×1080):
+3. Câmeras, chat e QR code do PIX entram como fontes **acima** da tela, encaixadas nas molduras. No OBS as molduras aparecem vazias (o texto "CÂMERA · 928×522" só aparece na prévia do painel). Tamanhos e posições (em 1920×1080):
 
-   | Tela | Câmeras | Chat |
+   | Tela | Câmeras (todas 16:9) | Chat |
    |---|---|---|
-   | Host, 1 câmera | 924×520 em (60,150); QR 214×214 dentro da caixa laranja | 440×800 em (1420,150) |
-   | Host, 2 câmeras | 635×520 em (60,150) e (725,150) | 440×800 em (1420,150) |
-   | Host, 3 câmeras | 780×520 em (60,150); 490×235 em (870,150) e (870,435) | 440×800 em (1420,150) |
-   | Futebol | 645×400 em (60,200) e (735,200); sem enquete, 645×750 | 440×910 em (1420,40) |
-   | Filme/série | 645×340 em (60,130), (735,130), (60,540), (735,540) | 440×750 em (1420,130) |
-   | Mesa redonda | 580×326 em (60,160), (670,160), (1280,160), (60,570), (670,570), (1280,570) | — |
+   | Host, 1 câmera | 928×522 em (60,150); QR 240×320 dentro da caixa laranja | 440×800 em (1420,150) |
+   | Host, 2 câmeras | 640×360 em (60,240) e (740,240) | 440×800 em (1420,150) |
+   | Host, 3 câmeras | 896×504 em (60,150); 400×225 em (980,150) e (980,429) | 440×800 em (1420,150) |
+   | Futebol | 640×360 em (60,200) e (740,200); sem enquete, em (60,370) e (740,370) | 440×800 em (1420,150) |
+   | Filme/série | 624×351 em (60,130), (756,130), (60,550), (756,550) | 440×800 em (1420,130) |
+   | Mesa redonda | 576×324 em (62,160), (672,160), (1282,160), (62,570), (672,570), (1282,570) | — |
 
 4. **Alerta de PIX:** é o widget do próprio LivePix (fonte Navegador com o link do LivePix), no topo das cenas. O painel só controla ele (ver 4.1).
 5. **Lower third** (`/tela/lower`): entra uma vez e fica; quem mostra/esconde é o OBS (atalho ou Modo Estúdio).
@@ -73,7 +73,7 @@ LIMPAR FILA pede confirmação ("LIMPAR FILA?") antes de apagar a fila.
 1. Instale a extensão do Social Stream Ninja e abra os chats da live (YouTube, Twitch, TikTok) no navegador, como ela pede. Anote o **ID da sessão** que ela mostra.
 2. No popup da extensão, em **⚙️ Mechanics - Connections & Integrations**, ligue **"📡 Send chat messages to API server (for external listeners)"**. No dashboard da extensão ela aparece como "Chat to External Apps (ch 3/4)" e deve ficar *Connected*. Não precisa ligar o "Remote Control API" (controle remoto da extensão): deixe desligado.
    - Com essa opção ligada, a extensão para de mandar o chat para o dock/overlay próprio do Social Stream Ninja. Se usar os dois, ligue também a opção logo abaixo ("also send API-routed chat to normal dock/overlay connections").
-3. No OBS, fonte **Navegador** `https://SEU-DOMINIO.vercel.app/chat?sessao=ID`, no tamanho da área do chat de cada cena (440×800 no Host, 440×910 no Futebol, 440×750 no Filme). As mensagens empilham de baixo pra cima.
+3. No OBS, fonte **Navegador** `https://SEU-DOMINIO.vercel.app/chat?sessao=ID`, no tamanho da área do chat de cada cena (440×800 em Host, Futebol e Filme). As mensagens empilham de baixo pra cima.
 4. No painel, na primeira vez em cada navegador, cole o mesmo ID no bloco CHAT e clique CONECTAR (fica guardado só naquele navegador; TROCAR no rodapé muda). DESTACAR fixa a mensagem no topo do chat no OBS até alguém clicar TIRAR.
 
 O ID da sessão fica só na URL do OBS e no navegador de quem usa o painel, nunca no estado da live (que as telas leem sem login) nem no código. Não mostre a URL da fonte na live. O servidor do Social Stream Ninja não guarda histórico: quem abre agora vê só o que chegar dali em diante.

@@ -30,23 +30,14 @@ describe('futebol e filme', () => {
     expect(screen.queryByText(/VOTA NO CHAT/)).toBeNull();
   });
 
-  it('sem enquete as 2 câmeras ocupam 60,200 a 1380,950; com enquete voltam a 645×400', () => {
+  it('câmeras 16:9 (640×360); sem enquete descem para o meio do espaço livre', () => {
     const cams = (c: HTMLElement) =>
       [...c.querySelectorAll<HTMLElement>('.t-slot')].map((e) => [e.style.left, e.style.top, e.style.width, e.style.height].join(' '));
     const semEnquete = { ...ESTADO_PADRAO, enquete: { casa: 0, empate: 0, fora: 0, mostrar: false } };
     const { container, rerender } = render(<TelaFutebol estado={semEnquete} />);
-    expect(cams(container)).toEqual(['60px 200px 645px 750px', '735px 200px 645px 750px']);
+    expect(cams(container)).toEqual(['60px 370px 640px 360px', '740px 370px 640px 360px']);
     rerender(<TelaFutebol estado={{ ...semEnquete, enquete: { ...semEnquete.enquete, mostrar: true } }} />);
-    expect(cams(container)).toEqual(['60px 200px 645px 400px', '735px 200px 645px 400px']);
-  });
-
-  it('sem enquete a etiqueta de nome fica dentro da câmera; com enquete, embaixo', () => {
-    const dentro = (c: HTMLElement) => c.querySelectorAll('.t-slot__tag--dentro').length;
-    const semEnquete = { ...ESTADO_PADRAO, enquete: { casa: 0, empate: 0, fora: 0, mostrar: false } };
-    const { container, rerender } = render(<TelaFutebol estado={semEnquete} />);
-    expect(dentro(container)).toBe(2);
-    rerender(<TelaFutebol estado={{ ...semEnquete, enquete: { ...semEnquete.enquete, mostrar: true } }} />);
-    expect(dentro(container)).toBe(0);
+    expect(cams(container)).toEqual(['60px 200px 640px 360px', '740px 200px 640px 360px']);
   });
 
   it('Filme mostra 4 câmeras, filme e episódio', () => {

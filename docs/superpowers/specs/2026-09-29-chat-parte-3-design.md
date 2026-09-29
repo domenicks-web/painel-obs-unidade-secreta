@@ -18,7 +18,7 @@ O ID dá acesso ao controle remoto da extensão, então **não vai para o estado
 
 ## Overlay `/chat`
 
-- Fundo transparente, ocupa a fonte inteira (o OBS define o tamanho: 440×800 Host, 440×910 Futebol, 440×750 Filme). Mensagens empilham de baixo pra cima, faixa listrada de 8 px embaixo, como na referência. Guarda as últimas 9.
+- Fundo transparente, ocupa a fonte inteira (o OBS define o tamanho: 440×800 em Host, Futebol e Filme). Mensagens empilham de baixo pra cima, faixa listrada de 8 px embaixo, como na referência. Guarda as últimas 9.
 - Visual das mensagens idêntico à referência (etiqueta com o nome, MOD, bolinha de membro, superchat, novo membro).
 - Tag da plataforma: chip escuro dentro da etiqueta do nome, com a sigla na cor da plataforma (YT laranja, TW violeta, TT creme), no mesmo estilo do chip MOD.
 - Destaque (`chatPin` do estado): cartão violeta fixo no topo, no estilo do cartão de novo membro, até alguém clicar TIRAR. **Não existe na referência**: decisão nossa, mostrar no print.

@@ -40,7 +40,6 @@
 .t-slot { position: absolute; background: #241d21; box-shadow: 0 0 0 4px #FF6B1F, 12px 12px 0 4px #8B6CF0; display: flex; align-items: center; justify-content: center; }
 .t-slot__placeholder { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: 0.14em; color: #4a3f44; }
 .t-slot__tag { position: absolute; left: -4px; top: calc(100% + 4px); display: flex; align-items: stretch; }
-.t-slot__tag--dentro { left: 0; top: auto; bottom: 0; }
 .t-slot__led-box { width: 40px; background: #FF6B1F; display: flex; align-items: center; justify-content: center; }
 .t-slot__led { width: 12px; height: 12px; border-radius: 50%; background: #1A1417; animation: usBlink 1.4s ease-in-out infinite; }
 .t-slot__nome { background: #1A1417; color: #FFF3E0; font: 700 26px/1 'Barlow Condensed', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; padding: 9px 16px 8px; }
@@ -135,7 +134,7 @@
 
 /* ===== Host (Telas Live linhas 104-153) ===== */
 .t-host__titulo { letter-spacing: .02em; }
-.t-host__pix { position: absolute; left: 1014px; top: 150px; width: 346px; height: 520px; box-sizing: border-box; background: #FF6B1F; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+.t-host__pix { position: absolute; left: 1014px; top: 150px; width: 346px; height: 522px; box-sizing: border-box; background: #FF6B1F; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
 .t-host__pix-titulo { font: 400 38px/1.05 'Bungee', sans-serif; color: #1A1417; text-align: center; }
 .t-host__qr { flex-shrink: 0; width: 240px; height: 320px; background: #FFF3E0; box-shadow: 8px 8px 0 #1A1417; display: flex; align-items: center; justify-content: center; font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #8a7f84; }
 .t-host__pix-link { font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; text-align: center; line-height: 1.35; }

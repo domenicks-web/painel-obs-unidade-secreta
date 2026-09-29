@@ -49,7 +49,8 @@ Lower third: `funcao`
 Fim: `proximo`
 
 Áreas reservadas pra outras fontes do OBS, que as telas não desenham:
-- chat: 440×800 no Host, 440×910 no Futebol, 440×750 no Filme
+- chat: 440×800 no Host, no Futebol e no Filme (mudado a pedido do usuário em 2026-09-29)
+- câmeras: todas em 16:9 por dentro (idem)
 - QR code do PIX: 214×214 no Host com 1 câmera
 
 ## 2. Painel ADM

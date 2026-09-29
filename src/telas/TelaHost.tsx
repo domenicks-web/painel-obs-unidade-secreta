@@ -23,7 +23,7 @@ export function TelaHost({ estado, previa }: PropsTela) {
 
       {estado.hostCams === '1' && (
         <>
-          <SlotCamera nome={n(0)} w={924} h={520} x={60} y={150} previa={previa} />
+          <SlotCamera nome={n(0)} w={928} h={522} x={60} y={150} previa={previa} />
           <div className="t-host__pix">
             <div className="t-host__pix-titulo">
               MANDA
@@ -40,15 +40,16 @@ export function TelaHost({ estado, previa }: PropsTela) {
       )}
       {estado.hostCams === '2' && (
         <>
-          <SlotCamera nome={n(0)} w={635} h={520} x={60} y={150} previa={previa} />
-          <SlotCamera nome={n(1)} w={635} h={520} x={725} y={150} previa={previa} />
+          {/* câmeras 16:9; centralizadas na faixa entre o topo e os cards */}
+          <SlotCamera nome={n(0)} w={640} h={360} x={60} y={240} previa={previa} />
+          <SlotCamera nome={n(1)} w={640} h={360} x={740} y={240} previa={previa} />
         </>
       )}
       {estado.hostCams === '3' && (
         <>
-          <SlotCamera nome={n(0)} w={780} h={520} x={60} y={150} previa={previa} />
-          <SlotCamera nome={n(1)} w={490} h={235} x={870} y={150} previa={previa} />
-          <SlotCamera nome={n(2)} w={490} h={235} x={870} y={435} previa={previa} />
+          <SlotCamera nome={n(0)} w={896} h={504} x={60} y={150} previa={previa} />
+          <SlotCamera nome={n(1)} w={400} h={225} x={980} y={150} previa={previa} />
+          <SlotCamera nome={n(2)} w={400} h={225} x={980} y={429} previa={previa} />
         </>
       )}
 
