@@ -5,6 +5,9 @@ import { TelaInicio } from './TelaInicio';
 import { TelaIntervalo } from './TelaIntervalo';
 import { TelaFim } from './TelaFim';
 import { TelaTecnico } from './TelaTecnico';
+import { TelaHost } from './TelaHost';
+import { TelaMesa } from './TelaMesa';
+import { TelaLower } from './TelaLower';
 
 export type { PropsTela } from './tipos';
 
@@ -14,4 +17,7 @@ export const TELA_COMPONENTE: Partial<Record<TelaId, (p: PropsTela) => JSX.Eleme
   intervalo: TelaIntervalo,
   fim: TelaFim,
   tecnico: TelaTecnico,
+  host: TelaHost,
+  mesa: TelaMesa,
+  lower: TelaLower,
 };

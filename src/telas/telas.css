@@ -116,3 +116,58 @@
 .t-tecnico__glitch-c { position: relative; color: #FF6B1F; }
 .t-tecnico__volta { font: 700 28px/1 'JetBrains Mono', monospace; letter-spacing: .2em; color: #FFF3E0; }
 .t-tecnico__scan { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(26,20,23,.12) 0 2px, transparent 2px 6px); background-size: 100% 12px; animation: usScan .4s linear infinite; pointer-events: none; }
+
+/* ===== Peças das telas escuras (Host, Mesa, Futebol, Filme) ===== */
+.t-escuro { position: absolute; inset: 0; background: #1A1417; background-image: radial-gradient(#2A2226 1.6px, transparent 1.8px); background-size: 22px 22px; overflow: hidden; }
+.t-topo { position: absolute; left: 60px; top: 40px; height: 80px; display: flex; align-items: center; gap: 24px; }
+.t-us { height: 80px; padding: 0 18px; background: #FF6B1F; display: flex; align-items: center; font: 600 72px/1 'Barlow Condensed', sans-serif; color: #1A1417; }
+.t-topo__titulo { font: 700 56px/1 'Barlow Condensed', sans-serif; color: #FFF3E0; text-transform: uppercase; }
+.t-aovivo { display: flex; align-items: center; gap: 12px; background: #FF6B1F; padding: 14px 20px; }
+.t-aovivo__led { width: 16px; height: 16px; border-radius: 50%; background: #1A1417; animation: usBlink 1.2s infinite; }
+.t-aovivo__txt { font: 700 22px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
+.t-selo { background: #8B6CF0; color: #1A1417; font: 700 20px/1 'JetBrains Mono', monospace; letter-spacing: .16em; padding: 12px 16px; }
+.t-chat { position: absolute; box-shadow: 0 0 0 4px #8B6CF0; background: #241d21; }
+.t-chat__rotulo { position: absolute; left: -4px; top: -48px; display: flex; align-items: center; gap: 10px; background: #8B6CF0; padding: 10px 14px; font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
+.t-chat__placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 16px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: #4a3f44; }
+
+/* ===== Host (Telas Live linhas 104-153) ===== */
+.t-host__titulo { letter-spacing: .02em; }
+.t-host__pix { position: absolute; left: 1014px; top: 150px; width: 346px; height: 520px; box-sizing: border-box; background: #FF6B1F; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+.t-host__pix-titulo { font: 400 38px/1.05 'Bungee', sans-serif; color: #1A1417; text-align: center; }
+.t-host__qr { width: 214px; height: 214px; background: #FFF3E0; box-shadow: 8px 8px 0 #1A1417; display: flex; align-items: center; justify-content: center; font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #8a7f84; }
+.t-host__pix-link { font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; text-align: center; line-height: 1.35; }
+.t-host__cards { position: absolute; left: 60px; top: 740px; width: 1300px; height: 210px; display: grid; grid-template-columns: 560px minmax(0,1fr) minmax(0,1fr); gap: 30px; }
+.t-host__meta { background: #FF6B1F; padding: 26px 30px; display: flex; flex-direction: column; justify-content: space-between; }
+.t-host__meta-topo { display: flex; justify-content: space-between; align-items: center; }
+.t-host__mono18 { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
+.t-host__meta-valores { display: flex; align-items: baseline; gap: 14px; }
+.t-host__meta-atual { font: 400 64px/1 'Bungee', sans-serif; color: #1A1417; }
+.t-host__meta-total { font: 700 26px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
+.t-host__meta-barra { height: 22px; background: #1A1417; position: relative; }
+.t-host__meta-barra-cheia { position: absolute; left: 0; top: 0; bottom: 0; background: #FFF3E0; transform-origin: 0 50%; animation: usGrow 1.4s cubic-bezier(.2,.8,.2,1) both; }
+.t-host__meta-desc { font: 700 16px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
+.t-host__card { background: #241d21; padding: 26px 30px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.t-host__card--ultimo { box-shadow: inset 0 0 0 4px #8B6CF0; }
+.t-host__card--top { box-shadow: inset 0 0 0 4px #FFF3E0; }
+.t-host__card-rotulo { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: .16em; }
+.t-host__card-nome { font: 700 48px/1 'Barlow Condensed', sans-serif; color: #FFF3E0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-host__card-valor { font: 400 44px/1 'Bungee', sans-serif; }
+
+/* ===== Mesa (Telas Live linhas 271-288) ===== */
+.t-mesa__aovivo { position: absolute; right: 60px; top: 52px; }
+
+/* ===== Lower third (Telas Live linhas 237-249) ===== */
+.t-lower { position: absolute; inset: 0; overflow: hidden; }
+/* a referência repete entrada/saída a cada 8s; aqui entra uma vez e fica (quem esconde é o OBS) */
+@keyframes usLTin { from { transform: translateX(-120%); } to { transform: translateX(0); } }
+@keyframes usLTsIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.t-lower__cartao { position: absolute; left: 80px; bottom: 110px; display: flex; align-items: stretch; animation: usLTin .64s cubic-bezier(.2,.8,.2,1) both; }
+.t-lower__listra { width: 26px; background: repeating-linear-gradient(-45deg, #1A1417 0 8px, #FF6B1F 8px 16px); transform-origin: 0 50%; animation: usLTsIn .48s both; }
+.t-lower__corpo { background: #FF6B1F; padding: 20px 30px 16px; display: flex; flex-direction: column; gap: 8px; }
+.t-lower__nome { font: 400 70px/1 'Bungee', sans-serif; color: #1A1417; }
+.t-lower__linha { display: flex; align-items: center; gap: 14px; }
+.t-lower__grade { display: grid; grid-template-columns: repeat(5, 9px); gap: 5px; }
+.t-lower__grade > div { width: 9px; height: 9px; border-radius: 50%; background: #1A1417; }
+.t-lower__grade > div:last-child { background: #FFF3E0; }
+.t-lower__funcao { font: 700 22px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
+.t-lower__fim { width: 18px; background: #8B6CF0; }
