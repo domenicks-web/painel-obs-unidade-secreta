@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { TelaPage } from './pages/TelaPage';
 import { ChatPage } from './pages/ChatPage';
 import { RotaProtegida } from './components/RotaProtegida';
+import { useTituloDaPagina } from './tituloDaPagina';
 
 // Painel, admin e login vêm sob demanda: as telas do OBS baixam só o que usam.
 const LoginPage = lazy(() => import('./pages/LoginPage').then((m) => ({ default: m.LoginPage })));
@@ -10,6 +11,7 @@ const PainelPage = lazy(() => import('./pages/PainelPage').then((m) => ({ defaul
 const AdminPage = lazy(() => import('./pages/AdminPage').then((m) => ({ default: m.AdminPage })));
 
 export default function App() {
+  useTituloDaPagina();
   return (
     <Suspense fallback={null}>
       <Routes>
