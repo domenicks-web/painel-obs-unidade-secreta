@@ -143,18 +143,25 @@ export const ESTADO_PADRAO: EstadoLive = {
   chatPin: null,
 };
 
-export interface Pix {
+export type TipoApoio = 'pix' | 'superchat' | 'sticker' | 'membro';
+
+/** Linha da tabela apoios: PIX (manual ou LivePix), superchat, super sticker e membro do YouTube. */
+export interface Apoio {
   id: string;
   nome: string;
+  /** sempre em reais */
   valor: number;
   msg: string;
-  origem: 'manual' | 'livepix';
+  origem: 'manual' | 'livepix' | 'youtube';
+  tipo: TipoApoio;
+  /** como veio da plataforma ("US$ 10.00"); vazio no PIX */
+  valor_texto: string;
   externo_id: string | null;
   off: boolean;
   created_at: string;
 }
 
 // numeric pode chegar como string no Realtime
-export function normalizarPix(linha: Pix): Pix {
-  return { ...linha, valor: Number(linha.valor) };
+export function normalizarApoio(linha: Apoio): Apoio {
+  return { ...linha, valor: Number(linha.valor), tipo: linha.tipo ?? 'pix', valor_texto: linha.valor_texto ?? '' };
 }

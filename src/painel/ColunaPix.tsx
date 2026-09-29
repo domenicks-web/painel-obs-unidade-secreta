@@ -1,17 +1,34 @@
 import { useState, type FormEvent } from 'react';
 import type { useLive } from '../live/useLive';
-import type { usePix } from '../live/usePix';
+import type { useApoios } from '../live/useApoios';
 import { reais } from '../live/formatar';
 import { CampoTexto } from './CampoTexto';
 import { ControlesLivePix } from './ControlesLivePix';
 import type { ControlesLivePix as Controles } from '../live/useControlesLivePix';
+import type { Apoio } from '../live/tipos';
+
+// etiqueta de cada apoio na lista: tipo + de onde veio
+function etiqueta(x: Apoio): { texto: string; classe: string } {
+  if (x.tipo === 'superchat') return { texto: 'SUPERCHAT', classe: 'p-pix__tipo--sc' };
+  if (x.tipo === 'sticker') return { texto: 'STICKER', classe: 'p-pix__tipo--sc' };
+  if (x.tipo === 'membro') return { texto: 'MEMBRO', classe: 'p-pix__tipo--membro' };
+  return { texto: x.origem === 'livepix' ? 'PIX · LIVEPIX' : 'PIX · MANUAL', classe: 'p-pix__tipo--pix' };
+}
+
+// valor em real; superchat de fora mostra o original do lado; moeda que não deu pra converter, só o original
+function valorDoApoio(x: Apoio): { principal: string; original?: string } {
+  if (x.tipo === 'membro') return { principal: '' };
+  const deFora = x.valor_texto && !/^R\$/.test(x.valor_texto.trim());
+  if (x.valor > 0) return { principal: `R$ ${reais(x.valor)}`, original: deFora ? x.valor_texto : undefined };
+  return { principal: x.valor_texto || '—' };
+}
 
 type Live = Pick<ReturnType<typeof useLive>, 'estado' | 'salvarDepois'>;
-type PixHook = ReturnType<typeof usePix>;
+type ApoiosHook = ReturnType<typeof useApoios>;
 
 const numero = (v: string) => Number(v.replace(',', '.'));
 
-export function ColunaPix({ live, pix, livepix }: { live: Live; pix: PixHook; livepix?: Controles }) {
+export function ColunaPix({ live, pix, livepix }: { live: Live; pix: ApoiosHook; livepix?: Controles }) {
   const { estado, salvarDepois } = live;
   const pct = Math.min(100, Math.round((estado.metaAtual / Math.max(1, estado.metaTotal)) * 100)) + '%';
   const [nome, setNome] = useState('');
@@ -37,8 +54,8 @@ export function ColunaPix({ live, pix, livepix }: { live: Live; pix: PixHook; li
   return (
     <section className="p-pix">
       <div className="p-bloco-cabeca">
-        <div className="p-bloco-titulo">PIX</div>
-        <div className="p-bloco-selo">MANUAL · ALERTA LIVEPIX</div>
+        <div className="p-bloco-titulo">APOIOS</div>
+        <div className="p-bloco-selo">PIX · SUPERCHAT · MEMBRO</div>
       </div>
 
       {livepix && <ControlesLivePix controles={livepix} />}
@@ -86,27 +103,38 @@ export function ColunaPix({ live, pix, livepix }: { live: Live; pix: PixHook; li
       </div>
 
       <div className="p-pix__lista">
-        {pix.lista.length === 0 && <div className="p-pix__vazio">Nenhum PIX ainda.</div>}
-        {pix.lista.map((x) => (
-          <div key={x.id} className={x.off ? 'p-pix__item p-pix__item--off' : 'p-pix__item'}>
-            <div className="p-pix__info">
-              <div className="p-pix__linha">
-                <div className="p-pix__nome">{x.nome}</div>
-                <div className="p-pix__origem">{x.origem === 'livepix' ? 'LIVEPIX' : 'MANUAL'}</div>
+        {pix.lista.length === 0 && <div className="p-pix__vazio">Nenhum apoio ainda.</div>}
+        {pix.lista.map((x) => {
+          const et = etiqueta(x);
+          const v = valorDoApoio(x);
+          return (
+            <div key={x.id} className={x.off ? 'p-pix__item p-pix__item--off' : 'p-pix__item'}>
+              <div className="p-pix__info">
+                <div className="p-pix__linha">
+                  <div className="p-pix__nome">{x.nome}</div>
+                  <div className={`p-pix__tipo ${et.classe}`}>{et.texto}</div>
+                </div>
+                <div className="p-pix__msg">{x.msg || (x.tipo === 'membro' ? 'entrou pra unidade' : '—')}</div>
               </div>
-              <div className="p-pix__msg">{x.msg || '—'}</div>
+              <div className="p-pix__valores">
+                <div className="p-pix__valor">{v.principal}</div>
+                {v.original && <div className="p-pix__original">{v.original}</div>}
+              </div>
+              {x.tipo === 'membro' ? (
+                <div />
+              ) : (
+                <button
+                  type="button"
+                  className="p-pix__alternar"
+                  title={x.off ? 'Voltar a contar' : 'Não contar (estorno/teste)'}
+                  onClick={() => pix.alternar(x.id)}
+                >
+                  {x.off ? '↺' : '×'}
+                </button>
+              )}
             </div>
-            <div className="p-pix__valor">R$ {reais(x.valor)}</div>
-            <button
-              type="button"
-              className="p-pix__alternar"
-              title={x.off ? 'Voltar a contar' : 'Não contar (estorno/teste)'}
-              onClick={() => pix.alternar(x.id)}
-            >
-              {x.off ? '↺' : '×'}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <form className="p-pix__novo" onSubmit={adicionar}>

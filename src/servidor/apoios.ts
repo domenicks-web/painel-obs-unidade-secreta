@@ -1,6 +1,7 @@
 // Parte 4 (servidor): PIX automático pelo webhook do LivePix, cotações para converter superchat
 // em real e a pausa do LivePix enquanto o /alerta toca.
 import type { Ambiente } from './livepix.js';
+import { TAXAS_FIXAS } from '../apoios/valor.js';
 
 export interface AmbienteApoios extends Ambiente {
   LIVEPIX_CLIENT_ID?: string;
@@ -114,12 +115,8 @@ export async function tratarWebhookLivePix(req: Request, amb: AmbienteApoios, f:
 
 // ---------------------------------------------------------------------------------------------
 // Cotações: quanto 1 real vale em cada moeda. Fonte aberta, com cache de 6 h na borda da Vercel.
-// Se a fonte cair, usa a tabela fixa abaixo (médias de 2026; só pra meta não travar).
+// Se a fonte cair, usa a tabela fixa de src/apoios/valor.ts (só pra meta não travar).
 
-export const TAXAS_FIXAS: Record<string, number> = {
-  BRL: 1, USD: 0.1955, EUR: 0.17, GBP: 0.146, JPY: 31.4, CAD: 0.274, AUD: 0.278, MXN: 3.39, ARS: 285.7,
-  CLP: 180.6, COP: 692, PEN: 0.674, UYU: 7.88, CHF: 0.157, INR: 18.65, KRW: 291, CNY: 1.32, NZD: 0.336,
-};
 
 export async function tratarCambio(req: Request, f: Fetch = fetch): Promise<Response> {
   if (req.method !== 'GET') return resposta(405, { erro: 'método não permitido' });

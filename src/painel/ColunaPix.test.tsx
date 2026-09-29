@@ -20,10 +20,29 @@ describe('ColunaPix', () => {
     const { pix } = montar();
     expect(screen.getByText('50%')).toBeInTheDocument();
     expect(screen.getByText('R$ 25,50')).toBeInTheDocument();
-    expect(screen.getByText('MANUAL')).toBeInTheDocument();
-    expect(screen.getByText('LIVEPIX')).toBeInTheDocument();
+    expect(screen.getByText('PIX · MANUAL')).toBeInTheDocument();
+    expect(screen.getByText('PIX · LIVEPIX')).toBeInTheDocument();
     fireEvent.click(screen.getByTitle('Voltar a contar'));
     expect(pix.alternar).toHaveBeenCalledWith('b');
+  });
+
+  it('superchat de fora mostra real e o original; membro sem valor nem ×; moeda desconhecida só o original', () => {
+    const live = { estado: ESTADO_PADRAO, salvarDepois: vi.fn() } as never;
+    const base = { msg: '', externo_id: 'x', off: false, created_at: '', origem: 'youtube' };
+    const apoios = [
+      { ...base, id: 's', nome: 'LIPE', valor: 54.3, tipo: 'superchat', valor_texto: 'US$ 10.00' },
+      { ...base, id: 'm', nome: 'BIA', valor: 0, tipo: 'membro', valor_texto: '' },
+      { ...base, id: 'z', nome: 'ZÉ', valor: 0, tipo: 'sticker', valor_texto: '₿ 1' },
+    ];
+    render(<ColunaPix live={live} pix={{ lista: apoios, adicionarManual: vi.fn(), alternar: vi.fn() } as never} />);
+    expect(screen.getByText('APOIOS')).toBeInTheDocument();
+    expect(screen.getByText('R$ 54,30')).toBeInTheDocument();
+    expect(screen.getByText('US$ 10.00')).toBeInTheDocument();
+    expect(screen.getByText('SUPERCHAT')).toBeInTheDocument();
+    expect(screen.getByText('MEMBRO')).toBeInTheDocument();
+    expect(screen.getByText('entrou pra unidade')).toBeInTheDocument();
+    expect(screen.getByText('₿ 1')).toBeInTheDocument();
+    expect(screen.getAllByTitle('Não contar (estorno/teste)')).toHaveLength(2);
   });
 
   it('PIX manual aceita vírgula e limpa depois', async () => {

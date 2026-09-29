@@ -138,7 +138,12 @@
 .p-pix__info { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .p-pix__linha { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .p-pix__nome { font: 700 18px/1 'Barlow Condensed', sans-serif; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.p-pix__origem { font: 700 9px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #8a7f84; }
+.p-pix__tipo { flex: none; font: 700 9px/1 'JetBrains Mono', monospace; letter-spacing: .12em; padding: 3px 5px; }
+.p-pix__tipo--pix { color: #8a7f84; padding: 3px 0; }
+.p-pix__tipo--sc { background: #FF6B1F; color: #1A1417; }
+.p-pix__tipo--membro { background: #8B6CF0; color: #1A1417; }
+.p-pix__valores { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.p-pix__original { font: 700 10px/1 'JetBrains Mono', monospace; letter-spacing: .06em; color: #8a7f84; white-space: nowrap; }
 .p-pix__msg { font: 500 15px/1.2 'Barlow Condensed', sans-serif; color: #b3a9ad; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .p-pix__valor { font: 400 18px/1 'Bungee', sans-serif; color: #FF6B1F; white-space: nowrap; }
 .p-pix__alternar { width: 30px; height: 30px; border: 2px solid #3a3035; background: transparent; color: #FFF3E0; cursor: pointer; font: 700 13px/1 'JetBrains Mono', monospace !important; padding: 0; }

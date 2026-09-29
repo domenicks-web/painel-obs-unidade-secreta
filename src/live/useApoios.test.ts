@@ -20,7 +20,7 @@ vi.mock('../lib/supabase', () => {
 });
 
 import { supabase } from '../lib/supabase';
-import { usePix } from './usePix';
+import { useApoios } from './useApoios';
 
 const pix = (id: string, extra = {}) => ({ id, nome: id, valor: '10.00', msg: '', origem: 'manual', externo_id: null, off: false, created_at: '2026-09-28T20:00:00Z', ...extra });
 
@@ -30,9 +30,9 @@ beforeEach(() => {
   vi.mocked(supabase.from).mockReturnValue({ select: () => ({ order: () => ({ limit }) }) } as never);
 });
 
-describe('usePix', () => {
+describe('useApoios', () => {
   it('carrega, normaliza valor e aplica INSERT/UPDATE do Realtime', async () => {
-    const { result } = renderHook(() => usePix());
+    const { result } = renderHook(() => useApoios());
     await waitFor(() => expect(result.current.lista).toHaveLength(2));
     expect(result.current.lista[0].valor).toBe(10);
     act(() => handler!({ eventType: 'INSERT', new: pix('c'), old: {} }));
@@ -42,7 +42,7 @@ describe('usePix', () => {
   });
 
   it('recarrega a lista quando o Realtime reconecta', async () => {
-    const { result } = renderHook(() => usePix());
+    const { result } = renderHook(() => useApoios());
     await waitFor(() => expect(result.current.lista).toHaveLength(2));
     const limit = vi.fn().mockResolvedValue({ data: [pix('c'), pix('b'), pix('a')], error: null });
     vi.mocked(supabase.from).mockReturnValue({ select: () => ({ order: () => ({ limit }) }) } as never);
@@ -52,7 +52,7 @@ describe('usePix', () => {
 
   it('adicionarManual chama a RPC e devolve erro legível', async () => {
     vi.mocked(supabase.rpc).mockResolvedValueOnce({ data: null, error: { message: 'não autorizado' } } as never);
-    const { result } = renderHook(() => usePix());
+    const { result } = renderHook(() => useApoios());
     let erro: string | null = null;
     await act(async () => {
       erro = await result.current.adicionarManual('Ana', 5);

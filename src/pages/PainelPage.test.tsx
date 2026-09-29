@@ -10,7 +10,7 @@ vi.mock('../live/useLive', () => ({
 }));
 vi.mock('../live/useControlesLivePix', () => ({ useControlesLivePix: () => ({ status: 'ativo', ultimo: null, alternarPausa: vi.fn(), pular: vi.fn(), repetir: vi.fn(), limpar: vi.fn() }) }));
 vi.mock('../chat/useChat', () => ({ useChat: () => ({ msgs: [], status: 'ao_vivo', adicionar: vi.fn(), limpar: vi.fn() }) }));
-vi.mock('../live/usePix', () => ({ usePix: () => ({ lista: [], adicionarManual: vi.fn(), alternar: vi.fn() }) }));
+vi.mock('../live/useApoios', () => ({ useApoios: () => ({ lista: [], adicionarManual: vi.fn(), alternar: vi.fn() }) }));
 vi.mock('../live/relogioServidor', () => ({ useAgora: () => Date.now(), RelogioServidorProvider: ({ children }: { children: React.ReactNode }) => children }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ papel: 'admin', sessao: {}, carregando: false, erro: null }) }));
 

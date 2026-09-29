@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { normalizarPix, type Pix } from './tipos';
+import { normalizarApoio, type Apoio } from './tipos';
 
 const LIMITE = 100;
 
-export function usePix() {
-  const [lista, setLista] = useState<Pix[]>([]);
+export function useApoios() {
+  const [lista, setLista] = useState<Apoio[]>([]);
 
   useEffect(() => {
     let ativo = true;
@@ -16,22 +16,22 @@ export function usePix() {
     function carregar() {
       const meu = ++pedido;
       supabase
-        .from('pix')
+        .from('apoios')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(LIMITE)
-        .then(({ data }: { data: Pix[] | null }) => {
-          if (ativo && meu === pedido && data) setLista(data.map(normalizarPix));
+        .then(({ data }: { data: Apoio[] | null }) => {
+          if (ativo && meu === pedido && data) setLista(data.map(normalizarApoio));
         });
     }
     carregar();
 
     const canal = supabase
-      .channel('pix-painel')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pix' }, (p: RealtimePostgresChangesPayload<Pix>) => {
+      .channel('apoios-painel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'apoios' }, (p: RealtimePostgresChangesPayload<Apoio>) => {
         setLista((atual) => {
-          if (p.eventType === 'INSERT') return [normalizarPix(p.new), ...atual.filter((x) => x.id !== p.new.id)].slice(0, LIMITE);
-          if (p.eventType === 'UPDATE') return atual.map((x) => (x.id === p.new.id ? normalizarPix(p.new) : x));
+          if (p.eventType === 'INSERT') return [normalizarApoio(p.new), ...atual.filter((x) => x.id !== p.new.id)].slice(0, LIMITE);
+          if (p.eventType === 'UPDATE') return atual.map((x) => (x.id === p.new.id ? normalizarApoio(p.new) : x));
           return atual.filter((x) => x.id !== p.old.id);
         });
       })
@@ -53,7 +53,7 @@ export function usePix() {
   }, []);
 
   const alternar = useCallback(async (id: string) => {
-    await supabase.rpc('alternar_pix', { p_id: id });
+    await supabase.rpc('alternar_apoio', { p_id: id });
   }, []);
 
   return { lista, adicionarManual, alternar };

@@ -21,7 +21,7 @@ describe('normalizarSsn', () => {
   it('mensagem comum do YouTube, com mod e membro', () => {
     expect(
       normalizarSsn({ id: 7, type: 'youtube', chatname: 'Lipe10', chatmessage: 'GOLAÇO', mod: true, member: true }),
-    ).toEqual({ id: '7', plataforma: 'yt', autor: 'Lipe10', txt: 'GOLAÇO', tipo: 'msg', mod: true, membro: true });
+    ).toEqual({ id: '7', idOriginal: '7', plataforma: 'yt', autor: 'Lipe10', txt: 'GOLAÇO', tipo: 'msg', mod: true, membro: true });
   });
 
   it('Twitch e TikTok viram TW e TT; outras plataformas são ignoradas', () => {
@@ -34,6 +34,14 @@ describe('normalizarSsn', () => {
   it('doação vira superchat com o valor como veio', () => {
     const m = normalizarSsn({ type: 'youtube', chatname: 'zeca', chatmessage: 'toma', hasDonation: 'R$ 10,00', event: 'superchat' });
     expect(m).toMatchObject({ tipo: 'super', valor: 'R$ 10,00', txt: 'toma' });
+  });
+
+  it('super sticker e membro novo ficam marcados; aniversário de membro não é novo', () => {
+    expect(normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: '', hasDonation: 'R$ 5,00', event: 'supersticker' })).toMatchObject({ tipo: 'super', sticker: true });
+    expect(normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: 'x', hasDonation: 'R$ 5,00', event: 'superchat' })?.sticker).toBe(false);
+    expect(normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: 'oi', membership: 'M', event: 'sponsorship' })?.membroNovo).toBe(true);
+    expect(normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: 'oi', membership: 'M', event: 'giftredemption' })?.membroNovo).toBe(true);
+    expect(normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: '12 meses', membership: 'M', event: 'membershiprenewal' })?.membroNovo).toBe(false);
   });
 
   it('evento de membro vira o cartão de novo membro', () => {

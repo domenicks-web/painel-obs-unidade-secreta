@@ -15,6 +15,8 @@ const PLATAFORMA_DO_TIPO: Record<string, Plataforma> = {
 // giftredemption; Twitch: subscription, resub, subscription_gift). Os outros (follow, entrou,
 // curtiu, redirect…) não aparecem no chat.
 const EVENTO_MEMBRO = /member|sponsor|subscri|resub|gift(purchase|redemption)/i;
+// quem virou membro agora (vale apoio e alerta); renovação/aniversário e compra de presentes não
+const MEMBRO_NOVO = /^(sponsorship|giftredemption|subscription|new_member)$/i;
 
 /** Texto puro: emote em <img> vira o alt dele, o resto do HTML some. */
 export function textoPuro(valor: unknown, html = true): string {
@@ -46,14 +48,15 @@ export function normalizarSsn(dado: unknown): MsgChat | null {
   const valor = typeof m.hasDonation === 'string' ? m.hasDonation.trim() : '';
   const base = {
     id: m.id != null ? String(m.id) : `ssn-${++semId}`,
+    idOriginal: m.id != null ? String(m.id) : undefined,
     plataforma,
     autor,
     txt,
     mod: !!(m.mod || m.moderator),
     membro: !!(m.member || m.membership),
   };
-  if (valor) return { ...base, tipo: 'super', valor };
-  if (evento && EVENTO_MEMBRO.test(evento)) return { ...base, tipo: 'membro', membro: true };
+  if (valor) return { ...base, tipo: 'super', valor, sticker: /sticker/i.test(evento) };
+  if (evento && EVENTO_MEMBRO.test(evento)) return { ...base, tipo: 'membro', membro: true, membroNovo: MEMBRO_NOVO.test(evento) };
   if (evento || !txt) return null;
   return { ...base, tipo: 'msg' };
 }

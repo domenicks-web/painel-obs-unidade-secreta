@@ -12,11 +12,12 @@ import { CamposTela } from '../painel/CamposTela';
 import { ColunaPix } from '../painel/ColunaPix';
 import { CaixaChat } from '../painel/CaixaChat';
 import { ModalGalera } from '../painel/ModalGalera';
-import { usePix } from '../live/usePix';
+import { useApoios } from '../live/useApoios';
 import { useControlesLivePix } from '../live/useControlesLivePix';
 import { useChat } from '../chat/useChat';
 import { gravarSessao, lerSessao } from '../chat/sessao';
 import { mensagemAuto } from '../chat/teste';
+import { useGravarApoiosYouTube } from '../apoios/youtube';
 import '../painel/painel.css';
 
 export function PainelPage() {
@@ -29,7 +30,7 @@ export function PainelPage() {
 
 function Painel() {
   const live = useLive();
-  const pix = usePix();
+  const pix = useApoios();
   const livepix = useControlesLivePix();
   const { papel } = useAuth();
   const [params] = useSearchParams();
@@ -37,6 +38,8 @@ function Painel() {
   const [sessao, setSessao] = useState(lerSessao);
   const chat = useChat({ sessao, max: 40, teste: chatTeste });
   const { adicionar } = chat;
+  // superchat, sticker e membro novo do YouTube viram apoio (nunca no modo teste)
+  useGravarApoiosYouTube(chat.msgs, chat.status !== 'teste');
   const trocarSessao = useCallback((s: string) => {
     gravarSessao(s);
     setSessao(s);

@@ -31,9 +31,12 @@ const estado = {
   enquete: { casa: 0, empate: 0, fora: 0, mostrar: false }, filme: 'NOME DO FILME', episodio: 'T1 · E3', ltNome: 'NOME 01',
   funcao: 'UNIDADE SECRETA', proximo: 'SEXTA, 21H', chatPin: null,
 };
+const agora = new Date().toISOString();
 const pix = [
-  { id: 'b', nome: 'Carol', valor: 10, msg: 'salve rapaziada', origem: 'manual', externo_id: null, off: false, created_at: new Date().toISOString() },
-  { id: 'a', nome: 'Tiagão', valor: 25, msg: 'pra pizza', origem: 'manual', externo_id: null, off: false, created_at: new Date().toISOString() },
+  { id: 'm', nome: 'Bia.gamer', valor: 0, msg: '', origem: 'youtube', tipo: 'membro', valor_texto: '', externo_id: 'yt:3', off: false, created_at: agora },
+  { id: 's', nome: 'Lipe10', valor: 51.15, msg: 'GOLAÇO', origem: 'youtube', tipo: 'superchat', valor_texto: 'US$ 10.00', externo_id: 'yt:2', off: false, created_at: agora },
+  { id: 'b', nome: 'Carol', valor: 10, msg: 'salve rapaziada', origem: 'livepix', tipo: 'pix', valor_texto: '', externo_id: 'livepix:1', off: false, created_at: agora },
+  { id: 'a', nome: 'Tiagão', valor: 25, msg: 'pra pizza', origem: 'manual', tipo: 'pix', valor_texto: '', externo_id: null, off: false, created_at: agora },
 ];
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 const exp = Math.floor(Date.now() / 1000) + 3600 * 24;
@@ -58,7 +61,8 @@ async function abrirPainel(largura, altura, autoPlay = true) {
     if (u.includes('/rpc/hora_servidor')) return json(new Date().toISOString());
     if (u.includes('/rest/v1/membros_equipe')) return json({ papel: 'admin' });
     if (u.includes('/rest/v1/salas')) return json({ estado, updated_at: new Date(Date.now() - 120000).toISOString(), updated_by_nome: 'Ramon' });
-    if (u.includes('/rest/v1/pix')) return json(pix);
+    if (u.includes('/rest/v1/apoios')) return json(pix);
+    if (u.includes('/api/cambio')) return json({ taxas: { BRL: 1, USD: 0.1955 } });
     if (u.includes('/auth/v1/user')) return json(sessao.user);
     return route.fulfill({ status: 404, body: '' });
   });

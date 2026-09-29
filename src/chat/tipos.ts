@@ -10,6 +10,12 @@ export interface MsgChat {
   valor?: string;
   mod: boolean;
   membro: boolean;
+  /** super sticker (tipo 'super', sem texto) */
+  sticker?: boolean;
+  /** entrou como membro agora (YouTube: sponsorship / giftredemption); aniversário de membro não */
+  membroNovo?: boolean;
+  /** id que o Social Stream Ninja deu (igual em todos os painéis); ausente no modo teste */
+  idOriginal?: string;
 }
 
 export const PLATAFORMAS: Record<Plataforma, { tag: string; cor: string }> = {
