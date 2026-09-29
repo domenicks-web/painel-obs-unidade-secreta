@@ -1,9 +1,7 @@
-import { Route, Routes } from 'react-router-dom';
-import { OverlayPage } from './pages/OverlayPage';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { PainelPage } from './pages/PainelPage';
 import { AdminPage } from './pages/AdminPage';
-import { PreviewPage } from './pages/PreviewPage';
 import { TelaPage } from './pages/TelaPage';
 import { AlertaPage } from './pages/AlertaPage';
 import { RotaProtegida } from './components/RotaProtegida';
@@ -11,8 +9,6 @@ import { RotaProtegida } from './components/RotaProtegida';
 export default function App() {
   return (
     <Routes>
-      <Route path="/overlay/:cena" element={<OverlayPage />} />
-      <Route path="/preview" element={<PreviewPage />} />
       <Route path="/tela/:id" element={<TelaPage />} />
       <Route path="/alerta" element={<AlertaPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -32,6 +28,7 @@ export default function App() {
           </RotaProtegida>
         }
       />
+      <Route path="*" element={<Navigate to="/painel" replace />} />
     </Routes>
   );
 }

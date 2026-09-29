@@ -41,47 +41,6 @@ input {
   text-align: center;
 }
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  max-width: 360px;
-}
-
-.login-form__logo {
-  width: 56px;
-  height: 56px;
-  background: var(--laranja);
-  color: var(--tinta);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font: 600 38px/1 'Barlow Condensed', sans-serif;
-  margin: 0 auto;
-}
-
-.login-form input {
-  background: #2a2226;
-  border: 2px solid #3a3136;
-  color: var(--creme);
-  font: 600 20px 'Barlow Condensed', sans-serif;
-  padding: 12px;
-}
-
-.login-form button {
-  background: var(--laranja);
-  color: var(--tinta);
-  border: 0;
-  padding: 14px;
-  font: 700 13px/1 'JetBrains Mono', monospace;
-  letter-spacing: 0.1em;
-}
-
-.login-form__erro {
-  color: var(--laranja);
-}
-
 .painel {
   max-width: 760px;
   margin: 0 auto;
@@ -89,23 +48,6 @@ input {
   display: flex;
   flex-direction: column;
   gap: 22px;
-}
-
-.painel__cabecalho {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.painel__logo {
-  width: 44px;
-  height: 44px;
-  background: var(--laranja);
-  color: var(--tinta);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font: 600 32px/1 'Barlow Condensed', sans-serif;
 }
 
 .painel h1 {
@@ -195,23 +137,6 @@ input {
   text-align: center;
 }
 
-.indicador-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.indicador-status__bolinha {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.indicador-status__editado {
-  color: #8a7f84;
-}
-
 .secao__cabecalhoLinha {
   display: flex;
   justify-content: space-between;
@@ -234,45 +159,4 @@ input {
 
 .secao__botaoVioleta {
   border: 2px solid var(--violeta) !important;
-}
-
-.preview {
-  padding: 24px;
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-.preview__grade {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 24px;
-}
-
-.preview__label {
-  font: 700 13px/1 'JetBrains Mono', monospace;
-  letter-spacing: 0.1em;
-  color: var(--laranja);
-  margin-bottom: 8px;
-}
-
-.preview__palcoMini {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  position: relative;
-  background: #241d21;
-}
-
-.preview__palcoMini .palco {
-  width: 1920px;
-  height: 1080px;
-  transform: scale(0.1875);
-  transform-origin: 0 0;
-}
-
-.preview__url {
-  font-size: 11px;
-  color: #8a7f84;
-  word-break: break-all;
-  margin-top: 6px;
 }
