@@ -3,7 +3,6 @@
 @keyframes usMarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes usMarqR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 @keyframes usStripe{from{background-position:0 0}to{background-position:104px 0}}
-@keyframes usFloat{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(3deg) translateY(-18px)}}
 @keyframes usWave{0%,100%{transform:translateY(0)}30%{transform:translateY(-38px) rotate(-4deg)}60%{transform:translateY(6px)}}
 @keyframes usGlA{0%,100%{transform:translate(0,0)}20%{transform:translate(-14px,6px)}40%{transform:translate(10px,-4px)}60%{transform:translate(-6px,-8px)}80%{transform:translate(12px,4px)}}
 @keyframes usGlB{0%,100%{transform:translate(0,0)}25%{transform:translate(12px,-6px)}50%{transform:translate(-10px,8px)}75%{transform:translate(8px,6px)}}
@@ -67,9 +66,9 @@
 .t-inicio__relogio { background: #1A1417; color: #FFF3E0; font: 700 170px/1 'JetBrains Mono', monospace; padding: 18px 36px 14px; box-shadow: 14px 14px 0 #8B6CF0; }
 .t-inicio__bolinhas { display: flex; justify-content: space-between; }
 .t-inicio__bolinha { width: 34px; height: 34px; box-sizing: border-box; border-radius: 50%; border: 4px solid #1A1417; }
-.t-inicio__logo { flex-shrink: 0; width: 500px; height: 500px; background: #1A1417; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; animation: usFloat 6s ease-in-out infinite; position: relative; }
-.t-inicio__logo-fundo { position: absolute; left: -4px; top: -4px; shape-rendering: geometricPrecision; }
-.t-inicio__logo > :not(svg) { position: relative; }
+.t-inicio__logo { flex-shrink: 0; width: 500px; height: 500px; position: relative; }
+.t-inicio__logo-svg { position: absolute; left: -60px; top: -70px; overflow: visible; shape-rendering: geometricPrecision; }
+.t-inicio__logo-miolo { width: 500px; height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
 .t-inicio__us { font: 600 330px/.74 'Barlow Condensed', sans-serif; color: #FF6B1F; padding-top: .04em; }
 .t-inicio__grade { display: grid; grid-template-columns: repeat(5, 28px); gap: 16px; }
 .t-inicio__grade > div { width: 28px; height: 28px; border-radius: 50%; background: #FF6B1F; }

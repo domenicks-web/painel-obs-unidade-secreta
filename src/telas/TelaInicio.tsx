@@ -32,20 +32,40 @@ export function TelaInicio({ estado }: PropsTela) {
           </div>
         </div>
         <div className="t-inicio__logo">
-          {/* quadrado e sombra em SVG: com background/box-shadow a borda girada sai serrilhada no OBS */}
-          <svg className="t-inicio__logo-fundo" width={526} height={526} viewBox="-4 -4 526 526" aria-hidden="true">
-            <rect x={18} y={18} width={500} height={500} fill="#FFF3E0" />
-            <rect x={0} y={0} width={500} height={500} fill="#1A1417" />
-          </svg>
-          <div className="t-inicio__us">US</div>
-          <div className="t-inicio__grade">
-            {Array.from({ length: 10 }, (_, i) => (
-              <div key={i} />
-            ))}
-          </div>
+          <LogoFlutuando />
         </div>
       </div>
       <div className="t-inicio__listra" />
     </div>
+  );
+}
+
+// O logo gira e flutua dentro do SVG (animateTransform), não com animação CSS no elemento:
+// animação CSS de transform vira uma camada à parte que o OBS gira sem suavizar a borda (serrilhado).
+// Aqui o SVG fica parado e a rotação é desenhada já suavizada. Mesmo movimento do antigo usFloat (rotate -4°→3°, sobe 18px, 6 s).
+const SUAVE = { keyTimes: '0;0.5;1', calcMode: 'spline', keySplines: '.42 0 .58 1;.42 0 .58 1', dur: '6s', repeatCount: 'indefinite' } as const;
+
+function LogoFlutuando() {
+  return (
+    <svg className="t-inicio__logo-svg" width={620} height={640} viewBox="-60 -70 620 640" aria-hidden="true">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" values="-4 250 250;3 250 250;-4 250 250" {...SUAVE} />
+        <g>
+          <animateTransform attributeName="transform" type="translate" values="0 0;0 -18;0 0" {...SUAVE} />
+          <rect x={18} y={18} width={500} height={500} fill="#FFF3E0" />
+          <rect x={0} y={0} width={500} height={500} fill="#1A1417" />
+          <foreignObject x={0} y={0} width={500} height={500}>
+            <div className="t-inicio__logo-miolo">
+              <div className="t-inicio__us">US</div>
+              <div className="t-inicio__grade">
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div key={i} />
+                ))}
+              </div>
+            </div>
+          </foreignObject>
+        </g>
+      </g>
+    </svg>
   );
 }

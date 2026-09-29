@@ -31,6 +31,8 @@ async function print(url) {
   await page.goto(url);
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({ content: congelar });
+  // animações SVG (logo do início) no mesmo instante das CSS
+  await page.evaluate(() => document.querySelectorAll('svg').forEach((s) => { s.pauseAnimations(); s.setCurrentTime(1); }));
   await page.waitForTimeout(800);
   return page.screenshot({ type: 'png' });
 }
