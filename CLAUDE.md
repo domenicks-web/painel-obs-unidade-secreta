@@ -99,4 +99,6 @@ Estava no meio do fluxo `superpowers:subagent-driven-development`. Regra da skil
 - Chat feito (spec `docs/superpowers/specs/2026-09-29-chat-parte-3-design.md`): `src/chat/*` (WebSocket `wss://io.socialstream.ninja/join/<sessao>/4`, normalização, modo teste), `/chat?sessao=ID` e `/chat?teste=1`, painel com filtros/DESTACAR/TIRAR (`chatPin`), selo CHAT. Prints: `docs/prints/chat-lado-a-lado.png`, `chat-destaque.png`, `painel-chat.png`.
 - ID da sessão só em `.env.local` (`VITE_SSN_SESSAO`, só dev; build de produção não inclui) e no localStorage do painel. Nunca no estado da live nem no código.
 - Na extensão, só precisa "Send chat messages to API server" (dashboard: "Chat to External Apps (ch 3/4)"); Remote Control API fica desligado.
-- Pendente: teste real com mensagens de verdade quando o usuário ligar a opção e abrir uma live.
+- Usuário ligou a opção: mensagens de teste do SSN chegaram no /chat (chips e superchat ok). Destaque violeta e chip dentro da etiqueta aprovados.
+- Serrilhado das caixas giradas: corrigido com SVG (`eea5836`); falta o usuário confirmar no OBS.
+- Pendente: teste com mensagens reais quando o usuário abrir uma live de teste com chat em pop-up (ele avisa).
