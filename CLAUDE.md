@@ -51,8 +51,10 @@ Há também 11 achados **menores**, não bloqueantes, listados no relatório (it
 - Plano `docs/superpowers/plans/2026-09-28-telas-novas-parte-1.md` **implementado** (commits `bea5cba`..`7eaf7b4` em `main`): migration 0005, `/tela/:id` (9 telas), `/alerta`, painel novo, limpeza do antigo, README. Revisão final (Opus) rodada; os 4 importantes foram corrigidos; 8 menores ficaram registrados no ledger `.superpowers/sdd/2026-09-28-telas-novas-parte-1/progress.md`.
 - Prints: `docs/prints/*-lado-a-lado.png` (9 telas × referência), `alerta.png`, `painel-*.png`. Scripts em `scripts/` (playwright-core; `npm i` dentro de `scripts/`).
 - Testes: `npx vitest run` (front) e `supabase/testes/rodar.sh` (Postgres 17 em Docker + teste de concorrência).
-- **Pendente:** rodar a `0005_telas_novas.sql` no Supabase de produção (apaga o estado antigo; precisa do OK do usuário) e o teste ponta a ponta com login real (Task 14, passos 3–4). Depois: parte 2 (LivePix) e parte 3 (chat), só quando o usuário pedir — ele pediu para fazer só a parte 1 por enquanto.
-- Decisões visuais para o usuário confirmar: placeholders "CÂMERA · W×H"/"CHAT"/"QR CODE" só na prévia (no OBS a moldura fica vazia); visual do `/alerta`; lower third entra uma vez e fica (a referência repetia a cada 8 s).
+- 0005 rodada em produção pelo usuário (2026-09-29). Depois disso, a pedido dele: recarregar o estado ao reconectar, META vazia não grava, gravar o pendente ao sair da página; e um bug achado no teste real (trocar de aba desmontava o painel via useAuth) — tudo corrigido.
+- Teste de ponta a ponta contra produção **passou** (`scripts/ponta-a-ponta.mjs`, senha só por variável de ambiente): título <1,1 s, PIX manual, meta, /alerta, não contar, relógio e contagem pela hora do servidor.
+- Próximo: o usuário vai mandar referência visual nova do `/alerta` (manter o atual até lá). Partes 2 (LivePix) e 3 (chat) só quando ele pedir. Menores ainda anotados no ledger: resposta da RPC pode trazer estado mais velho; "RECONECTANDO" em erro de validação; dois cliques de gol ao mesmo tempo; grants de PUBLIC nas RPCs; comentário da comparação por referência.
+- Decisões visuais aprovadas pelo usuário: placeholders só na prévia; lower third entra uma vez e fica (OBS controla); demais decisões da parte 1 aprovadas.
 
 ## Telas novas (2026-09-28, ~19:30) — histórico
 

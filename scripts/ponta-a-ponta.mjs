@@ -78,7 +78,6 @@ const metaDepois = (await host.locator('.t-host__meta-atual').textContent()).tri
 registrar('meta soma R$ 7,50', metaDepois !== metaAntes, `${metaAntes} → ${metaDepois}`);
 const al = await esperarTexto(alerta, '.a-alerta__nome', (t) => t === nomePix, 4000);
 registrar('/alerta mostra o cartão do PIX', al.ms != null, al.ms != null ? `${al.ms} ms` : `mostra "${al.txt}"`);
-if (al.ms != null) await alerta.screenshot({ path: resolve('docs/prints/alerta-ao-vivo.png') });
 
 // 3. não contar → meta volta
 const linhaPix = painel.locator('.p-pix__item', { hasText: nomePix });
@@ -89,6 +88,12 @@ registrar('"não contar" tira o PIX da meta', volta.ms != null, `meta ${volta.tx
 // 4. relógio do futebol pela hora do servidor
 await painel.locator('body').click({ position: { x: 5, y: 890 } });
 await painel.keyboard.press('3');
+await painel.getByText('RELÓGIO', { exact: true }).waitFor();
+// relógio que ficou rodando de uma rodada anterior: zera antes de testar
+if (await painel.getByText('❚❚ PAUSAR').count()) await painel.getByText('❚❚ PAUSAR').click();
+await painel.getByText('ZERAR').click();
+await painel.getByText('▶ INICIAR').waitFor();
+await painel.waitForTimeout(800);
 await painel.getByText('▶ INICIAR').click();
 relogioMexido = true;
 await painel.waitForTimeout(2500);
