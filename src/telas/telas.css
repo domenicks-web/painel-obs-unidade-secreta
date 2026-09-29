@@ -134,7 +134,7 @@
 .t-host__titulo { letter-spacing: .02em; }
 .t-host__pix { position: absolute; left: 1014px; top: 150px; width: 346px; height: 520px; box-sizing: border-box; background: #FF6B1F; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
 .t-host__pix-titulo { font: 400 38px/1.05 'Bungee', sans-serif; color: #1A1417; text-align: center; }
-.t-host__qr { width: 214px; height: 214px; background: #FFF3E0; box-shadow: 8px 8px 0 #1A1417; display: flex; align-items: center; justify-content: center; font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #8a7f84; }
+.t-host__qr { flex-shrink: 0; width: 240px; height: 320px; background: #FFF3E0; box-shadow: 8px 8px 0 #1A1417; display: flex; align-items: center; justify-content: center; font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #8a7f84; }
 .t-host__pix-link { font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; text-align: center; line-height: 1.35; }
 .t-host__cards { position: absolute; left: 60px; top: 740px; width: 1300px; height: 210px; display: grid; grid-template-columns: 560px minmax(0,1fr) minmax(0,1fr); gap: 30px; }
 .t-host__meta { background: #FF6B1F; padding: 26px 30px; display: flex; flex-direction: column; justify-content: space-between; }
