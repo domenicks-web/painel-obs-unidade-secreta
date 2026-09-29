@@ -29,12 +29,12 @@ select pg_temp.ok(pg_temp.e()->>'topNome' = 'Tiagão', 'empate mantém o primeir
 select pg_temp.ok(pg_temp.e()->>'pixNome' = 'Duda', 'último = Duda');
 
 -- não contar
-select public.alternar_pix((select id from public.pix where nome = 'Tiagão'));
+select public.alternar_apoio((select id from public.apoios where nome = 'Tiagão'));
 select pg_temp.ok((pg_temp.e()->>'metaAtual')::numeric = 35.5, 'sem Tiagão: 10.5 + 25');
 select pg_temp.ok(pg_temp.e()->>'topNome' = 'Duda', 'top vira Duda');
-select public.alternar_pix((select id from public.pix where nome = 'Duda'));
+select public.alternar_apoio((select id from public.apoios where nome = 'Duda'));
 select pg_temp.ok(pg_temp.e()->>'pixNome' = 'Carol', 'último ativo volta a ser Carol');
-select public.alternar_pix((select id from public.pix where nome = 'Duda'));
+select public.alternar_apoio((select id from public.apoios where nome = 'Duda'));
 
 -- ajuste e editado por
 select public.atualizar_estado('principal', '{"ajuste": 5}');
@@ -107,7 +107,7 @@ exception when others then if sqlerrm = 'devia recusar' then raise; end if; end 
 
 -- anon lê pix mas não escreve direto
 set role anon;
-select pg_temp.ok((select count(*) from public.pix) = 4, 'anon lê pix');
-do $$ begin insert into public.pix (nome, valor, origem) values ('Z', 1, 'manual'); raise exception 'devia recusar';
+select pg_temp.ok((select count(*) from public.apoios) = 4, 'anon lê pix');
+do $$ begin insert into public.apoios (nome, valor, origem) values ('Z', 1, 'manual'); raise exception 'devia recusar';
 exception when others then if sqlerrm = 'devia recusar' then raise; end if; end $$;
 reset role;
