@@ -46,7 +46,13 @@ registrar('login e painel carregam', true);
 
 const campoTitulo = painel.getByLabel('TÍTULO DA LIVE · TODAS AS CENAS');
 await painel.waitForTimeout(1500);
-const tituloOriginal = await campoTitulo.inputValue();
+// se uma rodada anterior parou no meio, o título ficou "TESTE ..."; TITULO_ORIGINAL força o valor de volta
+const lido = await campoTitulo.inputValue();
+const tituloOriginal = process.env.TITULO_ORIGINAL || (lido.startsWith('TESTE') ? 'OPERAÇÃO AO VIVO' : lido);
+let minutosAntes = null;
+let relogioMexido = false;
+
+try {
 
 const host = await ctx.newPage();
 await host.goto(`${BASE}/tela/host`);
@@ -84,6 +90,7 @@ registrar('"não contar" tira o PIX da meta', volta.ms != null, `meta ${volta.tx
 await painel.locator('body').click({ position: { x: 5, y: 890 } });
 await painel.keyboard.press('3');
 await painel.getByText('▶ INICIAR').click();
+relogioMexido = true;
 await painel.waitForTimeout(2500);
 const futebolA = await ctx.newPage();
 await futebolA.goto(`${BASE}/tela/futebol`);
@@ -94,10 +101,11 @@ const seg = Number(relPainel.split(':')[0]) * 60 + Number(relPainel.split(':')[1
 registrar('relógio roda pela hora do servidor', seg >= 3 && relTela === `${Math.floor(seg / 60)}'`, `painel ${relPainel}, tela aberta depois ${relTela}`);
 await painel.getByText('❚❚ PAUSAR').click();
 await painel.getByText('ZERAR').click();
+relogioMexido = false;
 
 // 5. contagem: duas fontes abertas em momentos diferentes mostram o mesmo tempo
 await painel.keyboard.press('1');
-const minutosAntes = await painel.locator('.p-opcao--min.p-opcao--ativa').textContent();
+minutosAntes = (await painel.locator('.p-opcao--min.p-opcao--ativa').textContent()).trim();
 await painel.getByText('2 MIN', { exact: true }).click();
 await painel.waitForTimeout(1500);
 const inicio = await ctx.newPage();
@@ -113,11 +121,24 @@ const [ti, tv] = await Promise.all([
 const s = (x) => Number(x.split(':')[0]) * 60 + Number(x.split(':')[1]);
 registrar('Início e Intervalo mostram o mesmo tempo', Math.abs(s(ti) - s(tv)) <= 1 && s(ti) < 120, `início ${ti}, intervalo ${tv}`);
 
-// arrumar o que o teste mexeu
-await painel.getByText(minutosAntes.trim(), { exact: true }).click();
-await campoTitulo.fill(tituloOriginal);
-await painel.waitForTimeout(1200);
 registrar('sem erros de JavaScript no painel', erros.length === 0, erros.join(' | '));
+} catch (e) {
+  registrar('passo interrompido', false, e.message.split('\n')[0]);
+} finally {
+  // arrumar o que o teste mexeu, mesmo se algum passo falhou
+  if (relogioMexido) {
+    await painel.keyboard.press('3');
+    if (await painel.getByText('❚❚ PAUSAR').count()) await painel.getByText('❚❚ PAUSAR').click();
+    await painel.getByText('ZERAR').click();
+  }
+  if (minutosAntes) {
+    await painel.keyboard.press('1');
+    await painel.getByText(minutosAntes, { exact: true }).click();
+  }
+  await campoTitulo.fill(tituloOriginal);
+  await painel.waitForTimeout(1500);
+  console.log(`(título restaurado para "${tituloOriginal}")`);
+}
 
 await browser.close();
 const falhas = resultados.filter((r) => !r.ok).length;
