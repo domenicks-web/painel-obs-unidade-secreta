@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Unidade Secreta Live</title>
     <script>
-      // Telas e alerta do OBS: fundo transparente desde o primeiro frame, antes de qualquer CSS ou JS.
-      if (/^\/(tela\/|alerta)/.test(location.pathname)) document.documentElement.classList.add('obs');
+      // Telas e chat do OBS: fundo transparente desde o primeiro frame, antes de qualquer CSS ou JS.
+      if (/^\/(tela\/|chat$)/.test(location.pathname) && !/[?&]teste=1/.test(location.search))
+        document.documentElement.classList.add('obs');
     </script>
     <style>
       html.obs,

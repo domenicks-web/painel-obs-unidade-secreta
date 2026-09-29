@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TelaPage } from './pages/TelaPage';
+import { ChatPage } from './pages/ChatPage';
 import { RotaProtegida } from './components/RotaProtegida';
 
 // Painel, admin e login vêm sob demanda: as telas do OBS baixam só o que usam.
@@ -13,6 +14,7 @@ export default function App() {
     <Suspense fallback={null}>
       <Routes>
         <Route path="/tela/:id" element={<TelaPage />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/painel"
