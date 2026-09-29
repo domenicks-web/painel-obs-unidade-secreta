@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLive } from '../live/useLive';
 import { useAuth } from '../hooks/useAuth';
 import { RelogioServidorProvider } from '../live/relogioServidor';
@@ -13,6 +14,9 @@ import { CaixaChat } from '../painel/CaixaChat';
 import { ModalGalera } from '../painel/ModalGalera';
 import { usePix } from '../live/usePix';
 import { useControlesLivePix } from '../live/useControlesLivePix';
+import { useChat } from '../chat/useChat';
+import { gravarSessao, lerSessao } from '../chat/sessao';
+import { mensagemAuto } from '../chat/teste';
 import '../painel/painel.css';
 
 export function PainelPage() {
@@ -28,11 +32,28 @@ function Painel() {
   const pix = usePix();
   const livepix = useControlesLivePix();
   const { papel } = useAuth();
+  const [params] = useSearchParams();
+  const chatTeste = params.get('chatTeste') === '1';
+  const [sessao, setSessao] = useState(lerSessao);
+  const chat = useChat({ sessao, max: 40, teste: chatTeste });
+  const { adicionar } = chat;
+  const trocarSessao = useCallback((s: string) => {
+    gravarSessao(s);
+    setSessao(s);
+  }, []);
   const [tela, setTela] = useState<TelaId>('host');
   const [galeraAberta, setGaleraAberta] = useState(false);
   const fecharGalera = useCallback(() => setGaleraAberta(false), []);
   const { estado, salvarDepois } = live;
   const label = TELAS.find((t) => t.id === tela)!.label;
+
+  // /painel?chatTeste=1: mensagens fictícias a cada 2,6 s (demonstração e prints)
+  useEffect(() => {
+    if (!chatTeste) return;
+    for (let i = 0; i < 5; i++) adicionar(mensagemAuto());
+    const t = setInterval(() => adicionar(mensagemAuto()), 2600);
+    return () => clearInterval(t);
+  }, [chatTeste, adicionar]);
 
   return (
     <div className="p-painel">
@@ -44,6 +65,7 @@ function Painel() {
         aoAbrirGalera={() => setGaleraAberta(true)}
         livepix={livepix.status}
         livepixUltimo={livepix.ultimo}
+        chat={chat.status}
       />
       <div className="p-grade">
         <ListaTelas atual={tela} aoEscolher={setTela} />
@@ -70,7 +92,14 @@ function Painel() {
         </main>
         <aside className="p-direita">
           <ColunaPix live={live} pix={pix} livepix={livepix} />
-          <CaixaChat />
+          <CaixaChat
+            msgs={chat.msgs}
+            status={chat.status}
+            sessao={sessao}
+            aoTrocarSessao={trocarSessao}
+            pin={estado.chatPin}
+            aoDestacar={(pin) => live.salvar({ chatPin: pin })}
+          />
         </aside>
       </div>
       {galeraAberta && <ModalGalera galera={estado.galera} aoSalvar={(g) => salvarDepois({ galera: g })} aoFechar={fecharGalera} />}

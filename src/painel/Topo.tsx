@@ -4,6 +4,7 @@ import { useAgora } from '../live/relogioServidor';
 import { formatarTempoRelativo } from '../live/formatar';
 import type { StatusConexao } from '../live/useLive';
 import type { ComandoLivePix, StatusLivePix, UltimoComando } from '../live/useControlesLivePix';
+import type { StatusChat } from '../chat/useChat';
 
 interface Props {
   status: StatusConexao;
@@ -13,6 +14,7 @@ interface Props {
   aoAbrirGalera: () => void;
   livepix: StatusLivePix;
   livepixUltimo?: UltimoComando | null;
+  chat: StatusChat;
 }
 
 // Os links do LivePix não dizem o estado real: o selo mostra o último comando dado.
@@ -31,7 +33,15 @@ function extraLivePix(status: StatusLivePix, ultimo: UltimoComando | null | unde
   return rotulo;
 }
 
-export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix, livepixUltimo }: Props) {
+const EXTRA_CHAT: Record<StatusChat, string> = {
+  ao_vivo: '',
+  teste: 'TESTE',
+  conectando: 'CONECTANDO…',
+  reconectando: 'RECONECTANDO…',
+  sem_sessao: 'SEM SESSÃO',
+};
+
+export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix, livepixUltimo, chat }: Props) {
   const agora = useAgora(15000);
   const indicadores = [
     { label: 'TELAS SINCRONIZADAS', aceso: status === 'ao_vivo', extra: status === 'reconectando' ? 'RECONECTANDO…' : '' },
@@ -44,7 +54,7 @@ export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, li
         ? `Último comando: ${ROTULO_COMANDO[livepixUltimo.comando]}${livepixUltimo.por ? `, por ${livepixUltimo.por}` : ''}, ${formatarTempoRelativo(Date.parse(livepixUltimo.em), agora)}`
         : undefined,
     },
-    { label: 'CHAT', aceso: false, extra: 'EM BREVE' },
+    { label: 'CHAT', aceso: chat === 'ao_vivo' || chat === 'teste', extra: EXTRA_CHAT[chat] },
   ];
 
   return (

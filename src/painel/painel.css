@@ -149,11 +149,31 @@
 .p-pix__add:disabled { opacity: .5; cursor: default; }
 .p-erro { background: #FFF3E0; color: #1A1417; font: 700 12px/1.4 'JetBrains Mono', monospace; letter-spacing: .06em; padding: 8px 10px; }
 
-.p-chat { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-height: 220px; }
+.p-chat { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-height: 320px; }
 .p-chat__fontes { display: flex; gap: 4px; margin-left: auto; }
-.p-chat__fonte { padding: 6px 9px; border: 0; background: #241d21; color: #6d6368; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .1em; cursor: default; }
-.p-chat__corpo { flex: 1; min-height: 120px; display: flex; align-items: center; justify-content: center; text-align: center; font: 700 13px/1.5 'JetBrains Mono', monospace; letter-spacing: .14em; color: #4a3f44; box-shadow: inset 0 0 0 2px #2A2226; }
-.p-chat__rodape { font: 400 11px/1.4 'JetBrains Mono', monospace; color: #6d6368; }
+.p-chat__fonte { padding: 6px 9px; border: 0; background: #241d21; color: #6d6368; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .1em; cursor: pointer; }
+.p-chat__pin { background: #8B6CF0; color: #1A1417; padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; animation: pIn .35s both; }
+.p-chat__pin-textos { min-width: 0; }
+.p-chat__pin-rotulo { font: 700 10px/1 'JetBrains Mono', monospace; letter-spacing: .14em; margin-bottom: 5px; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-chat__pin-txt { font: 600 17px/1.2 'Barlow Condensed', sans-serif; overflow-wrap: anywhere; }
+.p-chat__tirar { border: 2px solid #1A1417; background: transparent; color: #1A1417; cursor: pointer; padding: 6px 8px; font: 700 11px/1 'JetBrains Mono', monospace !important; }
+.p-chat__lista { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+.p-chat__vazio { flex: 1; min-height: 120px; display: flex; align-items: center; justify-content: center; text-align: center; font: 700 13px/1.5 'JetBrains Mono', monospace; letter-spacing: .14em; color: #4a3f44; box-shadow: inset 0 0 0 2px #2A2226; }
+.p-chat__item { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 8px 6px; animation: pIn .35s both; }
+.p-chat__item:hover { background: #241d21; }
+.p-chat__tag { font: 700 10px/1 'JetBrains Mono', monospace; padding: 4px 0; text-align: center; color: #1A1417; }
+.p-chat__txt { min-width: 0; font: 500 17px/1.25 'Barlow Condensed', sans-serif; color: #e8ddd0; overflow-wrap: anywhere; }
+.p-chat__autor { font-weight: 700; color: var(--cor); }
+.p-chat__valor { font: 400 15px/1 'Bungee', sans-serif; color: #FF6B1F; }
+.p-chat__evento { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #8B6CF0; }
+.p-chat__destacar { border: 0; background: transparent; color: #6d6368; cursor: pointer; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .1em; padding: 4px; }
+.p-chat__destacar:hover, .p-chat__destacar:focus-visible { color: #8B6CF0; }
+.p-chat__sessao { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 14px; box-shadow: inset 0 0 0 2px #2A2226; }
+.p-chat__sessao-rotulo { font: 700 11px/1.3 'JetBrains Mono', monospace; letter-spacing: .12em; color: #FFF3E0; }
+.p-chat__sessao-linha { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.p-chat__sessao-dica { font: 400 11px/1.4 'JetBrains Mono', monospace; color: #6d6368; }
+.p-chat__trocar { border: 0; background: transparent; color: #FF6B1F; cursor: pointer; padding: 0; font: 700 11px/1.4 'JetBrains Mono', monospace !important; letter-spacing: .1em; align-self: flex-start; }
+.p-chat__rodape { font: 400 11px/1.4 'JetBrains Mono', monospace; color: #6d6368; overflow-wrap: anywhere; }
 
 /* ===== Controles do alerta LivePix (coluna PIX) ===== */
 @keyframes pFalhou { 0%, 100% { border-color: #3a3035; } 50% { border-color: #FF6B1F; } }

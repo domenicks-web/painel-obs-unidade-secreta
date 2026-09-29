@@ -63,7 +63,7 @@ async function abrirPainel(largura, altura, autoPlay = true) {
     return route.fulfill({ status: 404, body: '' });
   });
   const page = await ctx.newPage();
-  await page.goto('http://localhost:5173/painel');
+  await page.goto('http://localhost:5173/painel?chatTeste=1'); // chat com as mensagens fictícias
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(1500);
   return page;
@@ -96,6 +96,12 @@ await nossa.screenshot({ path: resolve('docs/prints/painel-galera.png') });
 const pausado = await abrirPainel(1440, 900, false);
 await pausado.screenshot({ path: resolve('docs/prints/painel-livepix-pausado.png') });
 await pausado.screenshot({ path: resolve('docs/prints/painel-livepix-coluna.png'), clip: { x: 1040, y: 0, width: 400, height: 330 } });
+
+// chat com uma mensagem em destaque, recorte da coluna da direita
+estado.chatPin = { autor: 'marinaFC', txt: 'manda salve pro pessoal de BH', plataforma: 'yt' };
+const comPin = await abrirPainel(1440, 900);
+await comPin.screenshot({ path: resolve('docs/prints/painel-chat.png'), clip: { x: 1040, y: 330, width: 400, height: 570 } });
+estado.chatPin = null;
 
 // celular
 const cel = await abrirPainel(390, 844);
