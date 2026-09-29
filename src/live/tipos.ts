@@ -74,7 +74,38 @@ export type CampoSoDoBanco =
   | 'metaAtual' | 'pixNome' | 'pixValor' | 'topNome' | 'topValor'
   | 'timerInicio' | 'clockInicio' | 'clockAcumulado' | 'clockRodando';
 
-export type PatchLive = Partial<Omit<EstadoLive, CampoSoDoBanco>>;
+// Chaves com ponto mudam só um pedaço (uma câmera, um campo da enquete); o banco aplica com
+// jsonb_set, então dois editores mexendo em pedaços diferentes não se atropelam.
+export type CaminhoLive = { [K in `nomes.${number}`]?: string } & {
+  'enquete.casa'?: number;
+  'enquete.empate'?: number;
+  'enquete.fora'?: number;
+  'enquete.mostrar'?: boolean;
+};
+
+export type PatchLive = Partial<Omit<EstadoLive, CampoSoDoBanco>> & CaminhoLive;
+
+// Aplica um patch (com ou sem caminhos) sobre o estado, sem mutar nada.
+export function aplicarPatch(estado: EstadoLive, patch: PatchLive): EstadoLive {
+  const novo = { ...estado } as EstadoLive & Record<string, unknown>;
+  for (const [k, v] of Object.entries(patch)) {
+    const ponto = k.indexOf('.');
+    if (ponto < 0) {
+      novo[k] = v;
+      continue;
+    }
+    const raiz = k.slice(0, ponto);
+    const sub = k.slice(ponto + 1);
+    if (raiz === 'nomes') {
+      const nomes = [...novo.nomes];
+      nomes[Number(sub)] = v as string;
+      novo.nomes = nomes;
+    } else if (raiz === 'enquete') {
+      novo.enquete = { ...novo.enquete, [sub]: v };
+    }
+  }
+  return novo;
+}
 
 export const ESTADO_PADRAO: EstadoLive = {
   titulo: 'OPERAÇÃO AO VIVO',

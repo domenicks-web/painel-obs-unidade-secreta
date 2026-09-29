@@ -1,5 +1,5 @@
 import type { useLive } from '../live/useLive';
-import { JOGO_OPCOES, type EstadoLive, type TelaId } from '../live/tipos';
+import { JOGO_OPCOES, type PatchLive, type TelaId } from '../live/tipos';
 import { mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
@@ -62,8 +62,8 @@ function Cameras({ tela, live }: { tela: TelaId; live: Live }) {
             numero={i + 1}
             valor={estado.nomes[i] ?? ''}
             galera={estado.galera}
-            // o array inteiro vai junto: estado.nomes já tem as outras câmeras pendentes aplicadas
-            aoMudar={(v) => live.salvarDepois({ nomes: estado.nomes.map((n, j) => (j === i ? v : n)) })}
+            // só o índice desta câmera: outra pessoa pode estar mudando outra câmera ao mesmo tempo
+            aoMudar={(v) => live.salvarDepois({ [`nomes.${i}`]: v } as PatchLive)}
           />
         ))}
       </div>
@@ -74,7 +74,6 @@ function Cameras({ tela, live }: { tela: TelaId; live: Live }) {
 function CamposFutebol({ live }: { live: Live }) {
   const { estado, salvar, salvarDepois } = live;
   const agora = useAgora(500);
-  const enquete = (patch: Partial<EstadoLive['enquete']>) => ({ enquete: { ...estado.enquete, ...patch } });
 
   return (
     <>
@@ -135,14 +134,14 @@ function CamposFutebol({ live }: { live: Live }) {
       <div className="p-campo">
         <div className="p-rotulo">ENQUETE · QUEM GANHA? (EM %)</div>
         <div className="p-enquete">
-          <CampoTexto rotulo={estado.timeA} tipo="number" valor={String(estado.enquete.casa)} aoMudar={(v) => salvarDepois(enquete({ casa: limitar(v) }))} />
-          <CampoTexto rotulo="EMPATE" tipo="number" valor={String(estado.enquete.empate)} aoMudar={(v) => salvarDepois(enquete({ empate: limitar(v) }))} />
-          <CampoTexto rotulo={estado.timeB} tipo="number" valor={String(estado.enquete.fora)} aoMudar={(v) => salvarDepois(enquete({ fora: limitar(v) }))} />
+          <CampoTexto rotulo={estado.timeA} tipo="number" valor={String(estado.enquete.casa)} aoMudar={(v) => salvarDepois({ 'enquete.casa': limitar(v) })} />
+          <CampoTexto rotulo="EMPATE" tipo="number" valor={String(estado.enquete.empate)} aoMudar={(v) => salvarDepois({ 'enquete.empate': limitar(v) })} />
+          <CampoTexto rotulo={estado.timeB} tipo="number" valor={String(estado.enquete.fora)} aoMudar={(v) => salvarDepois({ 'enquete.fora': limitar(v) })} />
           <button
             type="button"
             className={estado.enquete.mostrar ? 'p-chave p-chave--ligada' : 'p-chave'}
             aria-pressed={estado.enquete.mostrar}
-            onClick={() => salvar(enquete({ mostrar: !estado.enquete.mostrar }))}
+            onClick={() => salvar({ 'enquete.mostrar': !estado.enquete.mostrar })}
           >
             {estado.enquete.mostrar ? 'ESCONDER' : 'MOSTRAR'}
           </button>

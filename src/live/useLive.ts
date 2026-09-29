@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { ESTADO_PADRAO, type EstadoLive, type PatchLive } from './tipos';
+import { aplicarPatch, ESTADO_PADRAO, type EstadoLive, type PatchLive } from './tipos';
 
 export const SLUG = 'principal';
 const DEBOUNCE_MS = 400;
@@ -85,7 +85,12 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
 
   const salvar = useCallback(
     async (patch: PatchLive) => {
-      for (const [k, v] of Object.entries(patch)) ultimos.current.set(k, v);
+      for (const [k, v] of Object.entries(patch)) {
+        ultimos.current.set(k, v);
+        // um clique vale mais que o texto ainda não enviado do mesmo campo
+        clearTimeout(timers.current.get(k));
+        timers.current.delete(k);
+      }
       setPendentes((p) => ({ ...p, ...patch }));
       if (fixture) return;
       await enviar(patch);
@@ -123,7 +128,7 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
   }, []);
 
   return {
-    estado: { ...servidor, ...pendentes } as EstadoLive,
+    estado: aplicarPatch(servidor, pendentes),
     status,
     editadoPor: editado.por,
     editadoEm: editado.em,

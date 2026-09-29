@@ -6,6 +6,8 @@ describe('reais', () => {
     expect(reais(25)).toBe('25');
     expect(reais(25.5)).toBe('25,50');
     expect(reais(0)).toBe('0');
+    expect(reais(1250)).toBe('1.250');
+    expect(reais(1250.5)).toBe('1.250,50');
   });
 });
 

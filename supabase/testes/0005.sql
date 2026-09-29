@@ -81,6 +81,17 @@ select public.controlar_relogio('principal', 'iniciar'); -- segundo iniciar não
 select public.controlar_relogio('principal', 'zerar');
 select pg_temp.ok((pg_temp.e()->>'clockAcumulado')::numeric = 0 and not (pg_temp.e()->>'clockRodando')::boolean, 'zerado');
 
+-- patch por caminho: cada editor mexe só no seu pedaço (câmera, campo da enquete)
+select public.atualizar_estado('principal', '{"nomes.1": "ZÉ"}');
+select public.atualizar_estado('principal', '{"nomes.3": "BIA"}');
+select pg_temp.ok(pg_temp.e()->'nomes'->>1 = 'ZÉ' and pg_temp.e()->'nomes'->>3 = 'BIA' and pg_temp.e()->'nomes'->>0 = 'NOME 01', 'nomes por índice');
+select public.atualizar_estado('principal', '{"enquete.casa": 40}');
+select public.atualizar_estado('principal', '{"enquete.mostrar": true}');
+select pg_temp.ok((pg_temp.e()->'enquete'->>'casa')::int = 40 and (pg_temp.e()->'enquete'->>'mostrar')::boolean, 'enquete por campo');
+select public.atualizar_estado('principal', '{"metaAtual.x": 1, "clockRodando.y": true}');
+select pg_temp.ok(jsonb_typeof(pg_temp.e()->'metaAtual') = 'number' and pg_temp.e()->>'clockRodando' = 'false', 'caminho não fura campos do banco');
+select pg_temp.ok(not (pg_temp.e() ? 'nomes.1'), 'caminho não vira chave solta');
+
 -- validações
 do $$ begin perform public.adicionar_pix_manual('X', 0); raise exception 'devia recusar valor 0';
 exception when others then if sqlerrm = 'devia recusar valor 0' then raise; end if; end $$;

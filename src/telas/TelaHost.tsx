@@ -8,6 +8,10 @@ export function TelaHost({ estado, previa }: PropsTela) {
   const n = (i: number) => estado.nomes[i] || `NOME 0${i + 1}`;
   const pct = Math.min(100, Math.round((estado.metaAtual / Math.max(1, estado.metaTotal)) * 100)) + '%';
   const [linkA, linkB] = partesPixLink(estado.pixLink);
+  // o cartão da meta tem 500px: valor com centavos ou milhar desce a fonte pra não quebrar linha
+  const meta = reais(estado.metaAtual);
+  const tamanhoMeta =
+    meta.length > 8 ? ' t-host__meta-atual--micro' : meta.length > 7 ? ' t-host__meta-atual--minima' : meta.length > 4 ? ' t-host__meta-atual--menor' : '';
 
   return (
     <div className="t-escuro">
@@ -55,7 +59,7 @@ export function TelaHost({ estado, previa }: PropsTela) {
             <div className="t-host__mono18">{pct}</div>
           </div>
           <div className="t-host__meta-valores">
-            <div className="t-host__meta-atual">R$ {reais(estado.metaAtual)}</div>
+            <div className={`t-host__meta-atual${tamanhoMeta}`}>R$ {meta}</div>
             <div className="t-host__meta-total">/ R$ {reais(estado.metaTotal)}</div>
           </div>
           <div className="t-host__meta-barra">

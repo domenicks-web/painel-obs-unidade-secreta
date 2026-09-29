@@ -76,6 +76,38 @@ describe('useLive', () => {
     expect(result.current.estado.timeA).toBe('OUTRO TIME');
   });
 
+  it('botão logo depois de digitar no mesmo campo cancela a gravação atrasada', async () => {
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    vi.useFakeTimers();
+    act(() => result.current.salvarDepois({ 'enquete.casa': 40 }));
+    await act(async () => {
+      await result.current.salvar({ 'enquete.casa': 55 });
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400);
+    });
+    expect(supabase.rpc).toHaveBeenCalledTimes(1);
+    expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { 'enquete.casa': 55 } });
+  });
+
+  it('patch por caminho mexe só no pedaço e não esconde a mudança do outro editor', async () => {
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    vi.useFakeTimers();
+    act(() => result.current.salvarDepois({ 'nomes.1': 'ZÉ', 'enquete.mostrar': true }));
+    const outro = [...ESTADO_PADRAO.nomes];
+    outro[3] = 'BIA';
+    act(() => handlerUpdate!({ new: linha({ nomes: outro, enquete: { casa: 30, empate: 0, fora: 0, mostrar: false } }) }));
+    expect(result.current.estado.nomes).toEqual(['NOME 01', 'ZÉ', 'NOME 03', 'BIA', 'NOME 05', 'NOME 06']);
+    expect(result.current.estado.enquete).toEqual({ casa: 30, empate: 0, fora: 0, mostrar: true });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400);
+    });
+    expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { 'nomes.1': 'ZÉ' } });
+    expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { 'enquete.mostrar': true } });
+  });
+
   it('relógio e reiniciar usam as RPCs dedicadas', async () => {
     const { result } = renderHook(() => useLive());
     await waitFor(() => expect(result.current.status).toBe('ao_vivo'));

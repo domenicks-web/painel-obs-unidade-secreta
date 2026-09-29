@@ -64,6 +64,9 @@ declare
   v_ult_nome text; v_ult_valor numeric;
   v_top_nome text; v_top_valor numeric;
 begin
+  -- trava a linha antes de somar: com PIX chegando ao mesmo tempo, a soma é feita
+  -- depois que o outro commit terminou e enxerga o PIX dele
+  perform 1 from salas where slug = p_slug for update;
   select coalesce((estado->>'ajuste')::numeric, 0) into v_ajuste from salas where slug = p_slug;
   select coalesce(sum(valor), 0) into v_soma from pix where not off;
   select nome, valor into v_ult_nome, v_ult_valor from pix where not off order by created_at desc, id desc limit 1;
@@ -118,6 +121,10 @@ as $$
 declare
   v_nome text := nome_membro_atual();
   v_patch jsonb;
+  v_caminhos jsonb := '{}'::jsonb;
+  v_estado jsonb;
+  v_k text;
+  v_v jsonb;
   v_sala salas;
 begin
   if v_nome is null then
@@ -135,17 +142,33 @@ begin
     v_patch := v_patch || jsonb_build_object('timerInicio', agora_ms());
   end if;
 
+  -- chaves com ponto ("nomes.1", "enquete.mostrar") mudam só aquele pedaço: dois editores
+  -- mexendo em câmeras ou campos diferentes não se atropelam. Só nomes e enquete aceitam.
+  for v_k, v_v in select * from jsonb_each(v_patch) loop
+    if position('.' in v_k) > 0 then
+      v_patch := v_patch - v_k;
+      if split_part(v_k, '.', 1) in ('nomes', 'enquete') then
+        v_caminhos := v_caminhos || jsonb_build_object(v_k, v_v);
+      end if;
+    end if;
+  end loop;
+
+  select estado into v_estado from salas where slug = p_slug for update;
+  if v_estado is null then
+    raise exception 'sala não encontrada: %', p_slug;
+  end if;
+  v_estado := v_estado || v_patch;
+  for v_k, v_v in select * from jsonb_each(v_caminhos) loop
+    v_estado := jsonb_set(v_estado, string_to_array(v_k, '.'), v_v, true);
+  end loop;
+
   update salas
-  set estado = estado || v_patch,
+  set estado = v_estado,
       updated_at = now(),
       updated_by = auth.uid(),
       updated_by_nome = v_nome
   where slug = p_slug
   returning * into v_sala;
-
-  if v_sala is null then
-    raise exception 'sala não encontrada: %', p_slug;
-  end if;
 
   if v_patch ? 'ajuste' or v_patch ? 'metaTotal' then
     perform recalcular_pix(p_slug);

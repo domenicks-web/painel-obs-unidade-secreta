@@ -12,4 +12,5 @@ run() { docker exec -i "$NOME" psql -U postgres -h 127.0.0.1 -v ON_ERROR_STOP=1 
 run < supabase/testes/stub-auth.sql
 for f in supabase/migrations/*.sql; do run < "$f"; done
 for f in supabase/testes/0*.sql; do run < "$f"; done
+supabase/testes/concorrencia.sh "$NOME"
 echo "SQL OK"

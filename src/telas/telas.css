@@ -142,6 +142,10 @@
 .t-host__mono18 { font: 700 18px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
 .t-host__meta-valores { display: flex; align-items: baseline; gap: 14px; }
 .t-host__meta-atual { font: 400 64px/1 'Bungee', sans-serif; color: #1A1417; }
+.t-host__meta-atual, .t-host__meta-total { white-space: nowrap; }
+.t-host__meta-atual--menor { font-size: 50px; }
+.t-host__meta-atual--minima { font-size: 40px; }
+.t-host__meta-atual--micro { font-size: 34px; }
 .t-host__meta-total { font: 700 26px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #1A1417; }
 .t-host__meta-barra { height: 22px; background: #1A1417; position: relative; }
 .t-host__meta-barra-cheia { position: absolute; left: 0; top: 0; bottom: 0; background: #FFF3E0; transform-origin: 0 50%; animation: usGrow 1.4s cubic-bezier(.2,.8,.2,1) both; }

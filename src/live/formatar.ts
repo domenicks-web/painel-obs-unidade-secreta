@@ -2,7 +2,8 @@ import type { EstadoLive } from './tipos';
 
 export function reais(v: number): string {
   const n = Number(v) || 0;
-  return Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',');
+  const casas = Number.isInteger(n) ? 0 : 2;
+  return n.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
 }
 
 export function itensLetreiro(ticker: string): string[] {

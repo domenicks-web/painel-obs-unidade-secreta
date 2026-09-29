@@ -20,7 +20,7 @@ describe('CamposTela', () => {
     fireEvent.click(screen.getByText('OUTRO'));
     expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ jogo: 'OUTRO' });
     fireEvent.click(screen.getByText('MOSTRAR'));
-    expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ enquete: { casa: 0, empate: 0, fora: 0, mostrar: true } });
+    expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ 'enquete.mostrar': true });
   });
 
   it('lower: escolher alguém da galera preenche nome e função', () => {
@@ -30,13 +30,13 @@ describe('CamposTela', () => {
     expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ ltNome: 'ANA', funcao: 'HOST' });
   });
 
-  it('câmera grava o array inteiro de nomes', () => {
+  it('câmera grava só o próprio índice', () => {
     const l = live({ hostCams: '2' });
     render(<CamposTela tela="host" live={l} />);
     const cam2 = screen.getByLabelText('CÂMERA 02');
     fireEvent.focus(cam2);
     fireEvent.change(cam2, { target: { value: 'zé' } });
-    expect((l as { salvarDepois: ReturnType<typeof vi.fn> }).salvarDepois).toHaveBeenLastCalledWith({ nomes: ['NOME 01', 'ZÉ', 'NOME 03', 'NOME 04', 'NOME 05', 'NOME 06'] });
+    expect((l as { salvarDepois: ReturnType<typeof vi.fn> }).salvarDepois).toHaveBeenLastCalledWith({ 'nomes.1': 'ZÉ' });
   });
 
   it('início: minutos e reiniciar', () => {

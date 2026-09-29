@@ -33,6 +33,18 @@ describe('telas com câmeras', () => {
     expect((container.querySelector('.t-host__meta-barra-cheia') as HTMLElement).style.width).toBe('100%');
   });
 
+  it('meta com centavos ou 4 dígitos usa fonte menor pra caber numa linha', () => {
+    const { container, rerender } = render(<TelaHost estado={{ ...ESTADO_PADRAO, metaAtual: 320 }} />);
+    const valor = () => container.querySelector('.t-host__meta-atual') as HTMLElement;
+    expect(valor().className).not.toContain('--menor');
+    rerender(<TelaHost estado={{ ...ESTADO_PADRAO, metaAtual: 999.5 }} />);
+    expect(valor().className).toContain('t-host__meta-atual--menor');
+    rerender(<TelaHost estado={{ ...ESTADO_PADRAO, metaAtual: 1250.5 }} />);
+    expect(valor().className).toContain('t-host__meta-atual--minima');
+    rerender(<TelaHost estado={{ ...ESTADO_PADRAO, metaAtual: 12500.5 }} />);
+    expect(valor().className).toContain('t-host__meta-atual--micro');
+  });
+
   it('Mesa mostra as 6 câmeras', () => {
     render(<TelaMesa estado={{ ...ESTADO_PADRAO, nomes }} />);
     nomes.forEach((n) => expect(screen.getByText(n)).toBeInTheDocument());
