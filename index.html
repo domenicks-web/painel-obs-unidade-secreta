@@ -10,8 +10,8 @@
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script>
-      // Telas e chat do OBS: fundo transparente desde o primeiro frame, antes de qualquer CSS ou JS.
-      if (/^\/(tela\/|chat$)/.test(location.pathname) && !/[?&]teste=1/.test(location.search))
+      // Telas, chat e alerta do OBS: fundo transparente desde o primeiro frame, antes de qualquer CSS ou JS.
+      if (/^\/(tela\/|chat$|alerta$)/.test(location.pathname) && !/[?&]teste=1/.test(location.search))
         document.documentElement.classList.add('obs');
     </script>
     <style>

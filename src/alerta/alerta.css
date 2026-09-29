@@ -1,0 +1,53 @@
+/* /alerta (referencia/Alerta YT.dc.html) */
+@keyframes alIn { 0% { transform: translateY(-140px) skewY(-4deg); opacity: 0 } 55% { transform: translateY(14px) skewY(1deg); opacity: 1 } 80% { transform: translateY(-4px) } 100% { transform: none; opacity: 1 } }
+@keyframes alOut { from { transform: none; opacity: 1 } to { transform: translateY(-140px); opacity: 0 } }
+@keyframes alStripe { from { background-position: 0 0 } to { background-position: 52px 0 } }
+@keyframes alPop { 0% { transform: scale(0) } 70% { transform: scale(1.35) } 100% { transform: scale(1) } }
+@keyframes alStamp { 0% { transform: rotate(-3deg) scale(2.2); opacity: 0 } 60% { transform: rotate(-3deg) scale(.94); opacity: 1 } 100% { transform: rotate(-3deg) scale(1); opacity: 1 } }
+@keyframes alBar { from { transform: scaleX(1) } to { transform: scaleX(0) } }
+
+.a-area { position: absolute; left: 0; right: 0; top: 80px; display: flex; justify-content: center; font-family: 'Barlow Condensed', sans-serif; }
+.a-cartao { animation: alIn .5s cubic-bezier(.2,.8,.2,1) both; }
+.a-cartao--saindo { animation: alOut .5s cubic-bezier(.6,0,.8,.4) both; }
+
+.a-barra { height: 6px; background: #1A1417; margin-top: auto; }
+.a-barra__cheia { height: 100%; background: #FFF3E0; transform-origin: 0 0; animation: alBar 6s .5s linear both; }
+
+/* superchat / super sticker */
+.a-super { width: 1040px; filter: drop-shadow(12px 12px 0 #8B6CF0); }
+.a-super__listra { height: 20px; background: repeating-linear-gradient(-45deg, #1A1417 0 18px, #FF6B1F 18px 36px); background-size: 72px 20px; animation: alStripe .6s linear infinite; }
+.a-super__corpo { background: #FF6B1F; padding: 30px 40px 0; display: flex; flex-direction: column; gap: 18px; min-height: 250px; box-sizing: border-box; }
+.a-super__topo { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.a-super__quem { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.a-super__rotulos { display: flex; gap: 10px; align-items: center; }
+.a-super__yt { background: #1A1417; color: #FF6B1F; font: 700 18px/1 'JetBrains Mono', monospace; padding: 6px 8px; letter-spacing: .1em; }
+.a-super__tipo { font: 700 20px/1 'JetBrains Mono', monospace; letter-spacing: .18em; color: #1A1417; }
+.a-super__nome { font: 700 76px/.95 'Barlow Condensed', sans-serif; text-transform: uppercase; color: #1A1417; overflow-wrap: anywhere; }
+.a-super__msg { font: 600 44px/1.15 'Barlow Condensed', sans-serif; color: #1A1417; text-wrap: pretty; max-width: 820px; overflow-wrap: anywhere; }
+.a-super__barra { margin: 0 -40px; }
+
+.a-carimbo { position: relative; flex: none; animation: alStamp .5s .35s cubic-bezier(.2,.8,.2,1) both; }
+.a-carimbo--parado { animation: none; transform: rotate(-3deg); }
+.a-carimbo__sombra { position: absolute; inset: 0; transform: translate(8px, 8px); background: #FFF3E0; }
+.a-carimbo__valor { position: relative; background: #1A1417; color: #FFF3E0; font: 400 64px/1 'Bungee', sans-serif; padding: 20px 26px 16px; white-space: nowrap; }
+
+/* membro novo */
+.a-membro { width: 940px; background: #8B6CF0; color: #1A1417; filter: drop-shadow(12px 12px 0 #FF6B1F); display: flex; flex-direction: column; }
+.a-membro__corpo { display: flex; align-items: center; gap: 36px; padding: 34px 40px; }
+.a-membro__bolinhas { display: grid; grid-template-columns: repeat(5, 22px); gap: 12px; flex-shrink: 0; }
+.a-membro__bolinha { width: 22px; height: 22px; border-radius: 50%; background: #1A1417; animation: alPop .35s both; }
+.a-membro__bolinha--creme { background: #FFF3E0; }
+.a-membro__textos { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.a-membro__rotulo { font: 700 22px/1 'JetBrains Mono', monospace; letter-spacing: .18em; }
+.a-membro__nome { font: 700 84px/.95 'Barlow Condensed', sans-serif; text-transform: uppercase; overflow-wrap: anywhere; }
+
+/* /alerta?teste=1: página de teste da referência */
+.a-teste { min-height: 100vh; display: flex; flex-direction: column; gap: 24px; padding: 28px; box-sizing: border-box; background: #0f0c0e; font-family: 'Barlow Condensed', sans-serif; color: #FFF3E0; }
+.a-teste__barra { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.a-teste__titulo { font: 400 30px/1 'Bungee', sans-serif; color: #FF6B1F; margin-right: 12px; }
+.a-teste__botao { font: 700 15px/1 'JetBrains Mono', monospace; letter-spacing: .1em; padding: 14px 20px; border: 0; background: #FF6B1F; color: #1A1417; cursor: pointer; }
+.a-teste__botao--creme { background: #FFF3E0; }
+.a-teste__botao--violeta { background: #8B6CF0; }
+.a-teste__fila { font: 700 13px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #8a7f84; }
+.a-teste__nota { font: 400 14px/1.4 'JetBrains Mono', monospace; color: #8a7f84; max-width: 900px; }
+.a-teste__palco { width: 1920px; height: 1080px; transform-origin: 0 0; transform: scale(.5); margin-bottom: -540px; margin-right: -960px; position: relative; overflow: hidden; background: repeating-conic-gradient(#1c171a 0 25%, #231d21 0 50%) 0 0 / 40px 40px; outline: 2px dashed #3a3035; }

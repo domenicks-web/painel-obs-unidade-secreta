@@ -12,6 +12,7 @@ export function tituloDaPagina(caminho: string): string {
     return `${t ? t.label : 'Tela'} · ${MARCA}`;
   }
   if (caminho.startsWith('/chat')) return `Chat ao vivo · ${MARCA}`;
+  if (caminho.startsWith('/alerta')) return `Alerta · ${MARCA}`;
   if (caminho.startsWith('/login')) return `Entrar · ${MARCA}`;
   if (caminho.startsWith('/admin')) return `Galera e acessos · ${MARCA}`;
   return `● Painel da Live · ${MARCA}`;
