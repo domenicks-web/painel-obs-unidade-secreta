@@ -1,0 +1,19 @@
+import type { EstadoLive } from './tipos';
+
+export function reais(v: number): string {
+  const n = Number(v) || 0;
+  return Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',');
+}
+
+export function itensLetreiro(ticker: string): string[] {
+  return ticker.split(/[●•|]/).map((x) => x.trim()).filter(Boolean);
+}
+
+export function partesPixLink(link: string): [string, string] {
+  const i = link.indexOf('/');
+  return i < 0 ? [link, ''] : [link.slice(0, i + 1), link.slice(i + 1)];
+}
+
+export function rotuloJogo(e: Pick<EstadoLive, 'jogo' | 'jogoOutro'>): string {
+  return e.jogo === 'OUTRO' ? e.jogoOutro : e.jogo;
+}
