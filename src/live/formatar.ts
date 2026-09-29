@@ -17,3 +17,14 @@ export function partesPixLink(link: string): [string, string] {
 export function rotuloJogo(e: Pick<EstadoLive, 'jogo' | 'jogoOutro'>): string {
   return e.jogo === 'OUTRO' ? e.jogoOutro : e.jogo;
 }
+
+export function formatarTempoRelativo(desdeMs: number, agora: number): string {
+  const diffMs = agora - desdeMs;
+  if (diffMs < 1000) return 'agora';
+  const seg = Math.floor(diffMs / 1000);
+  if (seg < 60) return `há ${seg}s`;
+  const min = Math.floor(seg / 60);
+  if (min < 60) return `há ${min}min`;
+  const horas = Math.floor(min / 60);
+  return `há ${horas}h`;
+}

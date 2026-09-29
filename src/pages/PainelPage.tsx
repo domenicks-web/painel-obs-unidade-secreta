@@ -1,39 +1,62 @@
-import { useSearchParams } from 'react-router-dom';
-import { useSala } from '../hooks/useSala';
-import { useServerClock } from '../hooks/useServerClock';
-import { useEventos } from '../hooks/useEventos';
-import { calcularRestante } from '../lib/tempo';
-import { IndicadorStatus } from '../components/painel/IndicadorStatus';
-import { SecaoComecando } from '../components/painel/SecaoComecando';
-import { SecaoIntervalo } from '../components/painel/SecaoIntervalo';
-import { SecaoEncerramento } from '../components/painel/SecaoEncerramento';
-import { SecaoPlacar } from '../components/painel/SecaoPlacar';
-import { SecaoCameras } from '../components/painel/SecaoCameras';
-import { SecaoMembros } from '../components/painel/SecaoMembros';
-import { SecaoAlerta } from '../components/painel/SecaoAlerta';
+import { useState } from 'react';
+import { useLive } from '../live/useLive';
+import { useAuth } from '../hooks/useAuth';
+import { RelogioServidorProvider } from '../live/relogioServidor';
+import { TELAS, type TelaId } from '../live/tipos';
+import { Topo } from '../painel/Topo';
+import { ListaTelas } from '../painel/ListaTelas';
+import { Previa } from '../painel/Previa';
+import { CampoTexto } from '../painel/CampoTexto';
+import '../painel/painel.css';
 
 export function PainelPage() {
-  const [params] = useSearchParams();
-  const slug = params.get('sala') || 'principal';
-  const { estado, status, updatedAt, updatedByNome, atualizar } = useSala(slug);
-  const agoraServidor = useServerClock();
-  const restanteMs = calcularRestante(estado, agoraServidor);
-  const { disparar } = useEventos(slug);
+  return (
+    <RelogioServidorProvider>
+      <Painel />
+    </RelogioServidorProvider>
+  );
+}
+
+function Painel() {
+  const live = useLive();
+  const { papel } = useAuth();
+  const [tela, setTela] = useState<TelaId>('host');
+  const [, setGaleraAberta] = useState(false);
+  const { estado, salvarDepois } = live;
+  const label = TELAS.find((t) => t.id === tela)!.label;
 
   return (
-    <div className="painel">
-      <header className="painel__cabecalho">
-        <div className="painel__logo">US</div>
-        <h1>PAINEL AO VIVO</h1>
-      </header>
-      <IndicadorStatus status={status} updatedAt={updatedAt} updatedByNome={updatedByNome} agoraServidor={agoraServidor} />
-      <SecaoComecando estado={estado} restanteMs={restanteMs} atualizar={atualizar} />
-      <SecaoIntervalo estado={estado} atualizar={atualizar} />
-      <SecaoEncerramento estado={estado} atualizar={atualizar} />
-      <SecaoPlacar estado={estado} atualizar={atualizar} />
-      <SecaoCameras estado={estado} atualizar={atualizar} />
-      <SecaoMembros estado={estado} atualizar={atualizar} />
-      <SecaoAlerta disparar={disparar} />
+    <div className="p-painel">
+      <Topo
+        status={live.status}
+        editadoPor={live.editadoPor}
+        editadoEm={live.editadoEm}
+        ehAdmin={papel === 'admin'}
+        aoAbrirGalera={() => setGaleraAberta(true)}
+      />
+      <div className="p-grade">
+        <ListaTelas atual={tela} aoEscolher={setTela} />
+        <main className="p-centro">
+          <div className="p-previa-bloco">
+            <div className="p-previa-cabeca">
+              <div className="p-previa-titulo">{label}</div>
+              <div className="p-previa-aviso">PRÉVIA · NÃO É O QUE ESTÁ NO AR</div>
+            </div>
+            <Previa tela={tela} estado={estado} />
+          </div>
+          <section className="p-infos">
+            <div className="p-infos-cabeca">
+              <div className="p-selo">INFOS DA TELA</div>
+              <div className="p-infos-sub">ATUALIZA NO OBS NA HORA</div>
+            </div>
+            <div className="p-divisor" />
+            <div className="p-duas">
+              <CampoTexto rotulo="TÍTULO DA LIVE · TODAS AS CENAS" valor={estado.titulo} maiusculo aoMudar={(v) => salvarDepois({ titulo: v })} />
+              <CampoTexto rotulo="LETREIRO · SEPARA COM ●" valor={estado.ticker} maiusculo aoMudar={(v) => salvarDepois({ ticker: v })} />
+            </div>
+          </section>
+        </main>
+      </div>
     </div>
   );
 }

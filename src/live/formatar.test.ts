@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { itensLetreiro, partesPixLink, reais, rotuloJogo } from './formatar';
+import { formatarTempoRelativo, itensLetreiro, partesPixLink, reais, rotuloJogo } from './formatar';
 
 describe('reais', () => {
   it('inteiro sem casas, quebrado com vírgula', () => {
@@ -26,5 +26,19 @@ describe('rotuloJogo', () => {
   it('usa o texto livre quando OUTRO', () => {
     expect(rotuloJogo({ jogo: '2º TEMPO', jogoOutro: 'X' })).toBe('2º TEMPO');
     expect(rotuloJogo({ jogo: 'OUTRO', jogoOutro: 'PÊNALTIS' })).toBe('PÊNALTIS');
+  });
+});
+
+describe('formatarTempoRelativo', () => {
+  it('mostra segundos para menos de um minuto', () => {
+    expect(formatarTempoRelativo(5_000, 10_000)).toBe('há 5s');
+  });
+
+  it('mostra minutos a partir de 60s', () => {
+    expect(formatarTempoRelativo(0, 90_000)).toBe('há 1min');
+  });
+
+  it('mostra "agora" para diferenças menores que 1s', () => {
+    expect(formatarTempoRelativo(9_800, 10_000)).toBe('agora');
   });
 });

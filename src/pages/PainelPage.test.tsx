@@ -1,42 +1,34 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { PainelPage } from './PainelPage';
-import { ESTADO_PADRAO } from '../types/estado';
+import { ESTADO_PADRAO } from '../live/tipos';
 
-const atualizar = vi.fn();
-
-vi.mock('../hooks/useSala', () => ({
-  useSala: () => ({ estado: ESTADO_PADRAO, status: 'ao_vivo', updatedAt: '2026-01-01T00:00:00Z', updatedByNome: 'FULANO', atualizar }),
+const salvarDepois = vi.fn();
+vi.mock('../live/useLive', () => ({
+  SLUG: 'principal',
+  useLive: () => ({ estado: { ...ESTADO_PADRAO, titulo: 'LIVE' }, status: 'ao_vivo', editadoPor: 'Ana', editadoEm: new Date().toISOString(), salvar: vi.fn(), salvarDepois, reiniciarContagem: vi.fn(), relogio: vi.fn() }),
 }));
-vi.mock('../hooks/useServerClock', () => ({ useServerClock: () => 1_000_000 }));
-vi.mock('../hooks/useEventos', () => ({ useEventos: () => ({ ultimoEvento: null, recebidoEm: null, disparar: vi.fn() }) }));
+vi.mock('../live/usePix', () => ({ usePix: () => ({ lista: [], adicionarManual: vi.fn(), alternar: vi.fn() }) }));
+vi.mock('../live/relogioServidor', () => ({ useAgora: () => Date.now(), RelogioServidorProvider: ({ children }: { children: React.ReactNode }) => children }));
+vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ papel: 'admin', sessao: {}, carregando: false, erro: null }) }));
 
-function renderPainel() {
-  return render(
-    <MemoryRouter>
-      <PainelPage />
-    </MemoryRouter>,
-  );
-}
+import { PainelPage } from './PainelPage';
 
 describe('PainelPage', () => {
-  it('atualiza o título ao digitar', () => {
-    renderPainel();
-    const campo = screen.getByPlaceholderText('Título da live');
-    fireEvent.change(campo, { target: { value: 'NOVO TÍTULO' } });
-    expect(atualizar).toHaveBeenCalledWith({ titulo: 'NOVO TÍTULO' });
+  it('mostra as 9 telas, o aviso de prévia, status e editado por', () => {
+    render(<MemoryRouter><PainelPage /></MemoryRouter>);
+    expect(screen.getByText('PRÉVIA · NÃO É O QUE ESTÁ NO AR')).toBeInTheDocument();
+    expect(screen.getByText('TELAS SINCRONIZADAS')).toBeInTheDocument();
+    expect(screen.getByText(/editado por Ana/)).toBeInTheDocument();
+    ['INÍCIO', 'HOST', 'FUTEBOL', 'FILME/SÉRIE', 'MESA REDONDA', 'INTERVALO', 'LOWER THIRD', 'TÉCNICO', 'FIM'].forEach((t) =>
+      expect(screen.getAllByText(t).length).toBeGreaterThan(0),
+    );
+    expect(screen.getByText('ADMIN')).toBeInTheDocument();
   });
 
-  it('incrementa o placar do time A', () => {
-    renderPainel();
-    const botoesMais = screen.getAllByText('+');
-    fireEvent.click(botoesMais[0]);
-    expect(atualizar).toHaveBeenCalledWith({ golsA: 1 });
-  });
-
-  it('mostra quem editou por último', () => {
-    renderPainel();
-    expect(screen.getByText(/editado por FULANO/)).toBeInTheDocument();
+  it('título grava com atraso (salvarDepois)', () => {
+    render(<MemoryRouter><PainelPage /></MemoryRouter>);
+    fireEvent.change(screen.getByLabelText('TÍTULO DA LIVE · TODAS AS CENAS'), { target: { value: 'nova' } });
+    expect(salvarDepois).toHaveBeenCalledWith({ titulo: 'NOVA' });
   });
 });
