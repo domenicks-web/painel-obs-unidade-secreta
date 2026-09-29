@@ -60,7 +60,8 @@ Há também 11 achados **menores**, não bloqueantes, listados no relatório (it
 
 - API do LivePix não devolve URL de áudio (mensagem de voz/IA): o alerta com som fica com o widget do LivePix; o painel só controla (decisão do usuário).
 - Feito (commit `b49be6a`): `src/servidor/livepix.ts` + `api/livepix/{controls,skip,replay}.ts` (funções da Vercel, Web handlers), OAuth client_credentials com escopo `controls`, token em cache, confere membro da equipe pelo JWT do Supabase. Dev: plugin no `vite.config.ts` atende `/api/livepix/*`. Painel: `useControlesLivePix` + `ControlesLivePix` na coluna PIX; selo LIVEPIX do topo violeta quando pausado.
-- **Pendente:** usuário criar a aplicação no LivePix e pôr `LIVEPIX_CLIENT_ID`/`LIVEPIX_CLIENT_SECRET` na Vercel (e no `.env.local` pra testar local). Ainda não testado contra o LivePix real.
+- **Trocado (2026-09-29, commits `d896343`..):** sem OAuth. Usa os links de "Controles de Alertas" do LivePix (`LIVEPIX_URL_{PAUSAR,RETOMAR,PULAR,REPETIR,LIMPAR}`, só servidor, POST). Rotas `api/livepix/{pausar,retomar,pular,repetir,limpar}`. Links não dizem o estado: migration 0006 (`livepix_controle`, rodada em produção) guarda o último comando, Realtime pra todos; selo do topo mostra o último comando. 4º botão LIMPAR FILA com confirmação, grade 2×2. Teste real `scripts/livepix-real.mjs` passou (dois painéis).
+- Na Vercel: criar as 5 `LIVEPIX_URL_*` ao publicar.
 
 ## Telas novas (2026-09-28, ~19:30) — histórico
 
