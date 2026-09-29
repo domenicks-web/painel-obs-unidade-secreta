@@ -67,7 +67,9 @@
 .t-inicio__relogio { background: #1A1417; color: #FFF3E0; font: 700 170px/1 'JetBrains Mono', monospace; padding: 18px 36px 14px; box-shadow: 14px 14px 0 #8B6CF0; }
 .t-inicio__bolinhas { display: flex; justify-content: space-between; }
 .t-inicio__bolinha { width: 34px; height: 34px; box-sizing: border-box; border-radius: 50%; border: 4px solid #1A1417; }
-.t-inicio__logo { flex-shrink: 0; width: 500px; height: 500px; background: #1A1417; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; animation: usFloat 6s ease-in-out infinite; box-shadow: 18px 18px 0 #FFF3E0; }
+.t-inicio__logo { flex-shrink: 0; width: 500px; height: 500px; background: #1A1417; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; animation: usFloat 6s ease-in-out infinite; position: relative; }
+.t-inicio__logo-fundo { position: absolute; left: -4px; top: -4px; shape-rendering: geometricPrecision; }
+.t-inicio__logo > :not(svg) { position: relative; }
 .t-inicio__us { font: 600 330px/.74 'Barlow Condensed', sans-serif; color: #FF6B1F; padding-top: .04em; }
 .t-inicio__grade { display: grid; grid-template-columns: repeat(5, 28px); gap: 16px; }
 .t-inicio__grade > div { width: 28px; height: 28px; border-radius: 50%; background: #FF6B1F; }
@@ -76,7 +78,8 @@
 
 /* ===== Fim (Telas Live linhas 78-100) ===== */
 .t-fim { position: absolute; inset: 0; background: #FF6B1F; overflow: hidden; }
-.t-fim__faixa { position: absolute; left: -300px; top: 600px; width: 2600px; height: 170px; background: #1A1417; transform: rotate(-10deg); display: flex; align-items: center; overflow: hidden; box-shadow: 0 0 0 8px #FFF3E0; }
+.t-fim__moldura { position: absolute; left: -312px; top: 588px; transform: rotate(-10deg); shape-rendering: geometricPrecision; }
+.t-fim__faixa { position: absolute; left: -300px; top: 600px; width: 2600px; height: 170px; transform: rotate(-10deg); display: flex; align-items: center; overflow: hidden; }
 .t-fim__letreiro { display: flex; white-space: nowrap; font: 400 110px/1 'Bungee', sans-serif; color: #FF6B1F; animation: usMarq 14s linear infinite; width: max-content; }
 .t-fim__listra { position: absolute; left: -300px; top: 790px; width: 2600px; height: 120px; transform: rotate(-10deg); background: repeating-linear-gradient(-45deg, #1A1417 0 26px, #8B6CF0 26px 52px); background-size: 104px 120px; animation: usStripe 1.6s linear infinite; }
 .t-fim__conteudo { position: absolute; left: 140px; right: 140px; top: 100px; display: flex; align-items: flex-start; justify-content: space-between; gap: 60px; }

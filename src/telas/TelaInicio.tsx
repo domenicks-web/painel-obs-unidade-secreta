@@ -32,6 +32,11 @@ export function TelaInicio({ estado }: PropsTela) {
           </div>
         </div>
         <div className="t-inicio__logo">
+          {/* quadrado e sombra em SVG: com background/box-shadow a borda girada sai serrilhada no OBS */}
+          <svg className="t-inicio__logo-fundo" width={526} height={526} viewBox="-4 -4 526 526" aria-hidden="true">
+            <rect x={18} y={18} width={500} height={500} fill="#FFF3E0" />
+            <rect x={0} y={0} width={500} height={500} fill="#1A1417" />
+          </svg>
           <div className="t-inicio__us">US</div>
           <div className="t-inicio__grade">
             {Array.from({ length: 10 }, (_, i) => (

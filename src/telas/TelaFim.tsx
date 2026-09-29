@@ -4,6 +4,11 @@ import { Linha } from './Letreiro';
 export function TelaFim({ estado }: PropsTela) {
   return (
     <div className="t-fim">
+      {/* faixa e contorno creme em SVG: com background/box-shadow a borda girada sai serrilhada no OBS */}
+      <svg className="t-fim__moldura" width={2624} height={194} viewBox="0 0 2624 194" aria-hidden="true">
+        <rect x={4} y={4} width={2616} height={186} fill="#FFF3E0" />
+        <rect x={12} y={12} width={2600} height={170} fill="#1A1417" />
+      </svg>
       <div className="t-fim__faixa">
         <div className="t-fim__letreiro">
           <Linha itens={['FIM DA LIVE', 'VALEU']} repeticoes={3} />
