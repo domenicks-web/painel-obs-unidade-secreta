@@ -21,6 +21,8 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
   // valores locais ainda não confirmados: sobrepõem o eco do Realtime
   const [pendentes, setPendentes] = useState<PatchLive>({});
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  // valores esperando os 400 ms pra ir ao banco (o que descarregar() manda de uma vez)
+  const aguardando = useRef(new Map<string, unknown>());
   const ultimos = useRef(new Map<string, unknown>());
 
   const aplicar = useCallback((l: Linha) => {
@@ -31,39 +33,51 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
   useEffect(() => {
     if (fixture) return;
     let ativo = true;
-    let carregou = false;
-    const pendentesTimers = timers.current;
+    let pedido = 0;
 
-    supabase
-      .from('salas')
-      .select('estado, updated_at, updated_by_nome')
-      .eq('slug', SLUG)
-      .single()
-      .then(({ data, error }: { data: Linha | null; error: unknown }) => {
-        if (!ativo) return;
-        if (error || !data) return setStatus('reconectando');
-        aplicar(data);
-        carregou = true;
-        setStatus('ao_vivo');
-      });
+    // Busca a linha inteira no banco. Roda no início, a cada (re)inscrição do Realtime,
+    // quando a internet volta e quando a página volta a ficar visível: o que mudou
+    // enquanto a conexão estava fora não chega pelo Realtime.
+    function carregar() {
+      const meu = ++pedido;
+      supabase
+        .from('salas')
+        .select('estado, updated_at, updated_by_nome')
+        .eq('slug', SLUG)
+        .single()
+        .then(({ data, error }: { data: Linha | null; error: unknown }) => {
+          if (!ativo || meu !== pedido) return; // chegou uma resposta mais nova
+          if (error || !data) return setStatus('reconectando');
+          aplicar(data);
+          setStatus('ao_vivo');
+        });
+    }
+
+    carregar();
 
     const canal = supabase
       .channel(`live-${SLUG}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'salas', filter: `slug=eq.${SLUG}` }, (p: { new: Linha }) => {
         aplicar(p.new);
-        carregou = true;
         setStatus('ao_vivo');
       })
       .subscribe((s: string) => {
         if (!ativo) return;
-        if (s === 'SUBSCRIBED' && carregou) setStatus('ao_vivo');
+        if (s === 'SUBSCRIBED') carregar();
         else if (['CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'].includes(s)) setStatus('reconectando');
       });
 
+    const aoVoltar = () => {
+      if (document.visibilityState === 'visible') carregar();
+    };
+    window.addEventListener('online', carregar);
+    document.addEventListener('visibilitychange', aoVoltar);
+
     return () => {
       ativo = false;
+      window.removeEventListener('online', carregar);
+      document.removeEventListener('visibilitychange', aoVoltar);
       supabase.removeChannel(canal);
-      pendentesTimers.forEach(clearTimeout);
     };
   }, [fixture, aplicar]);
 
@@ -90,6 +104,7 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
         // um clique vale mais que o texto ainda não enviado do mesmo campo
         clearTimeout(timers.current.get(k));
         timers.current.delete(k);
+        aguardando.current.delete(k);
       }
       setPendentes((p) => ({ ...p, ...patch }));
       if (fixture) return;
@@ -105,10 +120,12 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
         ultimos.current.set(k, v);
         clearTimeout(timers.current.get(k));
         if (fixture) continue;
+        aguardando.current.set(k, v);
         timers.current.set(
           k,
           setTimeout(() => {
             timers.current.delete(k);
+            aguardando.current.delete(k);
             enviar({ [k]: v } as PatchLive);
           }, DEBOUNCE_MS),
         );
@@ -116,6 +133,32 @@ export function useLive(opcoes: { fixture?: EstadoLive } = {}) {
     },
     [enviar, fixture],
   );
+
+  // Manda na hora tudo o que ainda esperava os 400 ms: ao esconder/fechar a aba e ao sair do painel.
+  const descarregar = useCallback(() => {
+    if (aguardando.current.size === 0) return;
+    const patch = Object.fromEntries(aguardando.current) as PatchLive;
+    timers.current.forEach(clearTimeout);
+    timers.current.clear();
+    aguardando.current.clear();
+    enviar(patch);
+  }, [enviar]);
+
+  useEffect(() => {
+    if (fixture) return;
+    const aoEsconder = () => {
+      if (document.visibilityState === 'hidden') descarregar();
+    };
+    window.addEventListener('pagehide', descarregar);
+    window.addEventListener('beforeunload', descarregar);
+    document.addEventListener('visibilitychange', aoEsconder);
+    return () => {
+      window.removeEventListener('pagehide', descarregar);
+      window.removeEventListener('beforeunload', descarregar);
+      document.removeEventListener('visibilitychange', aoEsconder);
+      descarregar();
+    };
+  }, [fixture, descarregar]);
 
   const reiniciarContagem = useCallback(async () => {
     const { error } = await supabase.rpc('reiniciar_contagem', { p_slug: SLUG });

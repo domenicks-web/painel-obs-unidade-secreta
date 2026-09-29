@@ -3,6 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 
 type Handler = (p: { eventType: string; new: unknown; old: unknown }) => void;
 let handler: Handler | null = null;
+let statusCanal: ((s: string) => void) | null = null;
 
 vi.mock('../lib/supabase', () => {
   const canal = {
@@ -10,7 +11,10 @@ vi.mock('../lib/supabase', () => {
       handler = h;
       return canal;
     }),
-    subscribe: vi.fn(() => canal),
+    subscribe: vi.fn((cb?: (s: string) => void) => {
+      statusCanal = cb ?? null;
+      return canal;
+    }),
   };
   return { supabase: { from: vi.fn(), rpc: vi.fn(), channel: vi.fn(() => canal), removeChannel: vi.fn() } };
 });
@@ -35,6 +39,15 @@ describe('usePix', () => {
     expect(result.current.lista[0].id).toBe('c');
     act(() => handler!({ eventType: 'UPDATE', new: pix('a', { off: true }), old: {} }));
     expect(result.current.lista.find((x) => x.id === 'a')!.off).toBe(true);
+  });
+
+  it('recarrega a lista quando o Realtime reconecta', async () => {
+    const { result } = renderHook(() => usePix());
+    await waitFor(() => expect(result.current.lista).toHaveLength(2));
+    const limit = vi.fn().mockResolvedValue({ data: [pix('c'), pix('b'), pix('a')], error: null });
+    vi.mocked(supabase.from).mockReturnValue({ select: () => ({ order: () => ({ limit }) }) } as never);
+    act(() => statusCanal!('SUBSCRIBED'));
+    await waitFor(() => expect(result.current.lista.map((x) => x.id)).toEqual(['c', 'b', 'a']));
   });
 
   it('adicionarManual chama a RPC e devolve erro legível', async () => {

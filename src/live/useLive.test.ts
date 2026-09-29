@@ -4,6 +4,7 @@ import { ESTADO_PADRAO } from './tipos';
 
 type Handler = (payload: { new: unknown }) => void;
 let handlerUpdate: Handler | null = null;
+let statusCanal: ((s: string) => void) | null = null;
 
 vi.mock('../lib/supabase', () => {
   const canal = {
@@ -12,6 +13,7 @@ vi.mock('../lib/supabase', () => {
       return canal;
     }),
     subscribe: vi.fn((cb: (s: string) => void) => {
+      statusCanal = cb;
       cb('SUBSCRIBED');
       return canal;
     }),
@@ -106,6 +108,58 @@ describe('useLive', () => {
     });
     expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { 'nomes.1': 'ZÉ' } });
     expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { 'enquete.mostrar': true } });
+  });
+
+  it('quando o Realtime cai e volta, recarrega o estado do banco', async () => {
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.estado.titulo).toBe('DO BANCO'));
+    act(() => statusCanal!('CHANNEL_ERROR'));
+    expect(result.current.status).toBe('reconectando');
+    // enquanto estava fora, alguém mudou o título
+    const single = vi.fn().mockResolvedValue({ data: linha({ titulo: 'MUDOU LÁ FORA' }, 'Bia'), error: null });
+    vi.mocked(supabase.from).mockReturnValue({ select: () => ({ eq: () => ({ single }) }) } as never);
+    act(() => statusCanal!('SUBSCRIBED'));
+    await waitFor(() => expect(result.current.estado.titulo).toBe('MUDOU LÁ FORA'));
+    expect(result.current.status).toBe('ao_vivo');
+    expect(result.current.editadoPor).toBe('Bia');
+  });
+
+  it('volta a buscar o estado quando a internet volta', async () => {
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.estado.titulo).toBe('DO BANCO'));
+    const single = vi.fn().mockResolvedValue({ data: linha({ titulo: 'DEPOIS DO WIFI' }), error: null });
+    vi.mocked(supabase.from).mockReturnValue({ select: () => ({ eq: () => ({ single }) }) } as never);
+    act(() => {
+      window.dispatchEvent(new Event('online'));
+    });
+    await waitFor(() => expect(result.current.estado.titulo).toBe('DEPOIS DO WIFI'));
+  });
+
+  it('ao esconder/fechar a página grava na hora o que estava esperando os 400 ms', async () => {
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    vi.useFakeTimers();
+    act(() => result.current.salvarDepois({ titulo: 'QUASE', 'nomes.2': 'CAIO' }));
+    expect(supabase.rpc).not.toHaveBeenCalled();
+    act(() => {
+      window.dispatchEvent(new Event('pagehide'));
+    });
+    expect(supabase.rpc).toHaveBeenCalledTimes(1);
+    expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { titulo: 'QUASE', 'nomes.2': 'CAIO' } });
+    // o timer original não manda de novo
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400);
+    });
+    expect(supabase.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it('sair do painel (desmontar) também grava o pendente em vez de jogar fora', async () => {
+    const { result, unmount } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    vi.useFakeTimers();
+    act(() => result.current.salvarDepois({ proximo: 'SÁBADO' }));
+    unmount();
+    expect(supabase.rpc).toHaveBeenCalledWith('atualizar_estado', { p_slug: 'principal', p_patch: { proximo: 'SÁBADO' } });
   });
 
   it('relógio e reiniciar usam as RPCs dedicadas', async () => {

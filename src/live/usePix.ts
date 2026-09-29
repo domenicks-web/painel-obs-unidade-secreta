@@ -10,14 +10,21 @@ export function usePix() {
 
   useEffect(() => {
     let ativo = true;
-    supabase
-      .from('pix')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(LIMITE)
-      .then(({ data }: { data: Pix[] | null }) => {
-        if (ativo && data) setLista(data.map(normalizarPix));
-      });
+    let pedido = 0;
+    // no início, a cada (re)inscrição do Realtime e quando a internet volta:
+    // PIX que chegaram com a conexão fora não vêm pelo Realtime
+    function carregar() {
+      const meu = ++pedido;
+      supabase
+        .from('pix')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(LIMITE)
+        .then(({ data }: { data: Pix[] | null }) => {
+          if (ativo && meu === pedido && data) setLista(data.map(normalizarPix));
+        });
+    }
+    carregar();
 
     const canal = supabase
       .channel('pix-painel')
@@ -28,10 +35,14 @@ export function usePix() {
           return atual.filter((x) => x.id !== p.old.id);
         });
       })
-      .subscribe();
+      .subscribe((st: string) => {
+        if (st === 'SUBSCRIBED') carregar();
+      });
+    window.addEventListener('online', carregar);
 
     return () => {
       ativo = false;
+      window.removeEventListener('online', carregar);
       supabase.removeChannel(canal);
     };
   }, []);

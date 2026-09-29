@@ -60,7 +60,11 @@ export function ColunaPix({ live, pix }: { live: Live; pix: PixHook }) {
           ariaLabel="META R$"
           inputMode="decimal"
           valor={String(estado.metaTotal)}
-          aoMudar={(v) => salvarDepois({ metaTotal: Math.max(1, numero(v) || 1) })}
+          // campo vazio ou zero no meio da digitação não vai ao ar: fica o último valor válido
+          aoMudar={(v) => {
+            const n = numero(v);
+            if (n > 0) salvarDepois({ metaTotal: n });
+          }}
         />
         <CampoTexto
           className="p-input p-input--mono"

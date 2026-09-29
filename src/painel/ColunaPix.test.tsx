@@ -43,6 +43,21 @@ describe('ColunaPix', () => {
     expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 
+  it('apagar ou zerar a META não grava; ao sair do campo volta o último valor válido', () => {
+    const { live } = montar();
+    const meta = screen.getByLabelText('META R$') as HTMLInputElement;
+    fireEvent.focus(meta);
+    fireEvent.change(meta, { target: { value: '' } });
+    fireEvent.change(meta, { target: { value: '0' } });
+    fireEvent.change(meta, { target: { value: 'abc' } });
+    expect(live.salvarDepois).not.toHaveBeenCalled();
+    fireEvent.change(meta, { target: { value: '750,5' } });
+    expect(live.salvarDepois).toHaveBeenLastCalledWith({ metaTotal: 750.5 });
+    fireEvent.change(meta, { target: { value: '' } });
+    fireEvent.blur(meta);
+    expect(meta.value).toBe('500');
+  });
+
   it('ajuste com vírgula grava número', () => {
     const { live } = montar();
     fireEvent.change(screen.getByLabelText('AJUSTE R$'), { target: { value: '-5,5' } });
