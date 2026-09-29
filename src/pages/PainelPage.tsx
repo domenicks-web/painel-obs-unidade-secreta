@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useLive } from '../live/useLive';
 import { useAuth } from '../hooks/useAuth';
 import { RelogioServidorProvider } from '../live/relogioServidor';
@@ -10,6 +10,7 @@ import { CampoTexto } from '../painel/CampoTexto';
 import { CamposTela } from '../painel/CamposTela';
 import { ColunaPix } from '../painel/ColunaPix';
 import { CaixaChat } from '../painel/CaixaChat';
+import { ModalGalera } from '../painel/ModalGalera';
 import { usePix } from '../live/usePix';
 import '../painel/painel.css';
 
@@ -26,7 +27,8 @@ function Painel() {
   const pix = usePix();
   const { papel } = useAuth();
   const [tela, setTela] = useState<TelaId>('host');
-  const [, setGaleraAberta] = useState(false);
+  const [galeraAberta, setGaleraAberta] = useState(false);
+  const fecharGalera = useCallback(() => setGaleraAberta(false), []);
   const { estado, salvarDepois } = live;
   const label = TELAS.find((t) => t.id === tela)!.label;
 
@@ -67,6 +69,7 @@ function Painel() {
           <CaixaChat />
         </aside>
       </div>
+      {galeraAberta && <ModalGalera galera={estado.galera} aoSalvar={(g) => salvarDepois({ galera: g })} aoFechar={fecharGalera} />}
     </div>
   );
 }

@@ -15,7 +15,7 @@
 .p-topo__barra { width: 2px; height: 28px; background: #3a3035; flex-shrink: 0; }
 .p-topo__sub { font: 700 13px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: #8a7f84; white-space: nowrap; }
 .p-topo__direita { margin-left: auto; display: flex; align-items: center; gap: 8px; min-width: 0; }
-.p-topo__editado { font: 400 11px/1.3 'JetBrains Mono', monospace; color: #8a7f84; white-space: nowrap; margin-right: 4px; }
+.p-topo__editado { font: 400 11px/1.3 'JetBrains Mono', monospace; color: #8a7f84; max-width: 150px; margin-right: 4px; }
 .p-status { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #241d21; white-space: nowrap; }
 .p-status__led { width: 8px; height: 8px; border-radius: 50%; background: #3a3035; flex-shrink: 0; }
 .p-status__led--aceso { background: #FF6B1F; animation: pBlink 1.6s ease-in-out infinite; }
@@ -102,7 +102,7 @@
 .p-placar__mais { height: 64px; border: 0; background: #FF6B1F; color: #1A1417; font: 400 34px/1 'Bungee', sans-serif !important; cursor: pointer; }
 .p-placar__mais:active { transform: translateY(2px); }
 .p-placar__mais--b { background: #8B6CF0; }
-.p-placar__numero { text-align: center; font: 400 72px/1 'Bungee', sans-serif; color: #FF6B1F; }
+.p-placar__numero { min-width: 0; text-align: center; font: 400 72px/1 'Bungee', sans-serif; color: #FF6B1F; }
 .p-placar__numero--b { color: #8B6CF0; }
 .p-relogio { background: #241d21; padding: 16px; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
 .p-relogio__rotulo { font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #8a7f84; text-align: center; }
@@ -172,6 +172,16 @@
 .p-botao-icone { height: 46px; border: 2px solid #3a3035; background: transparent; color: #FFF3E0; cursor: pointer; font: 700 18px/1 'JetBrains Mono', monospace !important; }
 .p-botao-icone:hover { border-color: #FF6B1F; color: #FF6B1F; }
 .p-vazio { font: 400 13px/1.5 'JetBrains Mono', monospace; color: #6d6368; padding: 10px 0; }
+
+/* ===== Telas de notebook: o topo ganhou GALERA/ADMIN/SAIR, então o subtítulo sai ===== */
+@media (max-width: 1599px) {
+  .p-topo__barra, .p-topo__sub { display: none; }
+  .p-placar { grid-template-columns: minmax(0, 1fr) 210px minmax(0, 1fr); gap: 12px; }
+  .p-placar__gols { grid-template-columns: 48px minmax(0, 1fr) 48px; gap: 6px; }
+  .p-placar__menos, .p-placar__mais { height: 56px; font-size: 28px !important; }
+  .p-placar__numero { font-size: 56px; }
+  .p-relogio__play, .p-relogio .p-botao-contorno { white-space: nowrap; letter-spacing: .04em; padding: 0 6px; }
+}
 
 /* ===== Celular / janela estreita ===== */
 @media (max-width: 1099px) {
