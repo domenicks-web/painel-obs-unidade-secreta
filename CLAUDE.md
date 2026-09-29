@@ -56,6 +56,12 @@ Há também 11 achados **menores**, não bloqueantes, listados no relatório (it
 - Próximo: o usuário vai mandar referência visual nova do `/alerta` (manter o atual até lá). Partes 2 (LivePix) e 3 (chat) só quando ele pedir. Menores ainda anotados no ledger: resposta da RPC pode trazer estado mais velho; "RECONECTANDO" em erro de validação; dois cliques de gol ao mesmo tempo; grants de PUBLIC nas RPCs; comentário da comparação por referência.
 - Decisões visuais aprovadas pelo usuário: placeholders só na prévia; lower third entra uma vez e fica (OBS controla); demais decisões da parte 1 aprovadas.
 
+## Parte 2 — controles do alerta LivePix (2026-09-29)
+
+- API do LivePix não devolve URL de áudio (mensagem de voz/IA): o alerta com som fica com o widget do LivePix; o painel só controla (decisão do usuário).
+- Feito (commit `b49be6a`): `src/servidor/livepix.ts` + `api/livepix/{controls,skip,replay}.ts` (funções da Vercel, Web handlers), OAuth client_credentials com escopo `controls`, token em cache, confere membro da equipe pelo JWT do Supabase. Dev: plugin no `vite.config.ts` atende `/api/livepix/*`. Painel: `useControlesLivePix` + `ControlesLivePix` na coluna PIX; selo LIVEPIX do topo violeta quando pausado.
+- **Pendente:** usuário criar a aplicação no LivePix e pôr `LIVEPIX_CLIENT_ID`/`LIVEPIX_CLIENT_SECRET` na Vercel (e no `.env.local` pra testar local). Ainda não testado contra o LivePix real.
+
 ## Telas novas (2026-09-28, ~19:30) — histórico
 
 Usuário mandou `TELAS-NOVAS.md` + referências novas em `referencia/`. Dividido em 3 partes: **1) estado + PIX manual + 9 telas + /alerta + painel**, 2) LivePix, 3) chat Social Stream Ninja.
