@@ -7,6 +7,7 @@ import { Topo } from '../painel/Topo';
 import { ListaTelas } from '../painel/ListaTelas';
 import { Previa } from '../painel/Previa';
 import { CampoTexto } from '../painel/CampoTexto';
+import { CamposTela } from '../painel/CamposTela';
 import '../painel/painel.css';
 
 export function PainelPage() {
@@ -49,6 +50,7 @@ function Painel() {
               <div className="p-selo">INFOS DA TELA</div>
               <div className="p-infos-sub">ATUALIZA NO OBS NA HORA</div>
             </div>
+            <CamposTela tela={tela} live={live} />
             <div className="p-divisor" />
             <div className="p-duas">
               <CampoTexto rotulo="TÍTULO DA LIVE · TODAS AS CENAS" valor={estado.titulo} maiusculo aoMudar={(v) => salvarDepois({ titulo: v })} />
