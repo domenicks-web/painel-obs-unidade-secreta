@@ -8,6 +8,9 @@ import { ListaTelas } from '../painel/ListaTelas';
 import { Previa } from '../painel/Previa';
 import { CampoTexto } from '../painel/CampoTexto';
 import { CamposTela } from '../painel/CamposTela';
+import { ColunaPix } from '../painel/ColunaPix';
+import { CaixaChat } from '../painel/CaixaChat';
+import { usePix } from '../live/usePix';
 import '../painel/painel.css';
 
 export function PainelPage() {
@@ -20,6 +23,7 @@ export function PainelPage() {
 
 function Painel() {
   const live = useLive();
+  const pix = usePix();
   const { papel } = useAuth();
   const [tela, setTela] = useState<TelaId>('host');
   const [, setGaleraAberta] = useState(false);
@@ -58,6 +62,10 @@ function Painel() {
             </div>
           </section>
         </main>
+        <aside className="p-direita">
+          <ColunaPix live={live} pix={pix} />
+          <CaixaChat />
+        </aside>
       </div>
     </div>
   );

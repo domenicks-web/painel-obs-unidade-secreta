@@ -10,11 +10,13 @@ interface Props {
   rotulo?: string;
   className?: string;
   title?: string;
+  // rótulo só para leitor de tela, quando o rótulo visível fica em outro lugar
+  ariaLabel?: string;
 }
 
 // Enquanto tem foco, o campo guarda o que a pessoa digita e ignora o eco do servidor;
 // sem foco, espelha o valor vindo de fora.
-export function CampoTexto({ valor, aoMudar, maiusculo, tipo = 'text', inputMode, placeholder, rotulo, className, title }: Props) {
+export function CampoTexto({ valor, aoMudar, maiusculo, tipo = 'text', inputMode, placeholder, rotulo, className, title, ariaLabel }: Props) {
   const id = useId();
   const [local, setLocal] = useState(valor);
   const [foco, setFoco] = useState(false);
@@ -37,6 +39,7 @@ export function CampoTexto({ valor, aoMudar, maiusculo, tipo = 'text', inputMode
         value={local}
         placeholder={placeholder}
         title={title}
+        aria-label={ariaLabel}
         onFocus={() => setFoco(true)}
         onBlur={() => setFoco(false)}
         onChange={(e) => {
