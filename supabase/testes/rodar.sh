@@ -13,4 +13,5 @@ run < supabase/testes/stub-auth.sql
 for f in supabase/migrations/*.sql; do run < "$f"; done
 for f in supabase/testes/0*.sql; do run < "$f"; done
 supabase/testes/concorrencia.sh "$NOME"
+
 echo "SQL OK"
