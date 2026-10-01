@@ -50,6 +50,11 @@ describe('FilaAlertas', () => {
     expect((screen.getByRole('button', { name: 'PULAR' }) as HTMLButtonElement).disabled).toBe(true); // nada tocando
   });
 
+  it('gol na tela: avisa que a fila está esperando', () => {
+    montar(estado({ segurado: true, atual: null }));
+    expect(screen.getByText('GOL NA TELA')).toBeTruthy();
+  });
+
   it('fonte fora do ar: avisa e trava os botões', () => {
     montar(null, false);
     expect(screen.getByText('FONTE FORA DO AR')).toBeTruthy();

@@ -16,6 +16,8 @@ export type ComandoAlerta = 'tocar' | 'remover' | 'pular' | 'pausar' | 'retomar'
 
 export interface EstadoRemoto extends EstadoFila {
   atual: Alerta | null;
+  /** fila esperando o gol sair da tela */
+  segurado?: boolean;
   instancia: string;
 }
 
@@ -39,11 +41,12 @@ export function useControleRemoto(f: Fila) {
   const instancia = useRef(Math.random().toString(36).slice(2, 10));
 
   const anunciar = useCallback(() => {
-    const { fila, historico, pausado, atual: tocando } = atual.current;
+    const { fila, historico, pausado, segurado, atual: tocando } = atual.current;
     const payload: EstadoRemoto = {
       fila,
       historico,
       pausado,
+      segurado,
       atual: tocando,
       instancia: instancia.current,
     };
@@ -94,7 +97,7 @@ export function useControleRemoto(f: Fila) {
     } catch {
       // sem localStorage: a fila só não sobrevive à recarga
     }
-  }, [f.versao, f.fila, f.historico, f.pausado, anunciar]);
+  }, [f.versao, f.fila, f.historico, f.pausado, f.segurado, anunciar]);
 }
 
 /** No painel: a fila que a fonte do OBS anunciou e os comandos pra ela. */

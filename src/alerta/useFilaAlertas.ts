@@ -46,6 +46,8 @@ export function useFilaAlertas(opcoes: { aoComecar?: () => void; aoTerminar?: ()
     saindo: false,
     tocando: false,
     vez: 0,
+    // quem está segurando a fila fora da equipe (o gol na tela): diferente da pausa do painel
+    segurando: new Set<string>(),
   });
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const cb = useRef(opcoes);
@@ -60,7 +62,7 @@ export function useFilaAlertas(opcoes: { aoComecar?: () => void; aoTerminar?: ()
     const e = s.current;
     limparTimers();
     const [a, ...resto] = e.fila;
-    if (a && !e.pausado) {
+    if (a && !e.pausado && !e.segurando.size) {
       e.fila = resto;
       iniciar(a);
     } else {
@@ -91,7 +93,7 @@ export function useFilaAlertas(opcoes: { aoComecar?: () => void; aoTerminar?: ()
   // começa uma sequência com o primeiro da fila (sozinho = ignora a pausa: foi escolhido no painel)
   const comecar = useCallback((sozinho = false) => {
     const e = s.current;
-    if (e.tocando || !e.fila.length || (e.pausado && !sozinho)) return;
+    if (e.tocando || !e.fila.length || e.segurando.size || (e.pausado && !sozinho)) return;
     e.tocando = true;
     cb.current.aoComecar?.();
     const [a, ...resto] = e.fila;
@@ -149,6 +151,33 @@ export function useFilaAlertas(opcoes: { aoComecar?: () => void; aoTerminar?: ()
     comecar();
   }, [comecar]);
 
+  /** Gol na tela: nada começa, e o alerta que estava na tela volta pro começo da fila (toca inteiro depois). */
+  const segurar = useCallback((motivo: string) => {
+    const e = s.current;
+    e.segurando.add(motivo);
+    if (e.atual) {
+      limparTimers();
+      const a = e.atual;
+      e.fila = [limpo(a), ...e.fila.filter((x) => x.id !== a.id)];
+      e.atual = null;
+      e.saindo = false;
+    }
+    if (e.tocando) {
+      e.tocando = false;
+      cb.current.aoTerminar?.();
+    }
+    mudou();
+  }, []);
+
+  const soltar = useCallback(
+    (motivo: string) => {
+      s.current.segurando.delete(motivo);
+      mudou();
+      comecar();
+    },
+    [comecar],
+  );
+
   // recarregou com fila e sem pausa: continua de onde parou
   useEffect(() => {
     comecar();
@@ -163,6 +192,7 @@ export function useFilaAlertas(opcoes: { aoComecar?: () => void; aoTerminar?: ()
     fila: e.fila,
     historico: e.historico,
     pausado: e.pausado,
+    segurado: e.segurando.size > 0,
     /** sobe a cada mudança (pra quem precisa avisar o painel) */
     versao,
     adicionar,
@@ -171,5 +201,7 @@ export function useFilaAlertas(opcoes: { aoComecar?: () => void; aoTerminar?: ()
     pular,
     pausar,
     retomar,
+    segurar,
+    soltar,
   };
 }

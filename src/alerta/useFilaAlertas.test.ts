@@ -149,3 +149,35 @@ describe('useFilaAlertas · playlist', () => {
     expect(result.current.historico.map((x) => x.id)).toEqual(['8']);
   });
 });
+
+describe('useFilaAlertas · segurar (gol na tela)', () => {
+  it('segurado: nada começa; o que estava na tela volta pro começo da fila e toca inteiro depois', () => {
+    const aoComecar = vi.fn();
+    const aoTerminar = vi.fn();
+    const { result } = renderHook(() => useFilaAlertas({ aoComecar, aoTerminar }));
+    act(() => ['1', '2'].forEach((id) => result.current.adicionar(a(id))));
+    act(() => vi.advanceTimersByTime(2000));
+    act(() => result.current.segurar('gol'));
+    expect(result.current.atual).toBeNull();
+    expect(result.current.segurado).toBe(true);
+    expect(result.current.fila.map((x) => x.id)).toEqual(['1', '2']);
+    expect(aoTerminar).toHaveBeenCalledTimes(1); // a sequência dos alertas parou
+    act(() => result.current.adicionar(a('3')));
+    act(() => result.current.tocar('3')); // nem escolhido no painel passa na frente do gol
+    act(() => vi.advanceTimersByTime(PROXIMO_EM * 2));
+    expect(result.current.atual).toBeNull();
+    act(() => result.current.soltar('gol'));
+    expect(result.current.atual?.id).toBe('3');
+    expect(aoComecar).toHaveBeenCalledTimes(2);
+  });
+
+  it('soltar o gol não desfaz a pausa da equipe', () => {
+    const { result } = renderHook(() => useFilaAlertas());
+    act(() => result.current.pausar());
+    act(() => result.current.segurar('gol'));
+    act(() => result.current.adicionar(a('1')));
+    act(() => result.current.soltar('gol'));
+    expect(result.current.pausado).toBe(true);
+    expect(result.current.atual).toBeNull();
+  });
+});

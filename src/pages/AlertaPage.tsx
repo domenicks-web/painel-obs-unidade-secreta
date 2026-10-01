@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Palco, usarFundoTransparente } from '../telas/Palco';
 import { useChat } from '../chat/useChat';
@@ -7,6 +7,10 @@ import { apoioDoYouTube } from '../apoios/youtube';
 import { CartaoAlerta } from '../alerta/CartaoAlerta';
 import { useFilaAlertas, type Alerta } from '../alerta/useFilaAlertas';
 import { lerSalvo, useControleRemoto } from '../alerta/remoto';
+import { useLivePixSeguro } from '../alerta/livepixSeguro';
+import { useLive } from '../live/useLive';
+import { RelogioServidorProvider, useOffsetServidor } from '../live/relogioServidor';
+import { useGolAoVivo } from '../gol/useGolAoVivo';
 
 // /alerta?sessao=ID&chave=K → fonte do OBS 1920×1080, transparente: superchat, super sticker e
 //                            membro novo do YouTube, direto do Social Stream Ninja.
@@ -14,56 +18,13 @@ import { lerSalvo, useControleRemoto } from '../alerta/remoto';
 export function AlertaPage() {
   const [params] = useSearchParams();
   if (params.get('teste') === '1') return <AlertaTeste />;
-  return <AlertaAoVivo sessao={params.get('sessao') || sessaoPadraoDev()} chave={params.get('chave') ?? ''} />;
-}
-
-// Segura o LivePix enquanto os alertas tocam. Os pedidos vão em fila (soltar nunca passa na
-// frente de segurar). Sem chave, o alerta toca mas não mexe no LivePix.
-function useLivePixSeguro(chave: string) {
-  const fila = useRef<Promise<unknown>>(Promise.resolve());
-  const segurando = useRef(false);
-
-  const pedir = useCallback(
-    (acao: 'segurar' | 'soltar', aoSair = false) => {
-      if (!chave) return;
-      const enviar = () =>
-        fetch('/api/livepix/alerta', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-alerta-chave': chave },
-          body: JSON.stringify({ acao }),
-          keepalive: aoSair,
-        }).catch(() => null);
-      fila.current = aoSair ? enviar() : fila.current.then(enviar);
-    },
-    [chave],
+  return (
+    <RelogioServidorProvider>
+      <AlertaAoVivo sessao={params.get('sessao') || sessaoPadraoDev()} chave={params.get('chave') ?? ''} />
+    </RelogioServidorProvider>
   );
-
-  const segurar = useCallback(() => {
-    segurando.current = true;
-    pedir('segurar');
-  }, [pedir]);
-  const soltar = useCallback(() => {
-    segurando.current = false;
-    pedir('soltar');
-  }, [pedir]);
-
-  // fechou a fonte no meio de um alerta: não deixa o LivePix preso
-  useEffect(() => {
-    const aoSair = () => {
-      if (segurando.current) {
-        segurando.current = false;
-        pedir('soltar', true);
-      }
-    };
-    window.addEventListener('pagehide', aoSair);
-    return () => {
-      window.removeEventListener('pagehide', aoSair);
-      aoSair();
-    };
-  }, [pedir]);
-
-  return { segurar, soltar };
 }
+
 
 function AlertaAoVivo({ sessao, chave }: { sessao: string; chave: string }) {
   usarFundoTransparente();
@@ -74,6 +35,21 @@ function AlertaAoVivo({ sessao, chave }: { sessao: string; chave: string }) {
   const fila = useFilaAlertas({ aoComecar: livepix.segurar, aoTerminar: livepix.soltar, inicial: inicial ?? undefined });
   useControleRemoto(fila);
   const { atual, saindo, adicionar } = fila;
+
+  // gol na tela (animação do FUTEBOL): a fila espera e o LivePix fica pausado até a animação acabar
+  const { estado } = useLive();
+  const { gol } = useGolAoVivo(estado.golEvento, useOffsetServidor());
+  const { segurar: segurarFila, soltar: soltarFila } = fila;
+  const temGol = !!gol;
+  useEffect(() => {
+    if (!temGol) return;
+    segurarFila('gol');
+    livepix.segurar();
+    return () => {
+      soltarFila('gol');
+      livepix.soltar();
+    };
+  }, [temGol, segurarFila, soltarFila, livepix]);
   const vistos = useRef(new Set<string>());
 
   useEffect(() => {

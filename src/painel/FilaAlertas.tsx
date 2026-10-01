@@ -41,7 +41,7 @@ export function FilaAlertas({ playlist }: { playlist: ReturnType<typeof usePlayl
       <div className="p-bloco-cabeca">
         <div className="p-bloco-titulo">ALERTAS YT</div>
         <div className={!online ? 'p-alertas__status p-alertas__status--fora' : pausado ? 'p-alertas__status p-alertas__status--pausada' : 'p-alertas__status'}>
-          {!online ? 'FONTE FORA DO AR' : pausado ? 'FILA PAUSADA' : 'AO VIVO'}
+          {!online ? 'FONTE FORA DO AR' : pausado ? 'FILA PAUSADA' : estado?.segurado ? 'GOL NA TELA' : 'AO VIVO'}
         </div>
       </div>
       {!online && <div className="p-pix__vazio">Abra a fonte /alerta no OBS (com a sessão do chat) pra ver e controlar a fila.</div>}
