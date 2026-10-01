@@ -297,6 +297,14 @@ describe('useLive', () => {
     expect(result.current.erro).toBeNull();
   });
 
+  it('repetir gol vai pela RPC e aplica a resposta', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: linha({ golsA: 1 }, 'Eu', 4), error: null } as never);
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    await act(() => result.current.repetirGol());
+    expect(supabase.rpc).toHaveBeenCalledWith('repetir_gol', { p_slug: 'principal' });
+  });
+
   it('fixture não toca no Supabase', () => {
     const { result } = renderHook(() => useLive({ fixture: { ...ESTADO_PADRAO, titulo: 'FIX' } }));
     expect(result.current.estado.titulo).toBe('FIX');

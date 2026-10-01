@@ -22,10 +22,17 @@ export function Previa({ tela, estado, editor }: { tela: TelaId; estado: EstadoL
       {largura > 0 && (
         <Palco escala={largura / 1920}>
           <Tela estado={estado} previa />
-          {tela === 'futebol' && <CamadaGol estado={estado} comSom={false} />}
         </Palco>
       )}
       {largura > 0 && editor && <ArrastarMolduras lista={editor.lista} escala={largura / 1920} aoMudar={editor.aoMudar} />}
+      {/* gol por cima de tudo, como a fonte /gol no OBS (sem som na prévia) */}
+      {largura > 0 && tela === 'futebol' && (
+        <div className="p-previa__gol">
+          <Palco escala={largura / 1920}>
+            <CamadaGol estado={estado} comSom={false} />
+          </Palco>
+        </div>
+      )}
     </div>
   );
 }

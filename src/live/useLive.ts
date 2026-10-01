@@ -239,6 +239,9 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
     [chamar],
   );
 
+  // REPETIR ANIMAÇÃO: o banco grava um evento novo do último gol
+  const repetirGol = useCallback(() => chamar('repetir_gol', {}), [chamar]);
+
   // soma no banco: dois painéis clicando "+" ao mesmo tempo contam os dois gols
   const gol = useCallback((lado: 'A' | 'B', delta: 1 | -1) => chamar('somar_gol', { p_lado: lado, p_delta: delta }), [chamar]);
 
@@ -254,5 +257,6 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
     reiniciarContagem,
     relogio,
     gol,
+    repetirGol,
   };
 }

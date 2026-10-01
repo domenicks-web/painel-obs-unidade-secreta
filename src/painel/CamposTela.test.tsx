@@ -7,7 +7,7 @@ vi.mock('../live/relogioServidor', () => ({ useAgora: () => 0 }));
 import { CamposTela } from './CamposTela';
 
 function live(extra = {}) {
-  return { estado: { ...ESTADO_PADRAO, galera: [{ id: '1', nome: 'ANA', funcao: 'HOST' }], ...extra }, status: 'ao_vivo', editadoPor: null, editadoEm: null, salvar: vi.fn(), salvarDepois: vi.fn(), reiniciarContagem: vi.fn(), relogio: vi.fn(), gol: vi.fn() } as never;
+  return { estado: { ...ESTADO_PADRAO, galera: [{ id: '1', nome: 'ANA', funcao: 'HOST' }], ...extra }, status: 'ao_vivo', editadoPor: null, editadoEm: null, salvar: vi.fn(), salvarDepois: vi.fn(), reiniciarContagem: vi.fn(), relogio: vi.fn(), gol: vi.fn(), repetirGol: vi.fn() } as never;
 }
 
 describe('CamposTela', () => {
@@ -142,6 +142,36 @@ describe('CamposTela', () => {
       render(<CamposTela tela="mesa" live={live({ camsMesa: cams })} />);
       expect((screen.getByRole('button', { name: '+ ADICIONAR CÂMERA' }) as HTMLButtonElement).disabled).toBe(true);
     });
+  });
+
+  it('futebol: animação de gol por time, repetir, som e duração', () => {
+    const l = live({ golEvento: { id: 'g', lado: 'A', a: 1, b: 0, em: 0, dur: 4, anim: true } });
+    const f = l as { salvar: ReturnType<typeof vi.fn>; salvarDepois: ReturnType<typeof vi.fn>; repetirGol: ReturnType<typeof vi.fn> };
+    render(<CamposTela tela="futebol" live={l} />);
+    const [casa, fora] = screen.getAllByRole('button', { name: /ANIMAÇÃO DE GOL/ });
+    expect(casa.textContent).toContain('LIGADA');
+    expect(fora.textContent).toContain('DESLIGADA');
+    fireEvent.click(fora);
+    expect(f.salvar).toHaveBeenCalledWith({ golAnimB: true });
+    fireEvent.click(casa);
+    expect(f.salvar).toHaveBeenCalledWith({ golAnimA: false });
+    fireEvent.click(screen.getByRole('button', { name: 'REPETIR ANIMAÇÃO' }));
+    expect(f.repetirGol).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: /SOM DO GOL/ }));
+    expect(f.salvar).toHaveBeenCalledWith({ golSom: true });
+    const dur = screen.getByLabelText('DURAÇÃO (S)');
+    fireEvent.change(dur, { target: { value: '5' } });
+    expect(f.salvarDepois).toHaveBeenLastCalledWith({ golDuracao: 5 });
+    fireEvent.change(dur, { target: { value: '9' } });
+    expect(f.salvarDepois).toHaveBeenLastCalledWith({ golDuracao: 6 });
+    const n = f.salvarDepois.mock.calls.length;
+    fireEvent.change(dur, { target: { value: '' } });
+    expect(f.salvarDepois.mock.calls.length).toBe(n);
+  });
+
+  it('futebol: sem gol ainda, REPETIR fica travado', () => {
+    render(<CamposTela tela="futebol" live={live()} />);
+    expect((screen.getByRole('button', { name: 'REPETIR ANIMAÇÃO' }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it('lower: escolher alguém da galera preenche nome e função', () => {

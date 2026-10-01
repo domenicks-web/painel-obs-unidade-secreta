@@ -52,6 +52,7 @@
 .p-previa-aviso { font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: #8a7f84; text-align: right; }
 .p-previa { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #000; box-shadow: 0 0 0 3px #FF6B1F, 10px 10px 0 3px #8B6CF0; }
 .p-previa .us-palco { position: absolute; left: 0; top: 0; }
+.p-previa__gol, .p-previa__gol .us-palco { pointer-events: none; }
 .p-arraste { position: absolute; inset: 0; }
 .p-arraste__moldura { position: absolute; box-sizing: border-box; cursor: move; touch-action: none; outline: 2px dashed transparent; outline-offset: -2px; }
 .p-arraste__moldura:hover, .p-arraste__moldura:active { outline-color: #FFF3E0; background: rgba(255, 243, 224, .08); }
@@ -112,6 +113,13 @@
 .p-placar__mais--b { background: #8B6CF0; }
 .p-placar__numero { min-width: 0; text-align: center; font: 400 72px/1 'Bungee', sans-serif; color: #FF6B1F; }
 .p-placar__numero--b { color: #8B6CF0; }
+.p-anim-gol { min-height: 36px; padding: 7px 10px; border: 1px solid #3a3035; background: transparent; color: #8a7f84; text-align: left; font: 700 11px/1.35 'JetBrains Mono', monospace !important; letter-spacing: .08em; cursor: pointer; }
+.p-anim-gol--a { border-color: #FF6B1F; background: #FF6B1F; color: #1A1417; }
+.p-anim-gol--b { border-color: #8B6CF0; background: #8B6CF0; color: #1A1417; }
+.p-gol { display: grid; grid-template-columns: auto auto 150px; gap: 12px; align-items: end; justify-content: start; }
+.p-gol__repetir { height: 46px; padding: 0 18px; border: 0; background: #FFF3E0; color: #1A1417; font: 700 12px/1 'JetBrains Mono', monospace !important; letter-spacing: .1em; cursor: pointer; }
+.p-gol__repetir:disabled { opacity: .35; cursor: default; }
+.p-gol .p-chave { height: 46px; }
 .p-relogio { background: #241d21; padding: 16px; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
 .p-relogio__rotulo { font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #8a7f84; text-align: center; }
 .p-relogio__tempo { text-align: center; font: 700 48px/1 'JetBrains Mono', monospace; color: #FFF3E0; }
@@ -304,5 +312,7 @@
 @media (max-width: 480px) {
   .p-cameras { grid-template-columns: minmax(0, 1fr); }
   .p-molduras { grid-template-columns: minmax(0, 1fr); }
+  .p-gol { grid-template-columns: 1fr 1fr; }
+  .p-gol .p-campo { grid-column: 1 / -1; }
   .p-pix__campos, .p-pix__rotulos { grid-template-columns: minmax(0, 1fr) 80px 80px; }
 }

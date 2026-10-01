@@ -139,6 +139,15 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
   );
 }
 
+// Chave por time: com ela ligada, o "+" toca a animação de gol (fonte /gol); desligada, o número só pisca.
+function ChaveAnimacao({ ligada, cor, aoTrocar }: { ligada: boolean; cor: 'a' | 'b'; aoTrocar: () => void }) {
+  return (
+    <button type="button" className={ligada ? `p-anim-gol p-anim-gol--${cor}` : 'p-anim-gol'} aria-pressed={ligada} onClick={aoTrocar}>
+      {ligada ? '● ANIMAÇÃO DE GOL: LIGADA' : '○ ANIMAÇÃO DE GOL: DESLIGADA'}
+    </button>
+  );
+}
+
 function CamposFutebol({ live }: { live: Live }) {
   const { estado, salvar, salvarDepois } = live;
   const agora = useAgora(500);
@@ -148,6 +157,7 @@ function CamposFutebol({ live }: { live: Live }) {
       <div className="p-placar">
         <div className="p-placar__lado">
           <CampoTexto className="p-input p-input--time" valor={estado.timeA} maiusculo aoMudar={(v) => salvarDepois({ timeA: v })} title="Time da casa" />
+          <ChaveAnimacao ligada={estado.golAnimA} cor="a" aoTrocar={() => salvar({ golAnimA: !estado.golAnimA })} />
           <div className="p-placar__gols">
             <button type="button" className="p-placar__menos" onClick={() => live.gol('A', -1)}>
               −
@@ -177,6 +187,7 @@ function CamposFutebol({ live }: { live: Live }) {
         </div>
         <div className="p-placar__lado">
           <CampoTexto className="p-input p-input--time p-input--time-b" valor={estado.timeB} maiusculo aoMudar={(v) => salvarDepois({ timeB: v })} title="Time de fora" />
+          <ChaveAnimacao ligada={estado.golAnimB} cor="b" aoTrocar={() => salvar({ golAnimB: !estado.golAnimB })} />
           <div className="p-placar__gols">
             <button type="button" className="p-placar__menos" onClick={() => live.gol('B', -1)}>
               −
@@ -187,6 +198,32 @@ function CamposFutebol({ live }: { live: Live }) {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="p-gol">
+        <button type="button" className="p-gol__repetir" disabled={!estado.golEvento} onClick={() => live.repetirGol()}>
+          REPETIR ANIMAÇÃO
+        </button>
+        <button
+          type="button"
+          className={estado.golSom ? 'p-chave p-chave--ligada' : 'p-chave'}
+          aria-pressed={estado.golSom}
+          onClick={() => salvar({ golSom: !estado.golSom })}
+        >
+          {estado.golSom ? '● SOM DO GOL' : '○ SOM DO GOL'}
+        </button>
+        <CampoTexto
+          className="p-input p-input--mono p-gol__duracao"
+          rotulo="DURAÇÃO (S)"
+          tipo="number"
+          inputMode="decimal"
+          title="Duração da animação de gol: 3 a 6 segundos"
+          valor={String(estado.golDuracao)}
+          aoMudar={(v) => {
+            const n = Number(v.replace(',', '.'));
+            if (v.trim() !== '' && Number.isFinite(n)) salvarDepois({ golDuracao: Math.min(6, Math.max(3, n)) });
+          }}
+        />
       </div>
 
       <div className="p-opcoes" style={{ gap: 8 }}>

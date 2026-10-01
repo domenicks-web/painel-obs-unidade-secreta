@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f0c0e}
+a{color:#FF6B1F}a:hover{color:#d4530f}
+@keyframes gWipe{from{transform:translateX(-2700px) skewX(-14deg)}to{transform:translateX(2700px) skewX(-14deg)}}
+@keyframes gBand{0%{transform:scaleY(0)}70%{transform:scaleY(1.06)}100%{transform:scaleY(1)}}
+@keyframes gStamp{0%{transform:translateY(-40px) scale(2.4) rotate(-6deg);opacity:0}55%{transform:scale(.9) rotate(-3deg);opacity:1}100%{transform:scale(1) rotate(-3deg);opacity:1}}
+@keyframes gSlide{from{transform:translateX(-1600px)}to{transform:none}}
+@keyframes gSlideR{from{transform:translateX(1600px)}to{transform:none}}
+@keyframes gPop{0%{transform:scale(1)}35%{transform:scale(1.7)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+@keyframes gShake{0%,100%{transform:none}20%{transform:translate(-14px,8px)}40%{transform:translate(12px,-10px)}60%{transform:translate(-8px,6px)}80%{transform:translate(6px,-4px)}}
+@keyframes gStripe{from{background-position:0 0}to{background-position:68px 0}}
+@keyframes gOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 0 100%)}}
+@keyframes alBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes gFlash{0%{opacity:0}20%{opacity:.7}100%{opacity:0}}
+</style></helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;gap:20px;padding:28px;box-sizing:border-box;font-family:'Barlow Condensed',sans-serif;color:#FFF3E0">
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+<div style="font:400 30px/1 'Bungee',sans-serif;color:#FF6B1F;margin-right:12px">ANIMAÇÃO DE GOL · TESTE</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:stretch">
+<div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:#1A1417;min-width:280px">
+<div style="font:700 22px/1 'Barlow Condensed',sans-serif;letter-spacing:.02em">BRASIL</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ golA }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#FF6B1F;color:#1A1417;cursor:pointer">+ GOL</button>
+<button onClick="{{ anularA }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 18px;border:1px solid #3a3035;background:transparent;color:#FFF3E0;cursor:pointer">–</button>
+</div>
+<button onClick="{{ toggleA }}" style="{{ toggleAStyle }}">{{ toggleALabel }}</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:#1A1417;min-width:280px">
+<div style="font:700 22px/1 'Barlow Condensed',sans-serif;letter-spacing:.02em">INDIA</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ golB }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#8B6CF0;color:#1A1417;cursor:pointer">+ GOL</button>
+<button onClick="{{ anularB }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 18px;border:1px solid #3a3035;background:transparent;color:#FFF3E0;cursor:pointer">–</button>
+</div>
+<button onClick="{{ toggleB }}" style="{{ toggleBStyle }}">{{ toggleBLabel }}</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:#1A1417;justify-content:flex-end">
+<button onClick="{{ repetir }}" style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:14px 20px;border:0;background:#FFF3E0;color:#1A1417;cursor:pointer">REPETIR ANIMAÇÃO</button>
+<button onClick="{{ zerar }}" style="font:700 13px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:12px 20px;border:1px solid #3a3035;background:transparent;color:#8a7f84;cursor:pointer">ZERAR PLACAR</button>
+</div>
+</div>
+<div style="font:400 14px/1.4 'JetBrains Mono',monospace;color:#8a7f84;max-width:980px">Fonte 1920×1080 por cima da cena FUTEBOL. Cerca de 4 s: faixas varrem a tela, entra o GOOOL, depois o time e o placar novo. Com a animação desligada, o gol só soma e o número pisca no placar. "–" durante a animação corta ela (gol anulado).</div>
+<div style="width:1920px;height:1080px;transform-origin:0 0;transform:scale(.5);margin-bottom:-540px;margin-right:-960px;position:relative;overflow:hidden;background:#1d181b;outline:2px dashed #3a3035">
+<div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,#1d181b 0 120px,#211b1f 120px 240px)"></div>
+<div style="position:absolute;left:80px;top:60px;display:flex;height:120px;filter:drop-shadow(10px 10px 0 #8B6CF0)">
+<div style="width:200px;background:#FF6B1F;color:#1A1417;display:flex;align-items:center;justify-content:center;font:400 72px/1 'Bungee',sans-serif">US</div>
+<div style="width:420px;background:#FFF3E0;color:#1A1417;display:flex;align-items:center;justify-content:flex-end;padding:0 36px;box-sizing:border-box;font:700 80px/1 'Barlow Condensed',sans-serif">BRASIL</div>
+<div style="width:280px;background:#1A1417;border:6px solid #FF6B1F;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:28px;font:400 80px/1 'Bungee',sans-serif;color:#FF6B1F">{{ placarA }}<span style="font-size:36px;color:#FFF3E0">×</span>{{ placarB }}</div>
+<div style="width:420px;background:#FFF3E0;color:#1A1417;display:flex;align-items:center;padding:0 36px;box-sizing:border-box;font:700 80px/1 'Barlow Condensed',sans-serif">INDIA</div>
+<div style="width:220px;background:#8B6CF0;color:#1A1417;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px"><span style="font:400 60px/1 'Bungee',sans-serif">23'</span><span style="font:700 18px/1 'JetBrains Mono',monospace;letter-spacing:.14em">1º TEMPO</span></div>
+</div>
+<div style="position:absolute;left:80px;top:240px;width:820px;height:460px;border:4px solid #FF6B1F;box-sizing:border-box;background:#2a2327;display:flex;align-items:center;justify-content:center;font:400 22px/1 'JetBrains Mono',monospace;letter-spacing:.2em;color:#5a4f54">CÂMERA</div>
+<div style="position:absolute;left:960px;top:240px;width:820px;height:460px;border:4px solid #FF6B1F;box-sizing:border-box;background:#2a2327;display:flex;align-items:center;justify-content:center;font:400 22px/1 'JetBrains Mono',monospace;letter-spacing:.2em;color:#5a4f54">CÂMERA</div>
+<div style="position:absolute;left:0;right:0;bottom:60px;height:64px;background:#FF6B1F;display:flex;align-items:center;padding-left:40px;font:700 32px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;color:#1A1417">MANDA O PIX NA DESCRIÇÃO • A UNIDADE NÃO PARA • SE INSCREVE NO CANAL</div>
+{{ overlay }}
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;duracao&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:4,&quot;min&quot;:3,&quot;max&quot;:6,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+const ink = '#1A1417', cream = '#FFF3E0', orange = '#FF6B1F', violet = '#8B6CF0';
+const h = React.createElement;
+const mono = "'JetBrains Mono',monospace";
+const TIMES = { A: { nome: 'BRASIL', cor: orange, alt: violet }, B: { nome: 'INDIA', cor: violet, alt: orange } };
+let uid = 0;
+
+class Component extends DCLogic {
+  state = { a: 0, b: 0, animA: true, animB: false, gol: null, saindo: false, pulse: null };
+  componentWillUnmount() { this.clear(); }
+  clear() { clearTimeout(this.t1); clearTimeout(this.t2); }
+  dur() { return Math.max(3, Math.min(6, Number(this.props.duracao ?? 4))); }
+  play(lado, a, b) {
+    this.clear();
+    const d = this.dur() * 1000;
+    this.setState({ gol: { id: ++uid, lado, a, b }, saindo: false });
+    this.t1 = setTimeout(() => this.setState({ saindo: true }), d - 500);
+    this.t2 = setTimeout(() => this.setState({ gol: null, saindo: false }), d);
+  }
+  gol(lado) {
+    const a = this.state.a + (lado === 'A' ? 1 : 0), b = this.state.b + (lado === 'B' ? 1 : 0);
+    const anim = lado === 'A' ? this.state.animA : this.state.animB;
+    this.setState({ a, b, pulse: { lado, id: ++uid } });
+    if (anim) this.play(lado, a, b);
+  }
+  anular(lado) {
+    const k = lado === 'A' ? 'a' : 'b';
+    if (this.state[k] === 0) return;
+    if (this.state.gol && this.state.gol.lado === lado) { this.clear(); this.setState({ gol: null, saindo: false }); }
+    this.setState({ [k]: this.state[k] - 1 });
+  }
+  num(v, lado) {
+    const p = this.state.pulse;
+    const on = p && p.lado === lado;
+    return h('span', { key: on ? p.id : 'n' + lado, style: { display: 'inline-block', animation: on ? 'gPop .6s cubic-bezier(.2,.8,.2,1) both' : 'none' } }, v);
+  }
+  overlay() {
+    const g = this.state.gol;
+    if (!g) return null;
+    const t = TIMES[g.lado];
+    const d = this.dur();
+    const stripes = (c) => `repeating-linear-gradient(-45deg,${ink} 0 24px,${c} 24px 48px)`;
+    const letras = 'GOOOL'.split('');
+    const scoreNum = (v, lado) => h('span', { style: { display: 'inline-block', color: lado === g.lado ? t.cor : cream, animation: lado === g.lado ? `gPop .7s ${1.35}s cubic-bezier(.2,.8,.2,1) both` : 'none' } }, v);
+    return h('div', { key: g.id, style: { position: 'absolute', inset: 0, pointerEvents: 'none', animation: this.state.saindo ? 'gOut .5s cubic-bezier(.7,0,.3,1) both' : 'none' } },
+      h('div', { style: { position: 'absolute', inset: 0, background: t.cor, animation: 'gFlash .6s .3s ease-out both' } }),
+      ...[stripes(t.cor), cream, t.alt].map((bg, i) => h('div', { key: 'w' + i, style: { position: 'absolute', top: -200, bottom: -200, left: 0, width: 900, background: bg, animation: `gWipe .75s ${i * 0.07}s cubic-bezier(.6,0,.3,1) both` } })),
+      h('div', { style: { position: 'absolute', inset: 0, animation: 'gShake .45s .7s both' } },
+        h('div', { style: { position: 'absolute', left: 0, right: 0, top: 250, height: 470, background: ink, transformOrigin: '50% 50%', animation: 'gBand .4s .45s cubic-bezier(.2,.8,.2,1) both', display: 'flex', flexDirection: 'column' } },
+          h('div', { style: { height: 26, background: stripes(t.cor), backgroundSize: '68px 26px', animation: 'gStripe .5s linear infinite' } }),
+          h('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 } },
+            ...letras.map((l, i) => h('span', { key: i, style: { display: 'inline-block', font: "400 300px/1 'Bungee',sans-serif", color: t.cor, textShadow: `14px 14px 0 ${cream}`, animation: `gStamp .45s ${0.6 + i * 0.07}s cubic-bezier(.2,.8,.2,1) both` } }, l))),
+          h('div', { style: { height: 26, background: stripes(t.cor), backgroundSize: '68px 26px', animation: 'gStripe .5s linear infinite reverse' } })),
+        h('div', { style: { position: 'absolute', left: 0, right: 0, top: 690, display: 'flex', justifyContent: 'center', alignItems: 'stretch', gap: 0, overflow: 'hidden', padding: '0 0 20px' } },
+          h('div', { style: { background: t.cor, color: ink, font: "700 120px/1 'Barlow Condensed',sans-serif", padding: '18px 56px 14px', display: 'flex', alignItems: 'center', gap: 28, boxShadow: `10px 10px 0 ${cream}`, animation: 'gSlide .45s 1.05s cubic-bezier(.2,.8,.2,1) both' } },
+            h('span', { style: { font: `700 26px/1 ${mono}`, letterSpacing: '.18em', background: ink, color: t.cor, padding: '10px 12px' } }, 'GOL DO'),
+            t.nome),
+          h('div', { style: { background: ink, color: cream, font: "400 96px/1 'Bungee',sans-serif", padding: '22px 44px 16px', display: 'flex', alignItems: 'center', gap: 26, border: `6px solid ${cream}`, marginLeft: 24, animation: 'gSlideR .45s 1.2s cubic-bezier(.2,.8,.2,1) both' } },
+            scoreNum(g.a, 'A'), h('span', { style: { fontSize: 44, color: '#8a7f84' } }, '×'), scoreNum(g.b, 'B')))),
+      h('div', { style: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 10, background: ink } },
+        h('div', { style: { height: '100%', background: t.cor, transformOrigin: '0 0', animation: `alBar ${d - 0.5}s linear both` } })));
+  }
+  toggleStyle(on, cor) {
+    return { font: `700 13px/1 ${mono}`, letterSpacing: '.1em', padding: '12px 14px', border: on ? '0' : '1px solid #3a3035', background: on ? cor : 'transparent', color: on ? ink : '#8a7f84', cursor: 'pointer', textAlign: 'left' };
+  }
+  renderVals() {
+    const s = this.state;
+    return {
+      overlay: this.overlay(),
+      placarA: this.num(s.a, 'A'),
+      placarB: this.num(s.b, 'B'),
+      golA: () => this.gol('A'),
+      golB: () => this.gol('B'),
+      anularA: () => this.anular('A'),
+      anularB: () => this.anular('B'),
+      toggleA: () => this.setState({ animA: !s.animA }),
+      toggleB: () => this.setState({ animB: !s.animB }),
+      toggleALabel: s.animA ? '● ANIMAÇÃO DE GOL: LIGADA' : '○ ANIMAÇÃO DE GOL: DESLIGADA',
+      toggleBLabel: s.animB ? '● ANIMAÇÃO DE GOL: LIGADA' : '○ ANIMAÇÃO DE GOL: DESLIGADA',
+      toggleAStyle: this.toggleStyle(s.animA, orange),
+      toggleBStyle: this.toggleStyle(s.animB, violet),
+      repetir: () => { const lado = s.gol ? s.gol.lado : (s.pulse ? s.pulse.lado : 'A'); this.play(lado, s.a, s.b); },
+      zerar: () => { this.clear(); this.setState({ a: 0, b: 0, gol: null, pulse: null }); },
+    };
+  }
+}
+</script>
+</body>
+</html>
