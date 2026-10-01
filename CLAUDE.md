@@ -1,6 +1,6 @@
 # unidade-secreta-live — estado do projeto
 
-> **2026-10-01:** No ar até a etiqueta das câmeras, Kick no chat, favicon/títulos (0001–0010 em produção). **Animação de gol commitada em `main` local, NÃO pushada**: depende de `0011_gol_evento.sql`. Ordem: usuário roda 0011 → push. Pendências em `PENDENCIAS.md`.
+> **Fim do dia 2026-10-01:** tudo pushado e no ar (migrations 0001–0011 rodadas em produção). Feito hoje: parte 4 em produção, relógio do FUTEBOL, permissões, molduras de câmera editáveis (+ etiqueta esquerda/direita), playlist ALERTAS YT, telas JOGO e REACT, Kick no chat, favicon/títulos, animação de gol (fonte `/gol`). O que falta (testes reais, kit OBS, cota do LivePix, trocar ALERTA_CHAVE) está em `PENDENCIAS.md`.
 
 Painel web (Vite+React+TS+Supabase) para controlar overlays de OBS em tempo real. Spec original em `PROMPT-CLAUDE-CODE.md`. Referência visual em `referencia/`.
 

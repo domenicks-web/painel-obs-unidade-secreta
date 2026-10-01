@@ -27,13 +27,13 @@ do LivePix (a API dele não deixa escolher qual alerta tocar). Ordem: rodar `001
 Transparentes, só molduras. JOGO: gameplay na tela inteira (sem etiqueta) + câmera no canto de baixo à direita.
 REACT: uma câmera em cada canto de cima. Editáveis como as outras (`camsJogo`, `camsReact`). Sem migration.
 
-### Animação de gol (FUTEBOL) — feita (2026-10-01), falta a 0011 em produção
+### Animação de gol (FUTEBOL) — no ar desde 2026-10-01 (0011 rodada)
 Fonte nova `/gol` (1920×1080, transparente, no topo da cena FUTEBOL, acima das câmeras), igual à
 `referencia/Animacao Gol.dc.html` (`scripts/comparar-gol.mjs`, `docs/prints/gol-lado-a-lado.png`).
 Painel: chave por time (casa ligada, fora desligada), REPETIR ANIMAÇÃO, SOM DO GOL (apito sintético
 `public/gol-apito.wav`), duração 3–6 s. O gol nasce no banco (`somar_gol` grava `golEvento`; "–" anula;
 `repetir_gol`). O /alerta segura a fila e o LivePix enquanto o gol está na tela.
-Ordem: rodar `0011_gol_evento.sql` → push. Conferir no OBS: fonte /gol no topo, "Controlar áudio via OBS" pro apito.
+Falta: teste num jogo de verdade (fonte /gol no topo da cena, "Controlar áudio via OBS" pro apito).
 
 ### Kit OBS
 Pasta `kit-obs/` com:
