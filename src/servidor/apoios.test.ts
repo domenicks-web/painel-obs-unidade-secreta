@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { esquecerToken, tratarAlertaLivePix, tratarCambio, tratarWebhookLivePix, type AmbienteApoios } from './apoios';
 
 const AMB: AmbienteApoios = {
@@ -85,6 +85,55 @@ describe('webhook do LivePix', () => {
     esquecerToken();
     const t = montar({ tokenFalha: true });
     expect((await tratarWebhookLivePix(post(aviso), AMB, t.f)).status).toBe(502);
+  });
+
+  describe('cota da API esgotada (429)', () => {
+    const agora = 1_790_000_000_000;
+    const lotado = (resetEm: number | null, retryAfter?: string) =>
+      new Response('{"message":"Slow down! Too many requests"}', {
+        status: 429,
+        headers: {
+          ...(resetEm != null ? { 'x-ratelimit-reset': String(Math.floor((agora + resetEm) / 1000)) } : {}),
+          ...(retryAfter ? { 'retry-after': retryAfter } : {}),
+        },
+      });
+    function comCota(respostas: Response[]) {
+      const base = montar();
+      const f = vi.fn(async (entrada: RequestInfo | URL, init?: RequestInit) =>
+        String(entrada).startsWith('https://api.livepix.gg/v2/messages/') && respostas.length
+          ? respostas.shift()!
+          : base.f(entrada, init),
+      );
+      return { f, rpc: base.rpc };
+    }
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(agora);
+    });
+    afterEach(() => vi.useRealTimers());
+
+    it('espera o reset que o LivePix informa e grava na hora, sem esperar os 10 min dele', async () => {
+      const { f, rpc } = comCota([lotado(12_000), lotado(null, '3')]);
+      const esperas: number[] = [];
+      const esperar = vi.fn(async (ms: number) => void esperas.push(ms));
+      const r = await tratarWebhookLivePix(post(aviso), AMB, f, esperar);
+      expect(r.status).toBe(200);
+      expect(rpc).toHaveLength(1);
+      expect(esperas[0]).toBeGreaterThanOrEqual(12_000);
+      expect(esperas[0]).toBeLessThan(14_000);
+      expect(esperas[1]).toBeGreaterThanOrEqual(3_000); // sem x-ratelimit-reset, vale o retry-after
+      expect(esperas[1]).toBeLessThan(5_000);
+    });
+
+    it('não espera mais que ~50 s no total: depois devolve 502 pro LivePix tentar de novo', async () => {
+      const { f, rpc } = comCota(Array.from({ length: 50 }, () => lotado(30_000)));
+      let total = 0;
+      const r = await tratarWebhookLivePix(post(aviso), AMB, f, async (ms) => void (total += ms));
+      expect(r.status).toBe(502);
+      expect(rpc).toHaveLength(0);
+      expect(total).toBeLessThanOrEqual(50_000);
+      expect(total).toBeGreaterThan(20_000);
+    });
   });
 
   it('sem credenciais: 500 explicando', async () => {

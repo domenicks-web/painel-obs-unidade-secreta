@@ -69,7 +69,37 @@ interface MensagemLivePix {
   currency?: string;
 }
 
-export async function tratarWebhookLivePix(req: Request, amb: AmbienteApoios, f: Fetch = fetch): Promise<Response> {
+// A cota da API (50 pedidos por minuto) é dividida com o resto da conta e às vezes zera. No 429,
+// espera o reset que o LivePix informa e tenta de novo, até ~50 s no total (a função tem 60 s,
+// ver vercel.json): é melhor que devolver erro e o LivePix só reenviar daqui a 10 min.
+const ESPERA_TOTAL_MAX = 50_000;
+
+function esperaDoLimite(r: Response): number {
+  const reset = Number(r.headers.get('x-ratelimit-reset')) * 1000;
+  if (reset > Date.now()) return reset - Date.now() + 250;
+  const depois = Number(r.headers.get('retry-after'));
+  return depois > 0 ? depois * 1000 + 250 : 2000;
+}
+
+const dormir = (ms: number) => new Promise<void>((ok) => setTimeout(ok, ms));
+
+async function buscarMensagem(id: string, tk: string, f: Fetch, esperar: (ms: number) => Promise<void>) {
+  let esperado = 0;
+  for (;;) {
+    const r = await f(`https://api.livepix.gg/v2/messages/${id}`, { headers: { authorization: `Bearer ${tk}` } });
+    if (r.status !== 429 || esperado >= ESPERA_TOTAL_MAX) return r;
+    const ms = Math.min(esperaDoLimite(r), ESPERA_TOTAL_MAX - esperado);
+    esperado += ms;
+    await esperar(ms);
+  }
+}
+
+export async function tratarWebhookLivePix(
+  req: Request,
+  amb: AmbienteApoios,
+  f: Fetch = fetch,
+  esperar: (ms: number) => Promise<void> = dormir,
+): Promise<Response> {
   if (req.method !== 'POST') return resposta(405, { erro: 'método não permitido' });
   if (!amb.LIVEPIX_CLIENT_ID || !amb.LIVEPIX_CLIENT_SECRET || !amb.SUPABASE_URL || !amb.SUPABASE_SERVICE_ROLE_KEY)
     return resposta(500, { erro: 'webhook não configurado no servidor' });
@@ -87,11 +117,11 @@ export async function tratarWebhookLivePix(req: Request, amb: AmbienteApoios, f:
 
   try {
     let tk = await tokenLivePix(amb, f);
-    let r = await f(`https://api.livepix.gg/v2/messages/${id}`, { headers: { authorization: `Bearer ${tk}` } });
+    let r = await buscarMensagem(id, tk, f, esperar);
     if (r.status === 401) {
       esquecerToken();
       tk = await tokenLivePix(amb, f);
-      r = await f(`https://api.livepix.gg/v2/messages/${id}`, { headers: { authorization: `Bearer ${tk}` } });
+      r = await buscarMensagem(id, tk, f, esperar);
     }
     // não existe: aviso falso ou velho, não adianta o LivePix tentar de novo
     if (r.status === 404) return resposta(200, { ignorado: true });
