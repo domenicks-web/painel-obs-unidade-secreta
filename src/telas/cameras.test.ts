@@ -107,3 +107,23 @@ describe('lista', () => {
     expect(moverOrdem(l, 0, -1).map((c) => c.id)).toEqual(['1', '2', '3']);
   });
 });
+
+describe('telas JOGO e REACT', () => {
+  it('JOGO: moldura da gameplay na tela inteira (sem etiqueta) e a câmera no canto de baixo à direita, na frente', () => {
+    const [gameplay, cam] = camerasDaTela(est(), 'jogo');
+    expect(gameplay).toMatchObject({ x: 0, y: 1080, w: 1920, h: 1080, nome: '' });
+    expect(cam).toMatchObject({ w: 480, h: 270, x: 1400, y: 1010, nome: 'NOME 01', formato: '16:9' });
+    expect(layoutAutomatico('jogo', 1, est())).toHaveLength(1); // só a câmera
+    expect(layoutAutomatico('jogo', 1, est())[0].nome).toBe('NOME 01');
+  });
+  it('REACT: duas câmeras, uma em cada canto de cima', () => {
+    const [esq, dir] = camerasDaTela(est(), 'react');
+    expect(esq).toMatchObject({ x: 40, y: 310, w: 480, h: 270, nome: 'NOME 01' });
+    expect(dir).toMatchObject({ x: 1400, y: 310, w: 480, h: 270, nome: 'NOME 02' });
+    expect(layoutAutomatico('react', 1, est())).toHaveLength(1);
+  });
+  it('cada tela tem a sua chave', () => {
+    expect(CHAVE_CAMS.jogo).toBe('camsJogo');
+    expect(CHAVE_CAMS.react).toBe('camsReact');
+  });
+});

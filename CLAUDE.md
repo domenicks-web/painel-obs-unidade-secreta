@@ -1,6 +1,6 @@
 # unidade-secreta-live — estado do projeto
 
-> **2026-10-01:** Parte 4, relógio, permissões (0009), molduras de câmera no ar. **Playlist dos alertas YT commitada em `main` local, NÃO pushada**: depende de `0010_alerta_comandos.sql`. Ordem: usuário roda 0010 → push. Pendências em `PENDENCIAS.md`.
+> **2026-10-01:** Tudo pushado e no ar (0001–0010 rodadas em produção): parte 4, relógio, permissões, molduras de câmera editáveis, playlist dos alertas YT, telas JOGO e REACT. Pendências em `PENDENCIAS.md`.
 
 Painel web (Vite+React+TS+Supabase) para controlar overlays de OBS em tempo real. Spec original em `PROMPT-CLAUDE-CODE.md`. Referência visual em `referencia/`.
 

@@ -5,6 +5,8 @@ export const TELAS = [
   { id: 'futebol', label: 'FUTEBOL' },
   { id: 'filme', label: 'FILME/SÉRIE' },
   { id: 'mesa', label: 'MESA REDONDA' },
+  { id: 'jogo', label: 'JOGO' },
+  { id: 'react', label: 'REACT' },
   { id: 'intervalo', label: 'INTERVALO' },
   { id: 'lower', label: 'LOWER THIRD' },
   { id: 'tecnico', label: 'TÉCNICO' },
@@ -49,6 +51,8 @@ export interface EstadoLive {
   camsMesa: Camera[] | null;
   camsFilme: Camera[] | null;
   camsFutebol: Camera[] | null;
+  camsJogo: Camera[] | null;
+  camsReact: Camera[] | null;
   pixLink: string;
   metaDesc: string;
   metaTotal: number;
@@ -126,6 +130,8 @@ export const ESTADO_PADRAO: EstadoLive = {
   camsMesa: null,
   camsFilme: null,
   camsFutebol: null,
+  camsJogo: null,
+  camsReact: null,
   pixLink: 'LIVEPIX.GG/UNIDADESECRETA',
   metaDesc: 'PIZZA PRA RAPAZIADA',
   metaTotal: 500,

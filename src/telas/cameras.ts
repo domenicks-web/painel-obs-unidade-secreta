@@ -20,12 +20,12 @@ export interface Camera {
   y: number;
 }
 
-export type TelaCam = 'host' | 'mesa' | 'filme' | 'futebol';
-export const TELAS_CAM: TelaCam[] = ['host', 'mesa', 'filme', 'futebol'];
+export type TelaCam = 'host' | 'mesa' | 'filme' | 'futebol' | 'jogo' | 'react';
+export const TELAS_CAM: TelaCam[] = ['host', 'mesa', 'filme', 'futebol', 'jogo', 'react'];
 export const ehTelaCam = (t: string): t is TelaCam => (TELAS_CAM as string[]).includes(t);
-export const CHAVE_CAMS = { host: 'camsHost', mesa: 'camsMesa', filme: 'camsFilme', futebol: 'camsFutebol' } as const;
+export const CHAVE_CAMS = { host: 'camsHost', mesa: 'camsMesa', filme: 'camsFilme', futebol: 'camsFutebol', jogo: 'camsJogo', react: 'camsReact' } as const;
 // botões de ponto de partida (layout automático com N câmeras)
-export const PARTIDAS: Record<TelaCam, number[]> = { host: [1, 2, 3], mesa: [1, 2, 3, 4, 5, 6], filme: [1, 2, 3, 4], futebol: [1, 2] };
+export const PARTIDAS: Record<TelaCam, number[]> = { host: [1, 2, 3], mesa: [1, 2, 3, 4, 5, 6], filme: [1, 2, 3, 4], futebol: [1, 2], jogo: [1, 2], react: [1, 2] };
 export const MAX_CAMERAS = 12;
 
 const MIN = 40;
@@ -38,7 +38,22 @@ const HOST: Record<number, Caixa[]> = {
   3: [{ x: 60, y: 150, w: 896, h: 504 }, { x: 980, y: 150, w: 400, h: 225 }, { x: 980, y: 429, w: 400, h: 225 }],
 };
 
+// JOGO: moldura da gameplay na tela inteira (sem etiqueta) + a câmera no canto de baixo à direita.
+// REACT: câmeras nos cantos de cima. Coordenadas já no canto inferior esquerdo.
+const CAM_JOGO = { w: 480, h: 270, x: 1400, y: 1010 };
+const CANTOS_REACT = [
+  { w: 480, h: 270, x: 40, y: 310 },
+  { w: 480, h: 270, x: 1400, y: 310 },
+];
+
 export function layoutAutomatico(tela: TelaCam, n: number, estado: EstadoLive): Camera[] {
+  const nome = (i: number) => estado.nomes[i] || `NOME 0${i + 1}`;
+  if (tela === 'jogo') {
+    const cam: Camera = { id: 'auto-cam', nome: nome(0), formato: '16:9', ...CAM_JOGO };
+    return n >= 2 ? [{ id: 'auto-gameplay', nome: '', formato: '16:9', w: 1920, h: 1080, x: 0, y: 1080 }, cam] : [cam];
+  }
+  if (tela === 'react')
+    return CANTOS_REACT.slice(0, Math.max(1, Math.min(2, n))).map((c, i) => ({ id: `auto-${i + 1}`, nome: nome(i), formato: '16:9', ...c }));
   const caixas =
     tela === 'host'
       ? HOST[n] ?? HOST[1]
@@ -48,7 +63,7 @@ export function layoutAutomatico(tela: TelaCam, n: number, estado: EstadoLive): 
         );
   return caixas.map((c, i) => ({
     id: `auto-${i + 1}`,
-    nome: estado.nomes[i] || `NOME 0${i + 1}`,
+    nome: nome(i),
     formato: '16:9',
     w: c.w,
     h: c.h,
@@ -57,7 +72,7 @@ export function layoutAutomatico(tela: TelaCam, n: number, estado: EstadoLive): 
   }));
 }
 
-const QTD_PADRAO: Record<Exclude<TelaCam, 'host'>, number> = { mesa: 6, filme: 4, futebol: 2 };
+const QTD_PADRAO: Record<Exclude<TelaCam, 'host'>, number> = { mesa: 6, filme: 4, futebol: 2, jogo: 2, react: 2 };
 
 export function camerasDaTela(estado: EstadoLive, tela: TelaCam): Camera[] {
   const salvo = sanitizar((estado as unknown as Record<string, unknown>)[CHAVE_CAMS[tela]]);
@@ -136,5 +151,9 @@ export function patchCams(tela: TelaCam, lista: Camera[]): PatchLive {
       return { camsFilme: lista };
     case 'futebol':
       return { camsFutebol: lista };
+    case 'jogo':
+      return { camsJogo: lista };
+    case 'react':
+      return { camsReact: lista };
   }
 }

@@ -6,6 +6,7 @@ import {
   MAX_CAMERAS,
   PARTIDAS,
   camerasDaTela,
+  ehTelaCam,
   layoutAutomatico,
   moverOrdem,
   mudarFormato,
@@ -34,7 +35,7 @@ export function CamposTela({ tela, live }: { tela: TelaId; live: Live }) {
   return (
     <>
       {tela === 'futebol' && <CamposFutebol live={live} />}
-      {(tela === 'host' || tela === 'mesa' || tela === 'futebol' || tela === 'filme') && <Cameras tela={tela} live={live} />}
+      {ehTelaCam(tela) && <Cameras tela={tela} live={live} />}
       {tela === 'host' && (
         <CampoTexto rotulo="PIX LINK" valor={live.estado.pixLink} maiusculo aoMudar={(v) => live.salvarDepois({ pixLink: v })} />
       )}
