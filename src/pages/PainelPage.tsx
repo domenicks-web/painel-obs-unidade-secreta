@@ -69,6 +69,8 @@ function Painel() {
         livepix={livepix.status}
         livepixUltimo={livepix.ultimo}
         chat={chat.status}
+        erro={live.erro}
+        aoFecharErro={live.fecharErro}
       />
       <div className="p-grade">
         <ListaTelas atual={tela} aoEscolher={setTela} />

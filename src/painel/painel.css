@@ -21,6 +21,10 @@
 .p-status__led--aceso { background: #FF6B1F; animation: pBlink 1.6s ease-in-out infinite; }
 .p-status__label { font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: #FFF3E0; }
 .p-status__extra { font: 700 10px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #6d6368; }
+.p-recusa { position: fixed; top: 74px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 32px); box-sizing: border-box; padding: 10px 10px 10px 16px; background: #E5484D; color: #1A1417; box-shadow: 6px 6px 0 #1A1417; }
+.p-recusa__rotulo { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .14em; white-space: nowrap; }
+.p-recusa__motivo { flex: 1; min-width: 0; font: 700 18px/1.15 'Barlow Condensed', sans-serif; }
+.p-recusa__fechar { width: 30px; height: 30px; flex: none; border: 2px solid #1A1417; background: transparent; color: #1A1417; font: 700 18px/1 'JetBrains Mono', monospace; cursor: pointer; }
 .p-status--apagado .p-status__label { color: #8a7f84; }
 .p-topo__botao { height: 32px; padding: 0 12px; border: 2px solid #3a3035; background: transparent; color: #FFF3E0; font: 700 12px/1 'JetBrains Mono', monospace !important; letter-spacing: .12em; cursor: pointer; display: flex; align-items: center; text-decoration: none; white-space: nowrap; }
 .p-topo__botao:hover { border-color: #FF6B1F; color: #FF6B1F; }
@@ -244,6 +248,7 @@
 @media (max-width: 1099px) {
   .p-painel { height: auto; min-height: 100vh; grid-template-rows: auto auto; }
   .p-topo { flex-wrap: wrap; padding: 0 12px 10px 0; row-gap: 10px; }
+  .p-recusa { left: 16px; right: 16px; top: 12px; transform: none; max-width: none; }
   .p-topo__barra, .p-topo__sub { display: none; }
   .p-topo__direita { margin-left: 0; width: 100%; padding-left: 12px; flex-wrap: wrap; }
   .p-topo__editado { width: 100%; order: 10; }

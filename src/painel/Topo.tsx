@@ -15,6 +15,8 @@ interface Props {
   livepix: StatusLivePix;
   livepixUltimo?: UltimoComando | null;
   chat: StatusChat;
+  erro?: string | null; // motivo da última gravação recusada pelo banco
+  aoFecharErro?: () => void;
 }
 
 // Os links do LivePix não dizem o estado real: o selo mostra o último comando dado.
@@ -41,7 +43,7 @@ const EXTRA_CHAT: Record<StatusChat, string> = {
   sem_sessao: 'SEM SESSÃO',
 };
 
-export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix, livepixUltimo, chat }: Props) {
+export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix, livepixUltimo, chat, erro, aoFecharErro }: Props) {
   const agora = useAgora(15000);
   const indicadores = [
     { label: 'TELAS SINCRONIZADAS', aceso: status === 'ao_vivo', extra: status === 'reconectando' ? 'RECONECTANDO…' : '' },
@@ -92,6 +94,15 @@ export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, li
           SAIR
         </button>
       </div>
+      {erro && (
+        <div className="p-recusa" role="alert">
+          <span className="p-recusa__rotulo">NÃO GRAVOU</span>
+          <span className="p-recusa__motivo">{erro}</span>
+          <button type="button" className="p-recusa__fechar" aria-label="Fechar aviso" onClick={aoFecharErro}>
+            ×
+          </button>
+        </div>
+      )}
     </header>
   );
 }

@@ -58,3 +58,22 @@ describe('Topo · selo LIVEPIX', () => {
     expect(selo.querySelector('.p-status__extra')!.textContent).toBe('PAUSADO');
   });
 });
+
+describe('Topo · gravação recusada', () => {
+  it('mostra o motivo e fecha no ×', () => {
+    const fechar = vi.fn();
+    render(
+      <MemoryRouter>
+        <Topo status="ao_vivo" editadoPor={null} editadoEm={null} ehAdmin={false} aoAbrirGalera={() => {}} livepix="ativo" chat="ao_vivo" erro="a galera tem no máximo 20 pessoas" aoFecharErro={fechar} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('alert').textContent).toContain('NÃO GRAVOU');
+    expect(screen.getByRole('alert').textContent).toContain('a galera tem no máximo 20 pessoas');
+    screen.getByRole('button', { name: 'Fechar aviso' }).click();
+    expect(fechar).toHaveBeenCalled();
+  });
+  it('sem erro não mostra nada', () => {
+    montar('ativo');
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+});

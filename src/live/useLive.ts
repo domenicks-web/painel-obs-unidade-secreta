@@ -7,6 +7,12 @@ const DEBOUNCE_MS = 400;
 
 export type StatusConexao = 'conectando' | 'ao_vivo' | 'reconectando';
 
+const ERRO_VISIVEL_MS = 8000;
+
+// O banco recusou o dado (raise exception, tipo/valor inválido, restrição, sem permissão):
+// a conexão está boa, então não é "RECONECTANDO" — o painel mostra o motivo.
+const ehRecusa = (e: { code?: string }) => /^(P0001|22|23|42501)/.test(e.code ?? '');
+
 interface Linha {
   estado: Partial<EstadoLive>;
   updated_at: string;
@@ -42,6 +48,8 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
   const [servidor, setServidor] = useState<EstadoLive>(() => fixture ?? ((guardarLocal && lerLocal()) || ESTADO_PADRAO));
   const [editado, setEditado] = useState<{ por: string | null; em: string | null }>({ por: null, em: null });
   const [status, setStatus] = useState<StatusConexao>(fixture ? 'ao_vivo' : 'conectando');
+  const [erro, setErro] = useState<string | null>(null);
+  const timerErro = useRef<ReturnType<typeof setTimeout>>(undefined);
   // valores locais ainda não confirmados: sobrepõem o eco do Realtime
   const [pendentes, setPendentes] = useState<PatchLive>({});
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
@@ -50,6 +58,20 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
   const ultimos = useRef(new Map<string, unknown>());
   // maior versão já aplicada: resposta de RPC que chega depois de um eco mais novo é descartada
   const versao = useRef(0);
+
+  const fecharErro = useCallback(() => {
+    clearTimeout(timerErro.current);
+    setErro(null);
+  }, []);
+
+  const falhou = useCallback((e: { code?: string; message: string }) => {
+    if (!ehRecusa(e)) return setStatus('reconectando');
+    clearTimeout(timerErro.current);
+    setErro(e.message);
+    timerErro.current = setTimeout(() => setErro(null), ERRO_VISIVEL_MS);
+  }, []);
+
+  useEffect(() => () => clearTimeout(timerErro.current), []);
 
   const aplicar = useCallback(
     (l: Linha) => {
@@ -118,17 +140,21 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
   const enviar = useCallback(
     async (patch: PatchLive) => {
       const { data, error } = await supabase.rpc('atualizar_estado', { p_slug: SLUG, p_patch: patch });
-      if (error) setStatus('reconectando');
+      if (error) falhou(error);
       // a resposta já traz o estado gravado: evita piscar o valor velho até o eco chegar
       else if (data) aplicar(data as Linha);
-      // libera os campos cujo valor confirmado é o último digitado
+      // Libera os campos cujo valor enviado ainda é o último digitado (deu certo ou foi recusado:
+      // recusado, o campo volta ao que está no banco). O === é de propósito: ultimos guarda o
+      // próprio valor enviado, então em objeto (galera, lista) compara a referência, não o conteúdo.
+      // Se a pessoa mudou o campo nesse meio-tempo, é outro valor/objeto e o campo continua
+      // pendente esperando a gravação mais nova.
       setPendentes((p) => {
         const novo = { ...p } as Record<string, unknown>;
         for (const [k, v] of Object.entries(patch)) if (ultimos.current.get(k) === v) delete novo[k];
         return novo as PatchLive;
       });
     },
-    [aplicar],
+    [aplicar, falhou],
   );
 
   const salvar = useCallback(
@@ -198,10 +224,10 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
   const chamar = useCallback(
     async (nome: string, args: Record<string, unknown>) => {
       const { data, error } = await supabase.rpc(nome, { p_slug: SLUG, ...args });
-      if (error) setStatus('reconectando');
+      if (error) falhou(error);
       else if (data) aplicar(data as Linha);
     },
-    [aplicar],
+    [aplicar, falhou],
   );
 
   const reiniciarContagem = useCallback(() => chamar('reiniciar_contagem', {}), [chamar]);
@@ -219,6 +245,8 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
   return {
     estado: aplicarPatch(servidor, pendentes),
     status,
+    erro,
+    fecharErro,
     editadoPor: editado.por,
     editadoEm: editado.em,
     salvar,

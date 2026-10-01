@@ -264,6 +264,39 @@ describe('useLive', () => {
     expect(result.current.estado.clockAcumulado).toBe(70);
   });
 
+  it('banco recusou o dado (validação): mostra o motivo e não acende RECONECTANDO', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: { code: 'P0001', message: 'a galera tem no máximo 20 pessoas' } } as never);
+    const { result } = renderHook(() => useLive());
+    await vi.waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    await act(() => result.current.salvar({ titulo: 'X' }));
+    expect(result.current.status).toBe('ao_vivo');
+    expect(result.current.erro).toBe('a galera tem no máximo 20 pessoas');
+    expect(result.current.estado.titulo).toBe('DO BANCO'); // o campo volta ao que está gravado
+    act(() => vi.advanceTimersByTime(8000));
+    expect(result.current.erro).toBeNull();
+  });
+
+  it('erro de validação nas RPCs do relógio/gol também só mostra o motivo; dá pra fechar', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: { code: 'P0001', message: 'tempo fora de 00:00–99:59' } } as never);
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    await act(() => result.current.relogio('definir', 9999));
+    expect(result.current.status).toBe('ao_vivo');
+    expect(result.current.erro).toBe('tempo fora de 00:00–99:59');
+    act(() => result.current.fecharErro());
+    expect(result.current.erro).toBeNull();
+  });
+
+  it('falha de rede continua acendendo RECONECTANDO, sem aviso de validação', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: { code: '', message: 'TypeError: Failed to fetch' } } as never);
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    await act(() => result.current.salvar({ titulo: 'X' }));
+    expect(result.current.status).toBe('reconectando');
+    expect(result.current.erro).toBeNull();
+  });
+
   it('fixture não toca no Supabase', () => {
     const { result } = renderHook(() => useLive({ fixture: { ...ESTADO_PADRAO, titulo: 'FIX' } }));
     expect(result.current.estado.titulo).toBe('FIX');
