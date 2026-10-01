@@ -1,4 +1,5 @@
 import type { Camera } from '../telas/cameras';
+import type { GolEvento } from '../gol/useGolAoVivo';
 export const TELAS = [
   { id: 'inicio', label: 'INÍCIO' },
   { id: 'host', label: 'HOST' },
@@ -53,6 +54,12 @@ export interface EstadoLive {
   camsFutebol: Camera[] | null;
   camsJogo: Camera[] | null;
   camsReact: Camera[] | null;
+  // animação de gol (FUTEBOL): chave por time, som, duração (3–6 s); o evento é gravado pelo banco
+  golAnimA: boolean;
+  golAnimB: boolean;
+  golSom: boolean;
+  golDuracao: number;
+  golEvento: GolEvento | null;
   pixLink: string;
   metaDesc: string;
   metaTotal: number;
@@ -82,7 +89,7 @@ export interface EstadoLive {
 
 export type CampoSoDoBanco =
   | 'metaAtual' | 'pixNome' | 'pixValor' | 'topNome' | 'topValor'
-  | 'timerInicio' | 'clockInicio' | 'clockAcumulado' | 'clockRodando';
+  | 'timerInicio' | 'clockInicio' | 'clockAcumulado' | 'clockRodando' | 'golEvento';
 
 // Chaves com ponto mudam só um pedaço (uma câmera, um campo da enquete); o banco aplica com
 // jsonb_set, então dois editores mexendo em pedaços diferentes não se atropelam.
@@ -132,6 +139,11 @@ export const ESTADO_PADRAO: EstadoLive = {
   camsFutebol: null,
   camsJogo: null,
   camsReact: null,
+  golAnimA: true,
+  golAnimB: false,
+  golSom: false,
+  golDuracao: 4,
+  golEvento: null,
   pixLink: 'LIVEPIX.GG/UNIDADESECRETA',
   metaDesc: 'PIZZA PRA RAPAZIADA',
   metaTotal: 500,

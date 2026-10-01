@@ -3,11 +3,23 @@ import { Molduras } from './SlotCamera';
 import { FaixaTicker } from './FaixaTicker';
 import { RelogioJogo } from './RelogioJogo';
 import { rotuloJogo } from '../live/formatar';
+import { useOffsetServidor } from '../live/relogioServidor';
+import { useGolAoVivo } from '../gol/useGolAoVivo';
+import '../gol/gol.css';
 
 const pct = (v: number) => Math.min(100, Math.max(0, Number(v) || 0)) + '%';
 
 export function TelaFutebol({ estado, previa }: PropsTela) {
   const { enquete } = estado;
+  const { pulso } = useGolAoVivo(estado.golEvento, useOffsetServidor());
+  const gols = (lado: 'A' | 'B', v: number) =>
+    pulso?.lado === lado ? (
+      <span key={pulso.id} className="g-pop">
+        {v}
+      </span>
+    ) : (
+      v
+    );
   const opcoes: [string, number, string, string][] = [
     [estado.timeA, enquete.casa, '#FF6B1F', '0s'],
     ['EMPATE', enquete.empate, '#FFF3E0', '.15s'],
@@ -21,9 +33,9 @@ export function TelaFutebol({ estado, previa }: PropsTela) {
         <div className="t-futebol__us">US</div>
         <div className="t-futebol__time t-futebol__time--a">{estado.timeA}</div>
         <div className="t-futebol__gols">
-          <div className="t-futebol__gol">{estado.golsA}</div>
+          <div className="t-futebol__gol">{gols('A', estado.golsA)}</div>
           <div className="t-futebol__x">×</div>
-          <div className="t-futebol__gol">{estado.golsB}</div>
+          <div className="t-futebol__gol">{gols('B', estado.golsB)}</div>
         </div>
         <div className="t-futebol__time">{estado.timeB}</div>
         <div className="t-futebol__tempo">

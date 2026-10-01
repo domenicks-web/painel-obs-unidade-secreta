@@ -1,0 +1,15 @@
+/* Animação de gol — keyframes iguais à referência (referencia/Animacao Gol.dc.html) */
+@keyframes gWipe { from { transform: translateX(-2700px) skewX(-14deg); } to { transform: translateX(2700px) skewX(-14deg); } }
+@keyframes gBand { 0% { transform: scaleY(0); } 70% { transform: scaleY(1.06); } 100% { transform: scaleY(1); } }
+@keyframes gStamp { 0% { transform: translateY(-40px) scale(2.4) rotate(-6deg); opacity: 0; } 55% { transform: scale(.9) rotate(-3deg); opacity: 1; } 100% { transform: scale(1) rotate(-3deg); opacity: 1; } }
+@keyframes gSlide { from { transform: translateX(-1600px); } to { transform: none; } }
+@keyframes gSlideR { from { transform: translateX(1600px); } to { transform: none; } }
+@keyframes gPop { 0% { transform: scale(1); } 35% { transform: scale(1.7); } 60% { transform: scale(.9); } 100% { transform: scale(1); } }
+@keyframes gShake { 0%, 100% { transform: none; } 20% { transform: translate(-14px, 8px); } 40% { transform: translate(12px, -10px); } 60% { transform: translate(-8px, 6px); } 80% { transform: translate(6px, -4px); } }
+@keyframes gStripe { from { background-position: 0 0; } to { background-position: 68px 0; } }
+@keyframes gOut { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 0 100%); } }
+@keyframes gBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes gFlash { 0% { opacity: 0; } 20% { opacity: .7; } 100% { opacity: 0; } }
+
+/* número do placar piscando quando sai gol */
+.g-pop { display: inline-block; animation: gPop .6s cubic-bezier(.2, .8, .2, 1) both; }

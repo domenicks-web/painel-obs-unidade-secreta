@@ -4,6 +4,7 @@ import { TELA_COMPONENTE } from '../telas';
 import type { EstadoLive, TelaId } from '../live/tipos';
 import type { Camera } from '../telas/cameras';
 import { ArrastarMolduras } from './ArrastarMolduras';
+import { CamadaGol } from '../gol/CamadaGol';
 
 // editor: nas telas com câmera, as molduras podem ser arrastadas em cima da prévia
 export function Previa({ tela, estado, editor }: { tela: TelaId; estado: EstadoLive; editor?: { lista: Camera[]; aoMudar: (l: Camera[]) => void } }) {
@@ -21,6 +22,7 @@ export function Previa({ tela, estado, editor }: { tela: TelaId; estado: EstadoL
       {largura > 0 && (
         <Palco escala={largura / 1920}>
           <Tela estado={estado} previa />
+          {tela === 'futebol' && <CamadaGol estado={estado} comSom={false} />}
         </Palco>
       )}
       {largura > 0 && editor && <ArrastarMolduras lista={editor.lista} escala={largura / 1920} aoMudar={editor.aoMudar} />}

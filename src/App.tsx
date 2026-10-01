@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { TelaPage } from './pages/TelaPage';
 import { ChatPage } from './pages/ChatPage';
 import { AlertaPage } from './pages/AlertaPage';
+import { GolPage } from './pages/GolPage';
 import { RotaProtegida } from './components/RotaProtegida';
 import { useTituloDaPagina } from './tituloDaPagina';
 
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/tela/:id" element={<TelaPage />} />
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/alerta" element={<AlertaPage />} />
+        <Route path="/gol" element={<GolPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/painel"

@@ -17,6 +17,7 @@ export function tituloDaPagina(caminho: string): string {
   }
   if (caminho.startsWith('/chat')) return com('Chat');
   if (caminho.startsWith('/alerta')) return com('Alertas');
+  if (caminho.startsWith('/gol')) return com('Gol');
   if (caminho.startsWith('/login')) return com('Entrar');
   if (caminho.startsWith('/admin')) return com('Equipe');
   return com('Painel');

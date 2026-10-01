@@ -55,3 +55,8 @@ export function useAgora(tickMs = 1000): number {
   }, [tickMs]);
   return agora + offset;
 }
+
+/** Diferença entre o relógio do servidor e o deste navegador (ms): agora do servidor = Date.now() + offset. */
+export function useOffsetServidor(): number {
+  return useContext(OffsetCtx);
+}

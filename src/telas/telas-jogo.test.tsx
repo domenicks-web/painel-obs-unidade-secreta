@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ESTADO_PADRAO } from '../live/tipos';
 
-vi.mock('../live/relogioServidor', () => ({ useAgora: () => 2_000_000 }));
+vi.mock('../live/relogioServidor', () => ({ useAgora: () => 2_000_000, useOffsetServidor: () => 0 }));
 
 import { TelaFutebol } from './TelaFutebol';
 import { TelaFilme } from './TelaFilme';
