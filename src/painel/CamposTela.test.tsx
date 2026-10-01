@@ -36,13 +36,14 @@ describe('CamposTela', () => {
     expect(relogio.mock.calls).toEqual([['ajustar', -60], ['ajustar', -10], ['ajustar', 10], ['ajustar', 60]]);
 
     const campo = screen.getByLabelText('TEMPO EXATO');
-    fireEvent.change(campo, { target: { value: '37:12' } });
+    fireEvent.change(campo, { target: { value: '3712' } });
+    expect((campo as HTMLInputElement).value).toBe('37:12');
     fireEvent.submit(campo);
     expect(relogio).toHaveBeenLastCalledWith('definir', 2232);
     expect((campo as HTMLInputElement).value).toBe('');
 
     relogio.mockClear();
-    fireEvent.change(campo, { target: { value: '1:75' } });
+    fireEvent.change(campo, { target: { value: '175' } });
     fireEvent.click(screen.getByRole('button', { name: 'DEFINIR' }));
     expect(relogio).not.toHaveBeenCalled();
     expect(campo.getAttribute('aria-invalid')).toBe('true');

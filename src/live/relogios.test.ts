@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bolinhasCheias, lerTempo, mmss, segundosJogo, segundosRestantes } from './relogios';
+import { bolinhasCheias, lerTempo, mascaraTempo, mmss, segundosJogo, segundosRestantes } from './relogios';
 
 describe('segundosRestantes', () => {
   it('parado (sem timerInicio) mostra o total', () => {
@@ -55,5 +55,20 @@ describe('lerTempo (campo do tempo exato do FUTEBOL)', () => {
   });
   it('recusa o que não é tempo', () => {
     for (const t of ['', 'abc', '1:60', '100:00', '12:3', '-1:00', '1:2:3', '45min']) expect(lerTempo(t)).toBeNull();
+  });
+});
+
+describe('mascaraTempo (o que aparece no campo enquanto digita)', () => {
+  it('põe os dois pontos antes dos dois últimos números', () => {
+    expect(['2', '23', '235', '2354'].map(mascaraTempo)).toEqual(['2', '23', '2:35', '23:54']);
+  });
+  it('ignora o que não é número e para em 4 números', () => {
+    expect(mascaraTempo('23:54')).toBe('23:54');
+    expect(mascaraTempo('a2b3 5-4')).toBe('23:54');
+    expect(mascaraTempo('235400')).toBe('23:54');
+    expect(mascaraTempo('')).toBe('');
+  });
+  it('apagando volta sozinho', () => {
+    expect(mascaraTempo('23:5')).toBe('2:35');
   });
 });

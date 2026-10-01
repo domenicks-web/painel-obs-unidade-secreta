@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { useLive } from '../live/useLive';
 import { JOGO_OPCOES, type PatchLive, type TelaId } from '../live/tipos';
-import { lerTempo, mmss, segundosJogo } from '../live/relogios';
+import { lerTempo, mascaraTempo, mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
 import { CampoCamera } from './CampoCamera';
@@ -248,7 +248,7 @@ function AjusteRelogio({ live }: { live: Live }) {
           maxLength={5}
           value={texto}
           onChange={(e) => {
-            setTexto(e.target.value);
+            setTexto(mascaraTempo(e.target.value));
             setInvalido(false);
           }}
         />

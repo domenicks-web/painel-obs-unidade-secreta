@@ -31,3 +31,9 @@ export function lerTempo(texto: string): number | null {
   const seg = m[2] != null ? Number(m[2]) : 0;
   return seg < 60 ? Number(m[1]) * 60 + seg : null;
 }
+
+/** Máscara do campo de tempo: só números (até 4), com ":" antes dos dois últimos ("2354" → "23:54"). */
+export function mascaraTempo(texto: string): string {
+  const d = texto.replace(/\D/g, '').slice(0, 4);
+  return d.length > 2 ? `${d.slice(0, -2)}:${d.slice(-2)}` : d;
+}
