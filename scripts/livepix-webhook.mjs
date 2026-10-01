@@ -28,11 +28,21 @@ const t = await fetch('https://oauth.livepix.gg/oauth2/token', {
 });
 if (!t.ok) throw new Error(`token: HTTP ${t.status} ${await t.text()}`);
 const { access_token } = await t.json();
-const api = (caminho, init = {}) =>
-  fetch(`https://api.livepix.gg/v2${caminho}`, {
-    ...init,
-    headers: { authorization: `Bearer ${access_token}`, 'content-type': 'application/json', ...(init.headers || {}) },
-  });
+// A cota da API (50 por janela) é dividida com o resto da conta e às vezes zera:
+// no 429, espera o reset que o LivePix informa e tenta de novo.
+const api = async (caminho, init = {}) => {
+  for (let tentativa = 1; ; tentativa++) {
+    const r = await fetch(`https://api.livepix.gg/v2${caminho}`, {
+      ...init,
+      headers: { authorization: `Bearer ${access_token}`, 'content-type': 'application/json', ...(init.headers || {}) },
+    });
+    if (r.status !== 429 || tentativa === 10) return r;
+    const reset = Number(r.headers.get('x-ratelimit-reset')) * 1000;
+    const ms = reset > Date.now() ? reset - Date.now() + 200 : 5000;
+    console.log(`LivePix pediu pra esperar (429), tentando de novo em ${Math.ceil(ms / 1000)} s…`);
+    await new Promise((ok) => setTimeout(ok, ms));
+  }
+};
 
 const lista = await api('/webhooks?limit=100');
 if (!lista.ok) throw new Error(`listar: HTTP ${lista.status} ${await lista.text()}`);
