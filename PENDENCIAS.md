@@ -18,6 +18,11 @@ redimensionar em cima da prévia. Modo "câmeras manuais" removido. Sem migratio
 - **Cota da API do LivePix** (50/min) vive esgotada por algo fora do projeto: procurar app/integração/widget antigo na conta. O webhook já espera o reset (até ~50 s) antes de devolver erro.
 - Apagar os apoios "TESTE Claude", se algum painel estava aberto durante o teste.
 
+### Playlist dos alertas do YouTube — feita (2026-10-01), falta a 0010 em produção
+Bloco ALERTAS YT no painel: tocando, fila e já tocou; tocar agora, tocar de novo, tirar, pular, pausar/retomar a fila.
+A fonte /alerta anuncia a fila (broadcast "alerta-fila") e obedece `alerta_comandos` (0010). PIX seguem no widget
+do LivePix (a API dele não deixa escolher qual alerta tocar). Ordem: rodar `0010_alerta_comandos.sql` → push.
+
 ### Kit OBS
 Pasta `kit-obs/` com:
 - a coleção de cenas e o perfil do OBS exportados, **sem caminhos absolutos** e **sem o ID de sessão do chat**;

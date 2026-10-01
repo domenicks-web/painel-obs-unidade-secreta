@@ -7,6 +7,8 @@ import { TELAS, type TelaId } from '../live/tipos';
 import { Topo } from '../painel/Topo';
 import { ListaTelas } from '../painel/ListaTelas';
 import { Previa } from '../painel/Previa';
+import { FilaAlertas } from '../painel/FilaAlertas';
+import { usePlaylistAlertas } from '../alerta/remoto';
 import { camerasDaTela, ehTelaCam, patchCams } from '../telas/cameras';
 import { CampoTexto } from '../painel/CampoTexto';
 import { CamposTela } from '../painel/CamposTela';
@@ -33,6 +35,7 @@ function Painel() {
   const live = useLive();
   const pix = useApoios();
   const livepix = useControlesLivePix();
+  const playlist = usePlaylistAlertas();
   const { papel } = useAuth();
   const [params] = useSearchParams();
   const chatTeste = params.get('chatTeste') === '1';
@@ -106,6 +109,7 @@ function Painel() {
         </main>
         <aside className="p-direita">
           <ColunaPix live={live} pix={pix} livepix={livepix} />
+          <FilaAlertas playlist={playlist} />
           <CaixaChat
             msgs={chat.msgs}
             status={chat.status}
