@@ -72,7 +72,7 @@ export function CartaoAlerta({ atual, saindo }: { atual: Alerta | null; saindo: 
   return (
     <div className="a-area">
       {atual && (
-        <div key={atual.id} className={saindo ? 'a-cartao a-cartao--saindo' : 'a-cartao'}>
+        <div key={`${atual.id}-${atual.vez ?? 0}`} className={saindo ? 'a-cartao a-cartao--saindo' : 'a-cartao'}>
           {atual.tipo === 'membro' ? <Membro a={atual} /> : <Superchat a={atual} />}
         </div>
       )}
