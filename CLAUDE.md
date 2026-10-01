@@ -1,6 +1,6 @@
 # unidade-secreta-live — estado do projeto
 
-> **AO RETOMAR (pedido do usuário, 2026-09-29 20:17): reenviar a ele a mensagem de `docs/retomar-parte-4.md`** (resumo da Parte 4 + o que ele precisa fazer). Backup no GitHub: branch `bkp/parte-4-apoios`. `main` local está 6+ commits à frente de `origin/main` e NÃO deve ir para o GitHub antes de a 0007 rodar em produção.
+> **2026-10-01:** 0007 rodada em produção pelo usuário, `main` pushado e no ar na Vercel. Falta: cadastrar o webhook do LivePix (precisa das `LIVEPIX_CLIENT_*` no `.env.local`) e a fonte `/alerta` no OBS.
 
 Painel web (Vite+React+TS+Supabase) para controlar overlays de OBS em tempo real. Spec original em `PROMPT-CLAUDE-CODE.md`. Referência visual em `referencia/`.
 
