@@ -42,7 +42,7 @@
 .t-slot__tag { position: absolute; left: -4px; top: calc(100% + 4px); display: flex; align-items: stretch; }
 .t-slot__led-box { width: 40px; background: #FF6B1F; display: flex; align-items: center; justify-content: center; }
 .t-slot__led { width: 12px; height: 12px; border-radius: 50%; background: #1A1417; animation: usBlink 1.4s ease-in-out infinite; }
-.t-slot__nome { background: #1A1417; color: #FFF3E0; font: 700 26px/1 'Barlow Condensed', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; padding: 9px 16px 8px; }
+.t-slot__nome { white-space: nowrap; background: #1A1417; color: #FFF3E0; font: 700 26px/1 'Barlow Condensed', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; padding: 9px 16px 8px; }
 
 /* Faixa do ticker (Telas Live linhas 149-152) */
 .t-ticker { position: absolute; left: 0; top: 1000px; width: 1920px; height: 56px; background: #FF6B1F; display: flex; align-items: center; overflow: hidden; }

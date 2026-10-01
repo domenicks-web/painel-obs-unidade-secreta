@@ -1,6 +1,21 @@
 import { useState } from 'react';
 import type { useLive } from '../live/useLive';
-import { JOGO_OPCOES, MAX_CAMS, qtdCams, type PatchLive, type TelaId } from '../live/tipos';
+import { JOGO_OPCOES, type EstadoLive, type TelaId } from '../live/tipos';
+import {
+  FORMATOS,
+  MAX_CAMERAS,
+  PARTIDAS,
+  camerasDaTela,
+  layoutAutomatico,
+  moverOrdem,
+  mudarFormato,
+  mudarPosicao,
+  mudarTamanho,
+  novaCamera,
+  patchCams,
+  type Camera,
+  type TelaCam,
+} from '../telas/cameras';
 import { lerTempo, mascaraTempo, mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
@@ -39,63 +54,75 @@ export function CamposTela({ tela, live }: { tela: TelaId; live: Live }) {
   );
 }
 
-function Cameras({ tela, live }: { tela: TelaId; live: Live }) {
+function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
   const { estado } = live;
-  const grade = tela === 'mesa' || tela === 'filme' || tela === 'futebol' ? tela : null;
-  const qtd = grade ? qtdCams(grade, estado[`${grade}Cams`]) : Number(estado.hostCams);
-  const patchQtd = (c: number): PatchLive => (grade === 'mesa' ? { mesaCams: c } : grade === 'filme' ? { filmeCams: c } : { futebolCams: c });
-  const manuais = estado.camsManuais;
+  const lista = camerasDaTela(estado, tela);
+  // botão: grava na hora; digitando: espera os 400 ms (o painel já mostra o valor novo)
+  const gravar = (nova: Camera[]) => live.salvar(patchCams(tela, nova));
+  const gravarDepois = (nova: Camera[]) => live.salvarDepois(patchCams(tela, nova));
+  const trocar = (i: number, cam: Camera) => lista.map((c, j) => (j === i ? cam : c));
+  const numero = (v: string) => (v.trim() === '' || !Number.isFinite(Number(v)) ? null : Number(v));
+
+  function partida(n: number) {
+    const nova = layoutAutomatico(tela, n, estado);
+    live.salvar(tela === 'host' ? { hostCams: String(n) as EstadoLive['hostCams'], ...patchCams(tela, nova) } : patchCams(tela, nova));
+  }
+
   return (
     <>
       <div className="p-linha">
         <div className="p-rotulo p-rotulo--grande">CÂMERAS</div>
-        {tela === 'host' && (
-          <div className="p-opcoes">
-            {(['1', '2', '3'] as const).map((c) => (
-              <button key={c} type="button" className={classeOpcao(estado.hostCams === c, 'p-opcao--cam')} onClick={() => live.salvar({ hostCams: c })}>
-                {c}
-              </button>
-            ))}
-          </div>
-        )}
-        {grade && !manuais && (
-          <div className="p-opcoes">
-            {Array.from({ length: MAX_CAMS[grade] }, (_, i) => i + 1).map((c) => (
-              <button key={c} type="button" className={classeOpcao(qtd === c, 'p-opcao--cam')} onClick={() => live.salvar(patchQtd(c))}>
-                {c}
-              </button>
-            ))}
-          </div>
-        )}
-        {/* vale pra todas as telas: as câmeras passam a ser postas direto no OBS */}
-        <button
-          type="button"
-          className={manuais ? 'p-chave p-chave--ligada p-cams-manuais' : 'p-chave p-cams-manuais'}
-          aria-pressed={manuais}
-          title="Vale para todas as telas"
-          onClick={() => live.salvar({ camsManuais: !manuais })}
-        >
-          CÂMERAS MANUAIS
-        </button>
-      </div>
-      {manuais ? (
-        <div className="p-texto-fraco">
-          Câmeras manuais ligado em todas as telas: as molduras e os nomes somem. Posicione as câmeras direto no OBS.
-        </div>
-      ) : (
-        <div className="p-cameras">
-          {Array.from({ length: qtd }, (_, i) => (
-            <CampoCamera
-              key={i}
-              numero={i + 1}
-              valor={estado.nomes[i] ?? ''}
-              galera={estado.galera}
-              // só o índice desta câmera: outra pessoa pode estar mudando outra câmera ao mesmo tempo
-              aoMudar={(v) => live.salvarDepois({ [`nomes.${i}`]: v } as PatchLive)}
-            />
+        <div className="p-rotulo">PONTO DE PARTIDA</div>
+        <div className="p-opcoes">
+          {PARTIDAS[tela].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={classeOpcao(tela === 'host' && estado.hostCams === String(n), 'p-opcao--cam')}
+              aria-label={`${n} CÂMERAS`}
+              title={`Layout automático com ${n} câmera${n > 1 ? 's' : ''}`}
+              onClick={() => partida(n)}
+            >
+              {n}
+            </button>
           ))}
         </div>
-      )}
+        <button type="button" className="p-chave p-cams-adicionar" disabled={lista.length >= MAX_CAMERAS} onClick={() => gravar([...lista, novaCamera(lista)])}>
+          + ADICIONAR CÂMERA
+        </button>
+      </div>
+      <div className="p-texto-fraco">X e Y são o canto de baixo à esquerda (tela de 1920×1080). A última da lista fica na frente.</div>
+      <div className="p-molduras">
+        {lista.map((c, i) => (
+          <div key={c.id} className="p-moldura">
+            <CampoCamera numero={i + 1} valor={c.nome} galera={estado.galera} aoMudar={(v) => gravarDepois(trocar(i, { ...c, nome: v }))} />
+            <div className="p-moldura__formatos" role="group" aria-label="FORMATO">
+              {FORMATOS.map((f) => (
+                <button key={f} type="button" className={classeOpcao(c.formato === f, 'p-opcao--formato')} onClick={() => gravar(trocar(i, mudarFormato(c, f)))}>
+                  {f === 'livre' ? 'LIVRE' : f}
+                </button>
+              ))}
+            </div>
+            <div className="p-moldura__numeros">
+              <CampoTexto rotulo="LARGURA" tipo="number" inputMode="numeric" valor={String(c.w)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { w: n }))); }} />
+              <CampoTexto rotulo="ALTURA" tipo="number" inputMode="numeric" valor={String(c.h)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { h: n }))); }} />
+              <CampoTexto rotulo="X" tipo="number" inputMode="numeric" valor={String(c.x)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarPosicao(c, n, c.y))); }} />
+              <CampoTexto rotulo="Y" tipo="number" inputMode="numeric" valor={String(c.y)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarPosicao(c, c.x, n))); }} />
+            </div>
+            <div className="p-moldura__acoes">
+              <button type="button" className="p-botao-contorno" disabled={i === lista.length - 1} onClick={() => gravar(moverOrdem(lista, i, 1))}>
+                PRA FRENTE
+              </button>
+              <button type="button" className="p-botao-contorno" disabled={i === 0} onClick={() => gravar(moverOrdem(lista, i, -1))}>
+                PRA TRÁS
+              </button>
+              <button type="button" className="p-botao-contorno p-moldura__remover" onClick={() => gravar(lista.filter((_, j) => j !== i))}>
+                REMOVER
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 }

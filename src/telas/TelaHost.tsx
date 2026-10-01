@@ -1,11 +1,10 @@
 import type { PropsTela } from './tipos';
-import { SlotCamera } from './SlotCamera';
+import { Molduras } from './SlotCamera';
 import { FaixaTicker } from './FaixaTicker';
 import { CaixaChat, SeloAoVivo } from './Pecas';
 import { partesPixLink, reais } from '../live/formatar';
 
 export function TelaHost({ estado, previa }: PropsTela) {
-  const n = (i: number) => estado.nomes[i] || `NOME 0${i + 1}`;
   const pct = Math.min(100, Math.round((estado.metaAtual / Math.max(1, estado.metaTotal)) * 100)) + '%';
   const [linkA, linkB] = partesPixLink(estado.pixLink);
   // o cartão da meta tem 500px: valor com centavos ou milhar desce a fonte pra não quebrar linha
@@ -21,9 +20,9 @@ export function TelaHost({ estado, previa }: PropsTela) {
         <SeloAoVivo />
       </div>
 
+      <Molduras estado={estado} tela="host" previa={previa} />
       {estado.hostCams === '1' && (
         <>
-          {!estado.camsManuais && <SlotCamera nome={n(0)} w={928} h={522} x={60} y={150} previa={previa} />}
           <div className="t-host__pix">
             <div className="t-host__pix-titulo">
               MANDA
@@ -36,20 +35,6 @@ export function TelaHost({ estado, previa }: PropsTela) {
               {linkB}
             </div>
           </div>
-        </>
-      )}
-      {estado.hostCams === '2' && (
-        <>
-          {/* câmeras 16:9; centralizadas na faixa entre o topo e os cards */}
-          {!estado.camsManuais && <SlotCamera nome={n(0)} w={640} h={360} x={60} y={240} previa={previa} />}
-          {!estado.camsManuais && <SlotCamera nome={n(1)} w={640} h={360} x={740} y={240} previa={previa} />}
-        </>
-      )}
-      {estado.hostCams === '3' && (
-        <>
-          {!estado.camsManuais && <SlotCamera nome={n(0)} w={896} h={504} x={60} y={150} previa={previa} />}
-          {!estado.camsManuais && <SlotCamera nome={n(1)} w={400} h={225} x={980} y={150} previa={previa} />}
-          {!estado.camsManuais && <SlotCamera nome={n(2)} w={400} h={225} x={980} y={429} previa={previa} />}
         </>
       )}
 

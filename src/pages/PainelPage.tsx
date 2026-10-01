@@ -7,6 +7,7 @@ import { TELAS, type TelaId } from '../live/tipos';
 import { Topo } from '../painel/Topo';
 import { ListaTelas } from '../painel/ListaTelas';
 import { Previa } from '../painel/Previa';
+import { camerasDaTela, ehTelaCam, patchCams } from '../telas/cameras';
 import { CampoTexto } from '../painel/CampoTexto';
 import { CamposTela } from '../painel/CamposTela';
 import { ColunaPix } from '../painel/ColunaPix';
@@ -80,7 +81,15 @@ function Painel() {
               <div className="p-previa-titulo">{label}</div>
               <div className="p-previa-aviso">PRÉVIA · NÃO É O QUE ESTÁ NO AR</div>
             </div>
-            <Previa tela={tela} estado={estado} />
+            <Previa
+              tela={tela}
+              estado={estado}
+              editor={
+                ehTelaCam(tela)
+                  ? { lista: camerasDaTela(estado, tela), aoMudar: (l) => live.salvarDepois(patchCams(tela, l)) }
+                  : undefined
+              }
+            />
           </div>
           <section className="p-infos">
             <div className="p-infos-cabeca">

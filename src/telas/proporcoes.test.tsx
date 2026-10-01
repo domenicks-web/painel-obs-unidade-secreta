@@ -6,6 +6,7 @@ import { TelaHost } from './TelaHost';
 import { TelaFutebol } from './TelaFutebol';
 import { TelaFilme } from './TelaFilme';
 import { TelaMesa } from './TelaMesa';
+import { layoutAutomatico } from './cameras';
 
 // Pedido do usuário: toda moldura de câmera por dentro em 16:9 (a webcam entra sem corte nem faixa)
 // e o chat de Host, Futebol e Filme com 440×800 por dentro.
@@ -22,13 +23,12 @@ const CASOS: Caso[] = [
   ['futebol sem enquete', (e) => <TelaFutebol estado={e} />, { enquete: { casa: 1, empate: 1, fora: 1, mostrar: false } }, 2],
   ['filme', (e) => <TelaFilme estado={e} />, {}, 4],
   ['mesa', (e) => <TelaMesa estado={e} />, {}, 6],
-  // grade automática: toda quantidade
-  ...[1, 2, 3, 4, 5].map((n) => [`mesa ${n} câmeras`, (e: EstadoLive) => <TelaMesa estado={e} />, { mesaCams: n }, n] as Caso),
-  ...[1, 2, 3].map((n) => [`filme ${n} câmeras`, (e: EstadoLive) => <TelaFilme estado={e} />, { filmeCams: n }, n] as Caso),
-  ['futebol 1 câmera sem enquete', (e) => <TelaFutebol estado={e} />, { futebolCams: 1 }, 1],
-  ['futebol 1 câmera com enquete', (e) => <TelaFutebol estado={e} />, { futebolCams: 1, enquete: { casa: 1, empate: 1, fora: 1, mostrar: true } }, 1],
-  // valor estranho no banco cai no padrão da tela
-  ['mesa com 99', (e) => <TelaMesa estado={e} />, { mesaCams: 99 }, 6],
+  // pontos de partida (layout automático com N câmeras, gravado como lista)
+  ...[1, 2, 3, 4, 5].map((n) => [`mesa ${n} câmeras`, (e: EstadoLive) => <TelaMesa estado={e} />, { camsMesa: layoutAutomatico('mesa', n, ESTADO_PADRAO) }, n] as Caso),
+  ...[1, 2, 3].map((n) => [`filme ${n} câmeras`, (e: EstadoLive) => <TelaFilme estado={e} />, { camsFilme: layoutAutomatico('filme', n, ESTADO_PADRAO) }, n] as Caso),
+  ['futebol 1 câmera', (e) => <TelaFutebol estado={e} />, { camsFutebol: layoutAutomatico('futebol', 1, ESTADO_PADRAO) }, 1],
+  // lista estragada no banco cai no automático
+  ['mesa com lixo salvo', (e) => <TelaMesa estado={e} />, { camsMesa: 'lixo' as never }, 6],
 ];
 
 describe('proporções', () => {
@@ -52,11 +52,28 @@ describe('proporções', () => {
   });
 });
 
-describe('câmeras manuais', () => {
-  it.each(CASOS)('%s: sem moldura nem nome; o resto da tela continua', (_, tela, extra) => {
-    const { container } = render(tela({ ...ESTADO_PADRAO, ...extra, camsManuais: true }));
+describe('molduras editadas no painel', () => {
+  const slots = (c: HTMLElement) => medidas(c, '.t-slot');
+  it('X/Y é o canto inferior esquerdo: a moldura cresce pra cima e a etiqueta fica no lugar', () => {
+    const cam = { id: 'a', nome: 'ANA', formato: '16:9' as const, w: 640, h: 360, x: 100, y: 800 };
+    const { container, rerender } = render(<TelaMesa estado={{ ...ESTADO_PADRAO, camsMesa: [cam] }} />);
+    expect(slots(container)).toEqual([{ x: 100, y: 440, w: 640, h: 360 }]);
+    rerender(<TelaMesa estado={{ ...ESTADO_PADRAO, camsMesa: [{ ...cam, w: 1280, h: 720 }] }} />);
+    expect(slots(container)).toEqual([{ x: 100, y: 80, w: 1280, h: 720 }]); // embaixo continua em 800
+  });
+  it('a última da lista fica na frente; sem nome não tem etiqueta', () => {
+    const base = { formato: 'livre' as const, w: 300, h: 300, x: 0, y: 500 };
+    const { container } = render(
+      <TelaFilme estado={{ ...ESTADO_PADRAO, camsFilme: [{ ...base, id: 'tras', nome: 'TRÁS' }, { ...base, id: 'frente', nome: '' }] }} />,
+    );
+    const els = container.querySelectorAll('.t-slot');
+    expect(els).toHaveLength(2);
+    expect(els[0].textContent).toContain('TRÁS');
+    expect(els[1].querySelector('.t-slot__tag')).toBeNull();
+  });
+  it('lista vazia: nenhuma moldura, o resto da tela fica', () => {
+    const { container } = render(<TelaHost estado={{ ...ESTADO_PADRAO, camsHost: [] }} />);
     expect(container.querySelectorAll('.t-slot')).toHaveLength(0);
-    expect(container.textContent).not.toMatch(/NOME 0\d/);
-    expect(container.firstElementChild!.childElementCount).toBeGreaterThan(0);
+    expect(container.textContent).toContain('META DA LIVE');
   });
 });

@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Palco } from '../telas/Palco';
 import { TELA_COMPONENTE } from '../telas';
 import type { EstadoLive, TelaId } from '../live/tipos';
+import type { Camera } from '../telas/cameras';
+import { ArrastarMolduras } from './ArrastarMolduras';
 
-export function Previa({ tela, estado }: { tela: TelaId; estado: EstadoLive }) {
+// editor: nas telas com câmera, as molduras podem ser arrastadas em cima da prévia
+export function Previa({ tela, estado, editor }: { tela: TelaId; estado: EstadoLive; editor?: { lista: Camera[]; aoMudar: (l: Camera[]) => void } }) {
   const caixa = useRef<HTMLDivElement>(null);
   const [largura, setLargura] = useState(0);
   useEffect(() => {
@@ -20,6 +23,7 @@ export function Previa({ tela, estado }: { tela: TelaId; estado: EstadoLive }) {
           <Tela estado={estado} previa />
         </Palco>
       )}
+      {largura > 0 && editor && <ArrastarMolduras lista={editor.lista} escala={largura / 1920} aoMudar={editor.aoMudar} />}
     </div>
   );
 }

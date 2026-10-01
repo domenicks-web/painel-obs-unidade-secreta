@@ -1,7 +1,5 @@
 import type { PropsTela } from './tipos';
-import { SlotCamera } from './SlotCamera';
-import { AREA_FILME, gradeCameras } from './grade';
-import { qtdCams } from '../live/tipos';
+import { Molduras } from './SlotCamera';
 
 export function TelaFilme({ estado, previa }: PropsTela) {
   return (
@@ -15,10 +13,7 @@ export function TelaFilme({ estado, previa }: PropsTela) {
         </div>
         <div className="t-filme__aviso">ASSISTINDO JUNTO · SEM SPOILER NO CHAT</div>
       </div>
-      {!estado.camsManuais &&
-        gradeCameras(qtdCams('filme', estado.filmeCams), AREA_FILME).map((c, i) => (
-          <SlotCamera key={i} nome={estado.nomes[i] || `NOME 0${i + 1}`} {...c} previa={previa} />
-        ))}
+      <Molduras estado={estado} tela="filme" previa={previa} />
       <div className="t-caixa-chat" style={{ left: 1420, top: 130, width: 440, height: 800 }}>
         {previa && 'CHAT · 440×800'}
       </div>

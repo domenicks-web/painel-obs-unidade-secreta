@@ -6,10 +6,11 @@
 ±10 s / ±1 min, tempo exato com máscara (2354 → 23:54) e RETOMAR, pela hora do servidor. Junto: "+ gol"
 somado no banco e versão da sala (0008 rodada em produção). Falta só o teste numa live.
 
-### Grade automática de câmeras — no ar desde 2026-10-01
-MESA (1–6), FILME (1–4) e FUTEBOL (1–2) escolhem a quantidade no painel; a grade (`src/telas/grade.ts`)
-acha a maior câmera 16:9 e centraliza. Chave CÂMERAS MANUAIS (todas as telas): molduras e nomes somem.
-Prints `docs/prints/grade-*.png`. Falta conferir no OBS.
+### Molduras de câmera editáveis — 2026-10-01
+HOST, MESA, FILME e FUTEBOL: cada tela guarda a sua lista (`camsHost`, `camsMesa`, `camsFilme`, `camsFutebol`;
+null = layout automático). No painel: ponto de partida (layouts automáticos), + ADICIONAR CÂMERA, nome, formato
+(16:9, 4:3, 1:1, 9:16, livre), largura/altura/X/Y (X/Y = canto inferior esquerdo), ordem e remover; arrastar e
+redimensionar em cima da prévia. Modo "câmeras manuais" removido. Sem migration. Falta conferir no OBS.
 
 ### Parte 4: apoios — no ar desde 2026-10-01
 0007 rodada, envs na Vercel, webhook cadastrado (`6abe437ab87a0a400e0f9e32`), `/alerta` no OBS testado com superchat, sticker e membro falsos (`scripts/superchat-falso.mjs`). Falta:

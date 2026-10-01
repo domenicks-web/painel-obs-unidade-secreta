@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ESTADO_PADRAO } from '../live/tipos';
+import type { Camera } from '../telas/cameras';
 
 vi.mock('../live/relogioServidor', () => ({ useAgora: () => 0 }));
 import { CamposTela } from './CamposTela';
@@ -56,44 +57,83 @@ describe('CamposTela', () => {
     expect((l as { relogio: ReturnType<typeof vi.fn> }).relogio).toHaveBeenCalledWith('iniciar');
   });
 
-  it('mesa, filme e futebol escolhem quantas câmeras; os campos de nome seguem a quantidade', () => {
-    const l = live({ mesaCams: 3 });
-    const salvar = (l as { salvar: ReturnType<typeof vi.fn> }).salvar;
-    const { unmount } = render(<CamposTela tela="mesa" live={l} />);
-    expect(screen.getAllByRole('button', { name: /^[1-6]$/ })).toHaveLength(6);
-    expect(screen.getByLabelText('CÂMERA 03')).toBeTruthy();
-    expect(screen.queryByLabelText('CÂMERA 04')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '5' }));
-    expect(salvar).toHaveBeenCalledWith({ mesaCams: 5 });
-    unmount();
+  describe('molduras de câmera', () => {
+    type Fn = ReturnType<typeof vi.fn>;
+    const fns = (l: unknown) => l as { salvar: Fn; salvarDepois: Fn };
+    const ultimaLista = (f: Fn, chave: string) => f.mock.calls.at(-1)![0][chave] as Camera[];
 
-    const f = live();
-    const r = render(<CamposTela tela="filme" live={f} />);
-    expect(screen.getAllByRole('button', { name: /^[1-6]$/ })).toHaveLength(4);
-    fireEvent.click(screen.getByRole('button', { name: '1' }));
-    expect((f as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ filmeCams: 1 });
-    r.unmount();
+    it('sem layout salvo, mostra o automático; + ADICIONAR CÂMERA grava a lista com uma 16:9 nova no fim', () => {
+      const l = live();
+      render(<CamposTela tela="mesa" live={l} />);
+      expect(screen.getAllByRole('combobox')).toHaveLength(6);
+      fireEvent.click(screen.getByRole('button', { name: '+ ADICIONAR CÂMERA' }));
+      const lista = ultimaLista(fns(l).salvar, 'camsMesa');
+      expect(lista).toHaveLength(7);
+      expect(lista[6]).toMatchObject({ formato: '16:9', w: 640, h: 360, nome: '' });
+      expect(lista[0]).toMatchObject({ x: 62, y: 484, nome: 'NOME 01' });
+    });
 
-    const fu = live();
-    render(<CamposTela tela="futebol" live={fu} />);
-    fireEvent.click(screen.getByRole('button', { name: '1' }));
-    expect((fu as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ futebolCams: 1 });
-  });
+    it('ponto de partida recria o automático com N câmeras (host também troca o 1/2/3)', () => {
+      const l = live();
+      const { unmount } = render(<CamposTela tela="filme" live={l} />);
+      fireEvent.click(screen.getByRole('button', { name: '2 CÂMERAS' }));
+      expect(ultimaLista(fns(l).salvar, 'camsFilme')).toHaveLength(2);
+      unmount();
+      const h = live();
+      render(<CamposTela tela="host" live={h} />);
+      fireEvent.click(screen.getByRole('button', { name: '3 CÂMERAS' }));
+      expect(fns(h).salvar.mock.calls.at(-1)![0]).toMatchObject({ hostCams: '3' });
+      expect(ultimaLista(fns(h).salvar, 'camsHost')).toHaveLength(3);
+    });
 
-  it('câmeras manuais: liga/desliga e esconde os nomes', () => {
-    const l = live();
-    const { unmount } = render(<CamposTela tela="host" live={l} />);
-    fireEvent.click(screen.getByRole('button', { name: 'CÂMERAS MANUAIS' }));
-    expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ camsManuais: true });
-    unmount();
+    const uma = (extra = {}) => live({ camsFutebol: [{ id: 'a', nome: 'ANA', formato: '16:9', w: 640, h: 360, x: 100, y: 800, ...extra }] });
 
-    const m = live({ camsManuais: true });
-    render(<CamposTela tela="mesa" live={m} />);
-    expect(screen.queryByLabelText('CÂMERA 01')).toBeNull();
-    expect(screen.queryByRole('button', { name: '5' })).toBeNull();
-    expect(screen.getByText(/direto no OBS/)).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'CÂMERAS MANUAIS' }));
-    expect((m as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ camsManuais: false });
+    it('largura com formato travado ajusta a altura; X/Y ficam', () => {
+      const l = uma();
+      render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.change(screen.getByLabelText('LARGURA'), { target: { value: '1280' } });
+      expect(ultimaLista(fns(l).salvarDepois, 'camsFutebol')[0]).toMatchObject({ w: 1280, h: 720, x: 100, y: 800 });
+    });
+
+    it('livre: altura sozinha; X e Y', () => {
+      const l = uma({ formato: 'livre' });
+      render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.change(screen.getByLabelText('ALTURA'), { target: { value: '500' } });
+      expect(ultimaLista(fns(l).salvarDepois, 'camsFutebol')[0]).toMatchObject({ w: 640, h: 500 });
+      fireEvent.change(screen.getByLabelText('X'), { target: { value: '300' } });
+      expect(ultimaLista(fns(l).salvarDepois, 'camsFutebol')[0]).toMatchObject({ x: 300, y: 800 });
+      fireEvent.change(screen.getByLabelText('Y'), { target: { value: '900' } });
+      expect(ultimaLista(fns(l).salvarDepois, 'camsFutebol')[0]).toMatchObject({ y: 900 });
+      const chamadas = fns(l).salvarDepois.mock.calls.length;
+      fireEvent.change(screen.getByLabelText('X'), { target: { value: '' } }); // apagando pra digitar: não grava lixo
+      expect(fns(l).salvarDepois.mock.calls.length).toBe(chamadas);
+    });
+
+    it('formato, nome, ordem e remover', () => {
+      const l = live({
+        camsFutebol: [
+          { id: 'a', nome: 'ANA', formato: '16:9', w: 640, h: 360, x: 100, y: 800 },
+          { id: 'b', nome: 'BIA', formato: '16:9', w: 640, h: 360, x: 800, y: 800 },
+        ],
+      });
+      const { salvar, salvarDepois } = fns(l);
+      render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.click(screen.getAllByRole('button', { name: '1:1' })[0]);
+      expect(ultimaLista(salvar, 'camsFutebol')[0]).toMatchObject({ formato: '1:1', w: 640, h: 640 });
+      fireEvent.change(screen.getAllByRole('combobox')[1], { target: { value: 'caio' } });
+      expect(ultimaLista(salvarDepois, 'camsFutebol')[1].nome).toBe('CAIO');
+      fireEvent.click(screen.getAllByRole('button', { name: 'PRA FRENTE' })[0]);
+      expect(ultimaLista(salvar, 'camsFutebol').map((c) => c.id)).toEqual(['b', 'a']);
+      expect((screen.getAllByRole('button', { name: 'PRA FRENTE' })[1] as HTMLButtonElement).disabled).toBe(true);
+      fireEvent.click(screen.getAllByRole('button', { name: 'REMOVER' })[0]);
+      expect(ultimaLista(salvar, 'camsFutebol').map((c) => c.id)).toEqual(['b']);
+    });
+
+    it('no máximo 12 câmeras', () => {
+      const cams = Array.from({ length: 12 }, (_, i) => ({ id: String(i), nome: '', formato: '16:9' as const, w: 160, h: 90, x: 0, y: 500 }));
+      render(<CamposTela tela="mesa" live={live({ camsMesa: cams })} />);
+      expect((screen.getByRole('button', { name: '+ ADICIONAR CÂMERA' }) as HTMLButtonElement).disabled).toBe(true);
+    });
   });
 
   it('lower: escolher alguém da galera preenche nome e função', () => {
@@ -103,13 +143,14 @@ describe('CamposTela', () => {
     expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ ltNome: 'ANA', funcao: 'HOST' });
   });
 
-  it('câmera grava só o próprio índice', () => {
+  it('nome no layout automático grava a lista da tela com o nome novo', () => {
     const l = live({ hostCams: '2' });
     render(<CamposTela tela="host" live={l} />);
     const cam2 = screen.getByLabelText('CÂMERA 02');
     fireEvent.focus(cam2);
     fireEvent.change(cam2, { target: { value: 'zé' } });
-    expect((l as { salvarDepois: ReturnType<typeof vi.fn> }).salvarDepois).toHaveBeenLastCalledWith({ 'nomes.1': 'ZÉ' });
+    const patch = (l as { salvarDepois: ReturnType<typeof vi.fn> }).salvarDepois.mock.calls.at(-1)![0];
+    expect(patch.camsHost.map((c: Camera) => c.nome)).toEqual(['NOME 01', 'ZÉ']);
   });
 
   it('início: minutos e reiniciar', () => {

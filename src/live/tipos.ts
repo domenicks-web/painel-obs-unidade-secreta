@@ -1,3 +1,4 @@
+import type { Camera } from '../telas/cameras';
 export const TELAS = [
   { id: 'inicio', label: 'INÍCIO' },
   { id: 'host', label: 'HOST' },
@@ -43,12 +44,11 @@ export interface EstadoLive {
   timerInicio: number | null;
   msg: string;
   hostCams: '1' | '2' | '3';
-  // quantas câmeras na grade automática de cada tela (máx.: MAX_CAMS)
-  mesaCams: number;
-  filmeCams: number;
-  futebolCams: number;
-  // ligado: molduras e nomes das câmeras somem de todas as telas (câmeras postas direto no OBS)
-  camsManuais: boolean;
+  // molduras de câmera editadas no painel, por tela (src/telas/cameras.ts); null = layout automático
+  camsHost: Camera[] | null;
+  camsMesa: Camera[] | null;
+  camsFilme: Camera[] | null;
+  camsFutebol: Camera[] | null;
   pixLink: string;
   metaDesc: string;
   metaTotal: number;
@@ -122,10 +122,10 @@ export const ESTADO_PADRAO: EstadoLive = {
   timerInicio: null,
   msg: 'VOLTAMOS JÁ',
   hostCams: '1',
-  mesaCams: 6,
-  filmeCams: 4,
-  futebolCams: 2,
-  camsManuais: false,
+  camsHost: null,
+  camsMesa: null,
+  camsFilme: null,
+  camsFutebol: null,
   pixLink: 'LIVEPIX.GG/UNIDADESECRETA',
   metaDesc: 'PIZZA PRA RAPAZIADA',
   metaTotal: 500,
@@ -176,10 +176,3 @@ export function normalizarApoio(linha: Apoio): Apoio {
   return { ...linha, valor: Number(linha.valor), tipo: linha.tipo ?? 'pix', valor_texto: linha.valor_texto ?? '' };
 }
 
-export const MAX_CAMS = { mesa: 6, filme: 4, futebol: 2 } as const;
-
-/** Quantidade válida de câmeras (valor estranho vindo do banco cai no padrão da tela). */
-export function qtdCams(tela: keyof typeof MAX_CAMS, valor: unknown): number {
-  const n = Math.round(Number(valor));
-  return n >= 1 && n <= MAX_CAMS[tela] ? n : MAX_CAMS[tela];
-}
