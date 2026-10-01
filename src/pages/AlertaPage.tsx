@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Palco, usarFundoTransparente } from '../telas/Palco';
 import { useChat } from '../chat/useChat';
@@ -6,6 +6,7 @@ import { sessaoPadraoDev } from '../chat/sessao';
 import { apoioDoYouTube } from '../apoios/youtube';
 import { CartaoAlerta } from '../alerta/CartaoAlerta';
 import { useFilaAlertas, type Alerta } from '../alerta/useFilaAlertas';
+import { lerSalvo, useControleRemoto } from '../alerta/remoto';
 
 // /alerta?sessao=ID&chave=K → fonte do OBS 1920×1080, transparente: superchat, super sticker e
 //                            membro novo do YouTube, direto do Social Stream Ninja.
@@ -68,7 +69,11 @@ function AlertaAoVivo({ sessao, chave }: { sessao: string; chave: string }) {
   usarFundoTransparente();
   const { msgs } = useChat({ sessao, max: 50 });
   const livepix = useLivePixSeguro(chave);
-  const { atual, saindo, adicionar } = useFilaAlertas({ aoComecar: livepix.segurar, aoTerminar: livepix.soltar });
+  // a fila e o histórico sobrevivem à recarga da fonte; o painel vê e controla a fila (playlist)
+  const [inicial] = useState(lerSalvo);
+  const fila = useFilaAlertas({ aoComecar: livepix.segurar, aoTerminar: livepix.soltar, inicial: inicial ?? undefined });
+  useControleRemoto(fila);
+  const { atual, saindo, adicionar } = fila;
   const vistos = useRef(new Set<string>());
 
   useEffect(() => {
