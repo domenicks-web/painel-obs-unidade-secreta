@@ -14,13 +14,11 @@ Vale na hora para todas as telas: o ajuste mexe no relógio do servidor (`clockI
 - Distribuição automática pelo número de câmeras: 1 no centro, 2 lado a lado, 3 em colunas…
 - Modo **câmeras manuais**: as molduras somem da tela e as câmeras são adicionadas direto pelo OBS.
 
-### Parte 4: apoios — feita, falta ligar em produção
-Implementada em 2026-09-29 (spec `docs/superpowers/specs/2026-09-29-parte-4-apoios-design.md`, README 4.3). Para funcionar em produção:
-- rodar `supabase/migrations/0007_apoios.sql` no Supabase de produção **antes** do deploy do front novo;
-- criar na Vercel `LIVEPIX_CLIENT_ID`, `LIVEPIX_CLIENT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALERTA_CHAVE`;
-- criar o app no LivePix (escopos `messages:read` e `webhooks`) e cadastrar o webhook (`node scripts/livepix-webhook.mjs …`);
-- fonte `/alerta?sessao=…&chave=…` no OBS;
-- testes reais: um PIX de verdade somando na meta, um superchat e um membro numa live de teste.
+### Parte 4: apoios — no ar desde 2026-10-01
+0007 rodada, envs na Vercel, webhook cadastrado (`6abe437ab87a0a400e0f9e32`), `/alerta` no OBS testado com superchat, sticker e membro falsos (`scripts/superchat-falso.mjs`). Falta:
+- **PIX real somando na meta** (ainda não conferido).
+- **Cota da API do LivePix** (50/min) vive esgotada por algo fora do projeto: procurar app/integração/widget antigo na conta. O webhook já espera o reset (até ~50 s) antes de devolver erro.
+- Apagar os apoios "TESTE Claude", se algum painel estava aberto durante o teste.
 
 ### Kit OBS
 Pasta `kit-obs/` com:
@@ -49,3 +47,4 @@ Já corrigidos (2026-09-29, ledger `.superpowers/sdd/2026-09-28-telas-novas-part
 ## Arrumação
 
 - Trocar a senha do admin (foi colada no chat).
+- Trocar a `ALERTA_CHAVE` (foi colada no chat): Vercel + redeploy + URL da fonte no OBS.
