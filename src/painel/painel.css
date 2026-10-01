@@ -110,6 +110,14 @@
 .p-relogio__botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .p-relogio__play { height: 44px; border: 0; background: #FF6B1F; color: #1A1417; font: 700 12px/1 'JetBrains Mono', monospace !important; letter-spacing: .12em; cursor: pointer; }
 .p-relogio__play--rodando { background: #FFF3E0; }
+.p-relogio__ajustes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.p-relogio__ajuste { height: 36px; padding: 0; border: 2px solid #3a3035; background: transparent; color: #FFF3E0; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .02em; white-space: nowrap; cursor: pointer; }
+.p-relogio__ajuste:hover { border-color: #FF6B1F; color: #FF6B1F; }
+.p-relogio__ajuste:active { transform: translateY(1px); }
+.p-relogio__exato { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.p-relogio__campo { height: 40px; padding: 0 10px; font: 700 18px/1 'JetBrains Mono', monospace; text-align: center; }
+.p-relogio__campo[aria-invalid='true'] { border-color: #ff4d4d; }
+.p-relogio__exato .p-botao-contorno { height: 40px; padding: 0 10px; }
 .p-enquete { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 12px; align-items: end; }
 .p-chave { height: 46px; padding: 0 16px; border: 0; cursor: pointer; font: 700 12px/1 'JetBrains Mono', monospace !important; letter-spacing: .12em; background: #241d21; color: #FFF3E0; }
 .p-chave--ligada { background: #8B6CF0; color: #1A1417; }

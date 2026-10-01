@@ -23,3 +23,11 @@ export function mmss(seg: number): string {
   const s = Math.max(0, Math.floor(seg));
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
+
+/** Tempo digitado no painel ("37:12" ou só minutos, "45") em segundos; null se não for tempo. */
+export function lerTempo(texto: string): number | null {
+  const m = texto.trim().match(/^(\d{1,2})(?::(\d{2}))?$/);
+  if (!m) return null;
+  const seg = m[2] != null ? Number(m[2]) : 0;
+  return seg < 60 ? Number(m[1]) * 60 + seg : null;
+}

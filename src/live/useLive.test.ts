@@ -31,8 +31,8 @@ vi.mock('../lib/supabase', () => {
 import { supabase } from '../lib/supabase';
 import { useLive } from './useLive';
 
-function linha(estado: object, nome: string | null = null) {
-  return { estado: { ...ESTADO_PADRAO, ...estado }, updated_at: '2026-09-28T20:00:00Z', updated_by_nome: nome };
+function linha(estado: object, nome: string | null = null, versao?: number) {
+  return { estado: { ...ESTADO_PADRAO, ...estado }, updated_at: '2026-09-28T20:00:00Z', updated_by_nome: nome, versao };
 }
 
 beforeEach(() => {
@@ -212,6 +212,56 @@ describe('useLive', () => {
     await act(() => result.current.reiniciarContagem());
     expect(supabase.rpc).toHaveBeenCalledWith('controlar_relogio', { p_slug: 'principal', p_acao: 'iniciar' });
     expect(supabase.rpc).toHaveBeenCalledWith('reiniciar_contagem', { p_slug: 'principal' });
+  });
+
+  it('resposta atrasada da RPC (versão menor) não traz de volta o estado velho', async () => {
+    let responder!: (v: unknown) => void;
+    vi.mocked(supabase.rpc).mockReturnValue(new Promise((r) => (responder = r)) as never);
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    let envio!: Promise<void>;
+    act(() => void (envio = result.current.salvar({ titulo: 'MEU' })));
+    // o eco da minha gravação e depois a de outra pessoa chegam antes da resposta
+    act(() => handlerUpdate!({ new: linha({ titulo: 'MEU' }, 'Eu', 7) }));
+    act(() => handlerUpdate!({ new: linha({ titulo: 'DO OUTRO' }, 'Bia', 8) }));
+    await act(async () => {
+      responder({ data: linha({ titulo: 'MEU' }, 'Eu', 7), error: null });
+      await envio;
+    });
+    expect(result.current.estado.titulo).toBe('DO OUTRO');
+    expect(result.current.editadoPor).toBe('Bia');
+  });
+
+  it('versão igual ou maior entra; linha sem versão (antes da 0008) também', async () => {
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    act(() => handlerUpdate!({ new: linha({ titulo: 'V5' }, null, 5) }));
+    act(() => handlerUpdate!({ new: linha({ titulo: 'V5 DE NOVO' }, null, 5) }));
+    expect(result.current.estado.titulo).toBe('V5 DE NOVO');
+    act(() => handlerUpdate!({ new: linha({ titulo: 'V4' }, null, 4) }));
+    expect(result.current.estado.titulo).toBe('V5 DE NOVO');
+    act(() => handlerUpdate!({ new: linha({ titulo: 'SEM VERSÃO' }) }));
+    expect(result.current.estado.titulo).toBe('SEM VERSÃO');
+  });
+
+  it('gol vai pela RPC que soma no banco e aplica a resposta', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: linha({ golsA: 3 }, 'Eu', 9), error: null } as never);
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    await act(() => result.current.gol('A', 1));
+    expect(supabase.rpc).toHaveBeenCalledWith('somar_gol', { p_slug: 'principal', p_lado: 'A', p_delta: 1 });
+    expect(result.current.estado.golsA).toBe(3);
+  });
+
+  it('ajustar e definir o relógio mandam os segundos e aplicam a resposta', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: linha({ clockAcumulado: 70 }, 'Eu', 3), error: null } as never);
+    const { result } = renderHook(() => useLive());
+    await waitFor(() => expect(result.current.status).toBe('ao_vivo'));
+    await act(() => result.current.relogio('ajustar', 10));
+    await act(() => result.current.relogio('definir', 2232));
+    expect(supabase.rpc).toHaveBeenCalledWith('controlar_relogio', { p_slug: 'principal', p_acao: 'ajustar', p_segundos: 10 });
+    expect(supabase.rpc).toHaveBeenCalledWith('controlar_relogio', { p_slug: 'principal', p_acao: 'definir', p_segundos: 2232 });
+    expect(result.current.estado.clockAcumulado).toBe(70);
   });
 
   it('fixture não toca no Supabase', () => {

@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { useLive } from '../live/useLive';
 import { JOGO_OPCOES, type PatchLive, type TelaId } from '../live/tipos';
-import { mmss, segundosJogo } from '../live/relogios';
+import { lerTempo, mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
 import { CampoCamera } from './CampoCamera';
@@ -81,11 +82,11 @@ function CamposFutebol({ live }: { live: Live }) {
         <div className="p-placar__lado">
           <CampoTexto className="p-input p-input--time" valor={estado.timeA} maiusculo aoMudar={(v) => salvarDepois({ timeA: v })} title="Time da casa" />
           <div className="p-placar__gols">
-            <button type="button" className="p-placar__menos" onClick={() => salvar({ golsA: Math.max(0, estado.golsA - 1) })}>
+            <button type="button" className="p-placar__menos" onClick={() => live.gol('A', -1)}>
               −
             </button>
             <div className="p-placar__numero">{estado.golsA}</div>
-            <button type="button" className="p-placar__mais" onClick={() => salvar({ golsA: estado.golsA + 1 })}>
+            <button type="button" className="p-placar__mais" onClick={() => live.gol('A', 1)}>
               +
             </button>
           </div>
@@ -99,21 +100,22 @@ function CamposFutebol({ live }: { live: Live }) {
               className={estado.clockRodando ? 'p-relogio__play p-relogio__play--rodando' : 'p-relogio__play'}
               onClick={() => live.relogio(estado.clockRodando ? 'pausar' : 'iniciar')}
             >
-              {estado.clockRodando ? '❚❚ PAUSAR' : '▶ INICIAR'}
+              {estado.clockRodando ? '❚❚ PAUSAR' : estado.clockAcumulado > 0 ? '▶ RETOMAR' : '▶ INICIAR'}
             </button>
             <button type="button" className="p-botao-contorno" onClick={() => live.relogio('zerar')}>
               ZERAR
             </button>
           </div>
+          <AjusteRelogio live={live} />
         </div>
         <div className="p-placar__lado">
           <CampoTexto className="p-input p-input--time p-input--time-b" valor={estado.timeB} maiusculo aoMudar={(v) => salvarDepois({ timeB: v })} title="Time de fora" />
           <div className="p-placar__gols">
-            <button type="button" className="p-placar__menos" onClick={() => salvar({ golsB: Math.max(0, estado.golsB - 1) })}>
+            <button type="button" className="p-placar__menos" onClick={() => live.gol('B', -1)}>
               −
             </button>
             <div className="p-placar__numero p-placar__numero--b">{estado.golsB}</div>
-            <button type="button" className="p-placar__mais p-placar__mais--b" onClick={() => salvar({ golsB: estado.golsB + 1 })}>
+            <button type="button" className="p-placar__mais p-placar__mais--b" onClick={() => live.gol('B', 1)}>
               +
             </button>
           </div>
@@ -203,6 +205,57 @@ function CamposLower({ live }: { live: Live }) {
         <CampoTexto rotulo="NOME" valor={estado.ltNome} maiusculo aoMudar={(v) => live.salvarDepois({ ltNome: v })} />
         <CampoTexto rotulo="FUNÇÃO / LEGENDA" valor={estado.funcao} maiusculo aoMudar={(v) => live.salvarDepois({ funcao: v })} />
       </div>
+    </>
+  );
+}
+
+const AJUSTES = [
+  { rotulo: '−1 MIN', seg: -60 },
+  { rotulo: '−10 S', seg: -10 },
+  { rotulo: '+10 S', seg: 10 },
+  { rotulo: '+1 MIN', seg: 60 },
+];
+
+// Ressincroniza o relógio com a transmissão: a conta é feita no banco, pela hora do servidor.
+function AjusteRelogio({ live }: { live: Live }) {
+  const [texto, setTexto] = useState('');
+  const [invalido, setInvalido] = useState(false);
+
+  function definir(e: React.FormEvent) {
+    e.preventDefault();
+    const seg = lerTempo(texto);
+    if (seg == null) return setInvalido(true);
+    live.relogio('definir', seg);
+    setTexto('');
+  }
+
+  return (
+    <>
+      <div className="p-relogio__ajustes">
+        {AJUSTES.map((a) => (
+          <button key={a.rotulo} type="button" className="p-relogio__ajuste" onClick={() => live.relogio('ajustar', a.seg)}>
+            {a.rotulo}
+          </button>
+        ))}
+      </div>
+      <form className="p-relogio__exato" onSubmit={definir}>
+        <input
+          className="p-input p-relogio__campo"
+          aria-label="TEMPO EXATO"
+          aria-invalid={invalido}
+          inputMode="numeric"
+          placeholder="MM:SS"
+          maxLength={5}
+          value={texto}
+          onChange={(e) => {
+            setTexto(e.target.value);
+            setInvalido(false);
+          }}
+        />
+        <button type="submit" className="p-botao-contorno">
+          DEFINIR
+        </button>
+      </form>
     </>
   );
 }

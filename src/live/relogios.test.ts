@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bolinhasCheias, mmss, segundosJogo, segundosRestantes } from './relogios';
+import { bolinhasCheias, lerTempo, mmss, segundosJogo, segundosRestantes } from './relogios';
 
 describe('segundosRestantes', () => {
   it('parado (sem timerInicio) mostra o total', () => {
@@ -39,5 +39,21 @@ describe('mmss', () => {
     expect(mmss(0)).toBe('00:00');
     expect(mmss(305)).toBe('05:05');
     expect(mmss(6000)).toBe('100:00');
+  });
+});
+
+describe('lerTempo (campo do tempo exato do FUTEBOL)', () => {
+  it('MM:SS vira segundos', () => {
+    expect(lerTempo('37:12')).toBe(2232);
+    expect(lerTempo(' 0:05 ')).toBe(5);
+    expect(lerTempo('99:59')).toBe(5999);
+    expect(lerTempo('45:00')).toBe(2700);
+  });
+  it('só minutos também vale', () => {
+    expect(lerTempo('45')).toBe(2700);
+    expect(lerTempo('0')).toBe(0);
+  });
+  it('recusa o que não é tempo', () => {
+    for (const t of ['', 'abc', '1:60', '100:00', '12:3', '-1:00', '1:2:3', '45min']) expect(lerTempo(t)).toBeNull();
   });
 });

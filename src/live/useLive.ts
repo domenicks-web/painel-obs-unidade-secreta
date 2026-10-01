@@ -11,6 +11,7 @@ interface Linha {
   estado: Partial<EstadoLive>;
   updated_at: string;
   updated_by_nome: string | null;
+  versao?: number; // sobe a cada mudança da sala (0008)
 }
 
 // Último estado recebido, guardado no navegador (a fonte do OBS guarda entre cenas e sessões):
@@ -47,9 +48,15 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
   // valores esperando os 400 ms pra ir ao banco (o que descarregar() manda de uma vez)
   const aguardando = useRef(new Map<string, unknown>());
   const ultimos = useRef(new Map<string, unknown>());
+  // maior versão já aplicada: resposta de RPC que chega depois de um eco mais novo é descartada
+  const versao = useRef(0);
 
   const aplicar = useCallback(
     (l: Linha) => {
+      if (l.versao != null) {
+        if (l.versao < versao.current) return;
+        versao.current = l.versao;
+      }
       setServidor({ ...ESTADO_PADRAO, ...l.estado });
       setEditado({ por: l.updated_by_nome, em: l.updated_at });
       if (guardarLocal) gravarLocal(l.estado);
@@ -69,7 +76,7 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
       const meu = ++pedido;
       supabase
         .from('salas')
-        .select('estado, updated_at, updated_by_nome')
+        .select('estado, updated_at, updated_by_nome, versao')
         .eq('slug', SLUG)
         .single()
         .then(({ data, error }: { data: Linha | null; error: unknown }) => {
@@ -187,15 +194,27 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
     };
   }, [fixture, descarregar]);
 
-  const reiniciarContagem = useCallback(async () => {
-    const { error } = await supabase.rpc('reiniciar_contagem', { p_slug: SLUG });
-    if (error) setStatus('reconectando');
-  }, []);
+  // RPCs que calculam no banco: a resposta já traz a sala gravada (com a versão)
+  const chamar = useCallback(
+    async (nome: string, args: Record<string, unknown>) => {
+      const { data, error } = await supabase.rpc(nome, { p_slug: SLUG, ...args });
+      if (error) setStatus('reconectando');
+      else if (data) aplicar(data as Linha);
+    },
+    [aplicar],
+  );
 
-  const relogio = useCallback(async (acao: 'iniciar' | 'pausar' | 'zerar') => {
-    const { error } = await supabase.rpc('controlar_relogio', { p_slug: SLUG, p_acao: acao });
-    if (error) setStatus('reconectando');
-  }, []);
+  const reiniciarContagem = useCallback(() => chamar('reiniciar_contagem', {}), [chamar]);
+
+  // ajustar: ± segundos; definir: tempo exato em segundos
+  const relogio = useCallback(
+    (acao: 'iniciar' | 'pausar' | 'zerar' | 'ajustar' | 'definir', segundos?: number) =>
+      chamar('controlar_relogio', { p_acao: acao, ...(segundos != null ? { p_segundos: segundos } : {}) }),
+    [chamar],
+  );
+
+  // soma no banco: dois painéis clicando "+" ao mesmo tempo contam os dois gols
+  const gol = useCallback((lado: 'A' | 'B', delta: 1 | -1) => chamar('somar_gol', { p_lado: lado, p_delta: delta }), [chamar]);
 
   return {
     estado: aplicarPatch(servidor, pendentes),
@@ -206,5 +225,6 @@ export function useLive(opcoes: { fixture?: EstadoLive; guardarLocal?: boolean }
     salvarDepois,
     reiniciarContagem,
     relogio,
+    gol,
   };
 }
