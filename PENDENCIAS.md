@@ -28,10 +28,8 @@ Pasta `kit-obs/` com:
 
 ## Problemas menores (revisão da parte 1)
 
-Ainda abertos:
-- **Erro de gravação sem motivo**: "RECONECTANDO" fica aceso depois de um erro de validação e o motivo não aparece.
-- `anon` ainda tem EXECUTE nas RPCs de escrita via PUBLIC (as funções recusam por dentro).
-- Comentário explicando a comparação de pendentes por referência no `useLive`.
+Todos corrigidos. Em 2026-10-01: gravação recusada mostra "NÃO GRAVOU: motivo" em vez de RECONECTANDO;
+comentário do `===` no `useLive`; visitante sem EXECUTE nas funções de escrita (`0009_permissoes.sql`, rodar em produção).
 
 Corrigidos em 2026-10-01 (0008): resposta velha sobrescrevendo (versão da sala) e gol perdido com cliques simultâneos (`somar_gol`).
 
@@ -42,5 +40,4 @@ Já corrigidos (2026-09-29, ledger `.superpowers/sdd/2026-09-28-telas-novas-part
 
 ## Arrumação
 
-- Trocar a senha do admin (foi colada no chat).
 - Trocar a `ALERTA_CHAVE` (foi colada no chat): Vercel + redeploy + URL da fonte no OBS.
