@@ -18,6 +18,8 @@ export interface Camera {
   h: number;
   x: number; // canto inferior esquerdo, no palco de 1920×1080
   y: number;
+  /** lado da etiqueta do nome embaixo da moldura (padrão: esquerda, ícone e depois nome) */
+  etiqueta?: 'direita';
 }
 
 export type TelaCam = 'host' | 'mesa' | 'filme' | 'futebol' | 'jogo' | 'react';
@@ -90,6 +92,7 @@ export function sanitizar(bruto: unknown): Camera[] | null {
     if (typeof c.id !== 'string' || ![c.w, c.h, c.x, c.y].every((v) => Number.isFinite(Number(v)))) continue;
     const formato = FORMATOS.includes(c.formato as FormatoCam) ? (c.formato as FormatoCam) : 'livre';
     const base: Camera = { id: c.id, nome: typeof c.nome === 'string' ? c.nome : '', formato, w: 0, h: 0, x: 0, y: 0 };
+    if (c.etiqueta === 'direita') base.etiqueta = 'direita';
     lista.push({ ...mudarTamanho(base, { w: Number(c.w), h: formato === 'livre' ? Number(c.h) : undefined }), ...posicao(Number(c.x), Number(c.y)) });
     if (lista.length === MAX_CAMERAS) break;
   }

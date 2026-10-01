@@ -71,6 +71,16 @@ describe('molduras editadas no painel', () => {
     expect(els[0].textContent).toContain('TRÁS');
     expect(els[1].querySelector('.t-slot__tag')).toBeNull();
   });
+  it('etiqueta na direita: presa no canto de baixo à direita, nome antes do ícone', () => {
+    const base = { formato: '16:9' as const, w: 640, h: 360, x: 0, y: 500, nome: 'ANA' };
+    const { container } = render(<TelaMesa estado={{ ...ESTADO_PADRAO, camsMesa: [{ ...base, id: 'e' }, { ...base, id: 'd', etiqueta: 'direita' }] }} />);
+    const [esq, dir] = [...container.querySelectorAll('.t-slot__tag')];
+    expect(esq.className).toBe('t-slot__tag');
+    expect(dir.className).toBe('t-slot__tag t-slot__tag--direita');
+    expect(dir.firstElementChild!.className).toBe('t-slot__nome');
+    expect(esq.firstElementChild!.className).toBe('t-slot__led-box');
+  });
+
   it('lista vazia: nenhuma moldura, o resto da tela fica', () => {
     const { container } = render(<TelaHost estado={{ ...ESTADO_PADRAO, camsHost: [] }} />);
     expect(container.querySelectorAll('.t-slot')).toHaveLength(0);

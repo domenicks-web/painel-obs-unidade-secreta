@@ -127,3 +127,12 @@ describe('telas JOGO e REACT', () => {
     expect(CHAVE_CAMS.react).toBe('camsReact');
   });
 });
+
+describe('lado da etiqueta', () => {
+  it('padrão é a esquerda; direita sobrevive à limpeza; valor estranho vira esquerda', () => {
+    expect(layoutAutomatico('react', 2, est())[0].etiqueta).toBeUndefined();
+    const l = sanitizar([cam({ etiqueta: 'direita' }), cam({ id: 'b', etiqueta: 'cima' as never })])!;
+    expect(l[0].etiqueta).toBe('direita');
+    expect(l[1].etiqueta).toBeUndefined();
+  });
+});

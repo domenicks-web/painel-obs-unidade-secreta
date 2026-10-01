@@ -55,6 +55,8 @@ export function CamposTela({ tela, live }: { tela: TelaId; live: Live }) {
   );
 }
 
+const semLado = ({ etiqueta: _, ...c }: Camera): Camera => c;
+
 function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
   const { estado } = live;
   const lista = camerasDaTela(estado, tela);
@@ -103,6 +105,15 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
                   {f === 'livre' ? 'LIVRE' : f}
                 </button>
               ))}
+            </div>
+            <div className="p-moldura__etiqueta" role="group" aria-label="ETIQUETA">
+              <div className="p-rotulo">ETIQUETA</div>
+              <button type="button" className={classeOpcao(c.etiqueta !== 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, semLado(c)))}>
+                ESQUERDA
+              </button>
+              <button type="button" className={classeOpcao(c.etiqueta === 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, { ...c, etiqueta: 'direita' }))}>
+                DIREITA
+              </button>
             </div>
             <div className="p-moldura__numeros">
               <CampoTexto rotulo="LARGURA" tipo="number" inputMode="numeric" valor={String(c.w)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { w: n }))); }} />

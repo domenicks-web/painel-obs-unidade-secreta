@@ -129,6 +129,14 @@ describe('CamposTela', () => {
       expect(ultimaLista(salvar, 'camsFutebol').map((c) => c.id)).toEqual(['b']);
     });
 
+    it('etiqueta: esquerda ou direita', () => {
+      const l = uma();
+      render(<CamposTela tela="futebol" live={l} />);
+      expect(screen.getByRole('button', { name: 'ESQUERDA' }).className).toContain('p-opcao--ativa');
+      fireEvent.click(screen.getByRole('button', { name: 'DIREITA' }));
+      expect(ultimaLista(fns(l).salvar, 'camsFutebol')[0]).toMatchObject({ etiqueta: 'direita' });
+    });
+
     it('no máximo 12 câmeras', () => {
       const cams = Array.from({ length: 12 }, (_, i) => ({ id: String(i), nome: '', formato: '16:9' as const, w: 160, h: 90, x: 0, y: 500 }));
       render(<CamposTela tela="mesa" live={live({ camsMesa: cams })} />);
