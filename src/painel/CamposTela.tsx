@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { useLive } from '../live/useLive';
-import { JOGO_OPCOES, type PatchLive, type TelaId } from '../live/tipos';
+import { JOGO_OPCOES, MAX_CAMS, qtdCams, type PatchLive, type TelaId } from '../live/tipos';
 import { lerTempo, mascaraTempo, mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
@@ -41,12 +41,15 @@ export function CamposTela({ tela, live }: { tela: TelaId; live: Live }) {
 
 function Cameras({ tela, live }: { tela: TelaId; live: Live }) {
   const { estado } = live;
-  const qtd = tela === 'mesa' ? 6 : tela === 'filme' ? 4 : tela === 'futebol' ? 2 : Number(estado.hostCams);
+  const grade = tela === 'mesa' || tela === 'filme' || tela === 'futebol' ? tela : null;
+  const qtd = grade ? qtdCams(grade, estado[`${grade}Cams`]) : Number(estado.hostCams);
+  const patchQtd = (c: number): PatchLive => (grade === 'mesa' ? { mesaCams: c } : grade === 'filme' ? { filmeCams: c } : { futebolCams: c });
+  const manuais = estado.camsManuais;
   return (
     <>
-      {tela === 'host' && (
-        <div className="p-linha">
-          <div className="p-rotulo p-rotulo--grande">CÂMERAS</div>
+      <div className="p-linha">
+        <div className="p-rotulo p-rotulo--grande">CÂMERAS</div>
+        {tela === 'host' && (
           <div className="p-opcoes">
             {(['1', '2', '3'] as const).map((c) => (
               <button key={c} type="button" className={classeOpcao(estado.hostCams === c, 'p-opcao--cam')} onClick={() => live.salvar({ hostCams: c })}>
@@ -54,20 +57,45 @@ function Cameras({ tela, live }: { tela: TelaId; live: Live }) {
               </button>
             ))}
           </div>
+        )}
+        {grade && !manuais && (
+          <div className="p-opcoes">
+            {Array.from({ length: MAX_CAMS[grade] }, (_, i) => i + 1).map((c) => (
+              <button key={c} type="button" className={classeOpcao(qtd === c, 'p-opcao--cam')} onClick={() => live.salvar(patchQtd(c))}>
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
+        {/* vale pra todas as telas: as câmeras passam a ser postas direto no OBS */}
+        <button
+          type="button"
+          className={manuais ? 'p-chave p-chave--ligada p-cams-manuais' : 'p-chave p-cams-manuais'}
+          aria-pressed={manuais}
+          title="Vale para todas as telas"
+          onClick={() => live.salvar({ camsManuais: !manuais })}
+        >
+          CÂMERAS MANUAIS
+        </button>
+      </div>
+      {manuais ? (
+        <div className="p-texto-fraco">
+          Câmeras manuais ligado em todas as telas: as molduras e os nomes somem. Posicione as câmeras direto no OBS.
+        </div>
+      ) : (
+        <div className="p-cameras">
+          {Array.from({ length: qtd }, (_, i) => (
+            <CampoCamera
+              key={i}
+              numero={i + 1}
+              valor={estado.nomes[i] ?? ''}
+              galera={estado.galera}
+              // só o índice desta câmera: outra pessoa pode estar mudando outra câmera ao mesmo tempo
+              aoMudar={(v) => live.salvarDepois({ [`nomes.${i}`]: v } as PatchLive)}
+            />
+          ))}
         </div>
       )}
-      <div className="p-cameras">
-        {Array.from({ length: qtd }, (_, i) => (
-          <CampoCamera
-            key={i}
-            numero={i + 1}
-            valor={estado.nomes[i] ?? ''}
-            galera={estado.galera}
-            // só o índice desta câmera: outra pessoa pode estar mudando outra câmera ao mesmo tempo
-            aoMudar={(v) => live.salvarDepois({ [`nomes.${i}`]: v } as PatchLive)}
-          />
-        ))}
-      </div>
     </>
   );
 }

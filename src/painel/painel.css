@@ -125,6 +125,7 @@
 .p-enquete { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 12px; align-items: end; }
 .p-chave { height: 46px; padding: 0 16px; border: 0; cursor: pointer; font: 700 12px/1 'JetBrains Mono', monospace !important; letter-spacing: .12em; background: #241d21; color: #FFF3E0; }
 .p-chave--ligada { background: #8B6CF0; color: #1A1417; }
+.p-cams-manuais { margin-left: auto; height: 40px; }
 
 /* ===== Direita ===== */
 .p-direita { background: #1A1417; border-left: 2px solid #2A2226; display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; overflow: auto; }

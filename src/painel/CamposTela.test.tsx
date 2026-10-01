@@ -56,6 +56,46 @@ describe('CamposTela', () => {
     expect((l as { relogio: ReturnType<typeof vi.fn> }).relogio).toHaveBeenCalledWith('iniciar');
   });
 
+  it('mesa, filme e futebol escolhem quantas câmeras; os campos de nome seguem a quantidade', () => {
+    const l = live({ mesaCams: 3 });
+    const salvar = (l as { salvar: ReturnType<typeof vi.fn> }).salvar;
+    const { unmount } = render(<CamposTela tela="mesa" live={l} />);
+    expect(screen.getAllByRole('button', { name: /^[1-6]$/ })).toHaveLength(6);
+    expect(screen.getByLabelText('CÂMERA 03')).toBeTruthy();
+    expect(screen.queryByLabelText('CÂMERA 04')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '5' }));
+    expect(salvar).toHaveBeenCalledWith({ mesaCams: 5 });
+    unmount();
+
+    const f = live();
+    const r = render(<CamposTela tela="filme" live={f} />);
+    expect(screen.getAllByRole('button', { name: /^[1-6]$/ })).toHaveLength(4);
+    fireEvent.click(screen.getByRole('button', { name: '1' }));
+    expect((f as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ filmeCams: 1 });
+    r.unmount();
+
+    const fu = live();
+    render(<CamposTela tela="futebol" live={fu} />);
+    fireEvent.click(screen.getByRole('button', { name: '1' }));
+    expect((fu as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ futebolCams: 1 });
+  });
+
+  it('câmeras manuais: liga/desliga e esconde os nomes', () => {
+    const l = live();
+    const { unmount } = render(<CamposTela tela="host" live={l} />);
+    fireEvent.click(screen.getByRole('button', { name: 'CÂMERAS MANUAIS' }));
+    expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ camsManuais: true });
+    unmount();
+
+    const m = live({ camsManuais: true });
+    render(<CamposTela tela="mesa" live={m} />);
+    expect(screen.queryByLabelText('CÂMERA 01')).toBeNull();
+    expect(screen.queryByRole('button', { name: '5' })).toBeNull();
+    expect(screen.getByText(/direto no OBS/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'CÂMERAS MANUAIS' }));
+    expect((m as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ camsManuais: false });
+  });
+
   it('lower: escolher alguém da galera preenche nome e função', () => {
     const l = live();
     render(<CamposTela tela="lower" live={l} />);
