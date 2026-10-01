@@ -2,9 +2,9 @@
 
 ## Próximas funcionalidades
 
-### Ajuste do relógio no FUTEBOL — feito (2026-10-01), falta a 0008 em produção
-±10 s / ±1 min, tempo exato (MM:SS) e RETOMAR, pela hora do servidor. Junto: "+ gol" somado no banco
-e versão da sala (resposta atrasada não traz estado velho). Ordem: rodar `0008_relogio_gols_versao.sql` → push.
+### Ajuste do relógio no FUTEBOL — no ar desde 2026-10-01
+±10 s / ±1 min, tempo exato com máscara (2354 → 23:54) e RETOMAR, pela hora do servidor. Junto: "+ gol"
+somado no banco e versão da sala (0008 rodada em produção). Falta só o teste numa live.
 
 ### Grade automática de câmeras
 - Distribuição automática pelo número de câmeras: 1 no centro, 2 lado a lado, 3 em colunas…
