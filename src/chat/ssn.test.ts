@@ -28,7 +28,7 @@ describe('normalizarSsn', () => {
     expect(normalizarSsn({ type: 'twitch', chatname: 'a', chatmessage: 'oi' })?.plataforma).toBe('tw');
     expect(normalizarSsn({ type: 'tiktok', chatname: 'a', chatmessage: 'oi' })?.plataforma).toBe('tt');
     expect(normalizarSsn({ type: 'youtubeshorts', chatname: 'a', chatmessage: 'oi' })?.plataforma).toBe('yt');
-    expect(normalizarSsn({ type: 'kick', chatname: 'a', chatmessage: 'oi' })).toBeNull();
+    expect(normalizarSsn({ type: 'facebook', chatname: 'a', chatmessage: 'oi' })).toBeNull();
   });
 
   it('doação vira superchat com o valor como veio', () => {
@@ -62,5 +62,27 @@ describe('normalizarSsn', () => {
     const a = normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: 'x' });
     const b = normalizarSsn({ type: 'youtube', chatname: 'a', chatmessage: 'x' });
     expect(a?.id).not.toBe(b?.id);
+  });
+});
+
+describe('Kick', () => {
+  it('mensagem vira plataforma kk', () => {
+    expect(normalizarSsn({ type: 'kick', id: 'k1', chatname: 'zeca', chatmessage: 'salve' })).toMatchObject({ plataforma: 'kk', tipo: 'msg', txt: 'salve' });
+  });
+  it('KICKs e gorjeta viram apoio (super), com o valor como veio', () => {
+    expect(normalizarSsn({ type: 'kick', id: 'k2', chatname: 'zeca', chatmessage: '', event: 'gift', hasDonation: '100 KICKs' })).toMatchObject({
+      plataforma: 'kk',
+      tipo: 'super',
+      valor: '100 KICKs',
+    });
+    expect(normalizarSsn({ type: 'kick', id: 'k3', chatname: 'zeca', chatmessage: 'tamo junto', event: 'donation', hasDonation: '$5.00' })).toMatchObject({
+      tipo: 'super',
+      valor: '$5.00',
+    });
+  });
+  it('sub novo, renovação e de presente viram membro; follow não aparece', () => {
+    for (const event of ['new_subscriber', 'resub', 'subscription_gift'])
+      expect(normalizarSsn({ type: 'kick', id: event, chatname: 'zeca', chatmessage: '', event })).toMatchObject({ plataforma: 'kk', tipo: 'membro' });
+    expect(normalizarSsn({ type: 'kick', id: 'f', chatname: 'zeca', chatmessage: '', event: 'new_follower' })).toBeNull();
   });
 });

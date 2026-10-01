@@ -9,11 +9,13 @@ const PLATAFORMA_DO_TIPO: Record<string, Plataforma> = {
   youtubeshorts: 'yt',
   twitch: 'tw',
   tiktok: 'tt',
+  kick: 'kk',
 };
 
 // Eventos que viram o cartão de novo membro (YT: sponsorship, membershiprenewal, giftpurchase,
-// giftredemption; Twitch: subscription, resub, subscription_gift). Os outros (follow, entrou,
-// curtiu, redirect…) não aparecem no chat.
+// giftredemption; Twitch: subscription, resub, subscription_gift; Kick: new_subscriber, resub,
+// subscription_gift). Os outros (follow, entrou, curtiu, redirect…) não aparecem no chat.
+// KICKs e gorjetas da Kick chegam com hasDonation ("100 KICKs", "$5.00") e viram apoio.
 const EVENTO_MEMBRO = /member|sponsor|subscri|resub|gift(purchase|redemption)/i;
 // quem virou membro agora (vale apoio e alerta); renovação/aniversário e compra de presentes não
 const MEMBRO_NOVO = /^(sponsorship|giftredemption|subscription|new_member)$/i;

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const MOSTRAR = 14;
-const TODAS: Record<Plataforma, boolean> = { yt: true, tw: true, tt: true };
+const TODAS: Record<Plataforma, boolean> = { yt: true, tw: true, tt: true, kk: true };
 
 export function CaixaChat({ msgs, status, sessao, aoTrocarSessao, pin, aoDestacar }: Props) {
   const [fontes, setFontes] = useState(TODAS);

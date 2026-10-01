@@ -1,4 +1,4 @@
-export type Plataforma = 'yt' | 'tw' | 'tt';
+export type Plataforma = 'yt' | 'tw' | 'tt' | 'kk';
 
 export interface MsgChat {
   id: string;
@@ -22,10 +22,11 @@ export const PLATAFORMAS: Record<Plataforma, { tag: string; cor: string }> = {
   yt: { tag: 'YT', cor: '#FF6B1F' },
   tw: { tag: 'TW', cor: '#8B6CF0' },
   tt: { tag: 'TT', cor: '#FFF3E0' },
+  kk: { tag: 'KK', cor: '#53FC18' },
 };
 
 export function ehPlataforma(p: unknown): p is Plataforma {
-  return p === 'yt' || p === 'tw' || p === 'tt';
+  return p === 'yt' || p === 'tw' || p === 'tt' || p === 'kk';
 }
 
 // Cor da etiqueta do nome: fixa por autor, como na referência (tamanho do nome).
