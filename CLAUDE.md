@@ -1,6 +1,6 @@
 # unidade-secreta-live — estado do projeto
 
-> **2026-10-01:** 0007 rodada em produção pelo usuário, `main` pushado e no ar na Vercel. Falta: cadastrar o webhook do LivePix (precisa das `LIVEPIX_CLIENT_*` no `.env.local`) e a fonte `/alerta` no OBS.
+> **2026-10-01:** Parte 4 no ar (0007, webhook `6abe437ab87a0a400e0f9e32`, /alerta testado no OBS). **Relógio do FUTEBOL + gol no banco + versão da sala commitados em `main` local, NÃO pushados**: o front lê a coluna `salas.versao`, que só existe depois da `0008_relogio_gols_versao.sql`. Ordem: usuário roda 0008 em produção → push. Pendências em `PENDENCIAS.md`.
 
 Painel web (Vite+React+TS+Supabase) para controlar overlays de OBS em tempo real. Spec original em `PROMPT-CLAUDE-CODE.md`. Referência visual em `referencia/`.
 

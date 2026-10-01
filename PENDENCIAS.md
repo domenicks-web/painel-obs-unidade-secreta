@@ -2,13 +2,9 @@
 
 ## Próximas funcionalidades
 
-### Ajuste do relógio no FUTEBOL
-Para ressincronizar quando a transmissão travar:
-- botões **−1 min**, **−10 s**, **+10 s**, **+1 min**;
-- campo para digitar o tempo exato (ex.: `37:12`);
-- **PAUSAR / RETOMAR**.
-
-Vale na hora para todas as telas: o ajuste mexe no relógio do servidor (`clockInicio` / `clockAcumulado`), não no navegador de quem clicou.
+### Ajuste do relógio no FUTEBOL — feito (2026-10-01), falta a 0008 em produção
+±10 s / ±1 min, tempo exato (MM:SS) e RETOMAR, pela hora do servidor. Junto: "+ gol" somado no banco
+e versão da sala (resposta atrasada não traz estado velho). Ordem: rodar `0008_relogio_gols_versao.sql` → push.
 
 ### Grade automática de câmeras
 - Distribuição automática pelo número de câmeras: 1 no centro, 2 lado a lado, 3 em colunas…
@@ -33,11 +29,11 @@ Pasta `kit-obs/` com:
 ## Problemas menores (revisão da parte 1)
 
 Ainda abertos:
-- **Resposta velha sobrescrevendo**: a resposta da RPC pode trazer um estado mais velho que um eco do Realtime já recebido (`useLive.enviar`).
 - **Erro de gravação sem motivo**: "RECONECTANDO" fica aceso depois de um erro de validação e o motivo não aparece.
-- **Gol perdido com cliques simultâneos**: dois cliques em "+ gol" ao mesmo tempo (dois painéis) podem perder um gol.
 - `anon` ainda tem EXECUTE nas RPCs de escrita via PUBLIC (as funções recusam por dentro).
 - Comentário explicando a comparação de pendentes por referência no `useLive`.
+
+Corrigidos em 2026-10-01 (0008): resposta velha sobrescrevendo (versão da sala) e gol perdido com cliques simultâneos (`somar_gol`).
 
 Já corrigidos (2026-09-29, ledger `.superpowers/sdd/2026-09-28-telas-novas-parte-1/progress.md`):
 - **Reconexão**: estado e lista de PIX recarregam ao reconectar o Realtime, quando a internet volta e quando a aba volta a ficar visível.
