@@ -14,6 +14,7 @@ vi.mock('../escalacao/useTimes', () => ({
 vi.mock('../live/relogioServidor', () => ({ useAgora: () => 0, useOffsetServidor: () => 0 }));
 
 import { CamposTela } from './CamposTela';
+import { CamposEscalacao } from './CamposEscalacao';
 import { ModalTimes } from './ModalTimes';
 import { ArrastarJogadores } from './ArrastarJogadores';
 import { TelaEscalacao, timesEscalados } from '../telas/TelaEscalacao';
@@ -27,7 +28,7 @@ function live(extra: Partial<EstadoLive> = {}) {
   } as never as { estado: EstadoLive; salvar: ReturnType<typeof vi.fn>; salvarDepois: ReturnType<typeof vi.fn> };
 }
 
-const opcoes = () => ({ editandoPosicoes: false, aoEditarPosicoes: vi.fn(), aoAbrirTimes: vi.fn() });
+const opcoes = (cena: 'futebol' | 'escalacao' = 'futebol') => ({ cena, aoTrocarCena: vi.fn(), editandoPosicoes: false, aoEditarPosicoes: vi.fn(), aoAbrirTimes: vi.fn() });
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -38,7 +39,7 @@ afterEach(() => {
 describe('campos da ESCALAÇÃO', () => {
   it('modo e times voltam as câmeras pro automático', () => {
     const l = live();
-    render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
+    render(<CamposEscalacao live={l as never} {...opcoes()} />);
     fireEvent.click(screen.getByRole('button', { name: 'CAMPO' }));
     expect(l.salvar).toHaveBeenCalledWith({ escModo: 'campo', camsEscalacao: null });
     fireEvent.click(screen.getByRole('button', { name: 'CASA E VISITANTE' }));
@@ -47,7 +48,7 @@ describe('campos da ESCALAÇÃO', () => {
 
   it('câmeras de 2 a 6: grava a quantidade e volta pro automático', () => {
     const l = live({ escCams: 4 });
-    render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
+    render(<CamposTela tela="futebol" live={l as never} escalacao={opcoes('escalacao')} />);
     expect(screen.queryByRole('button', { name: '1 CÂMERAS' })).toBeNull();
     expect(screen.getByRole('button', { name: '4 CÂMERAS' }).className).toContain('p-opcao--ativa');
     fireEvent.click(screen.getByRole('button', { name: '6 CÂMERAS' }));
@@ -56,7 +57,7 @@ describe('campos da ESCALAÇÃO', () => {
 
   it('time é texto livre: digitar grava o nome do placar, com sugestão dos cadastrados', () => {
     const l = live({ escTimes: 'visitante', timeB: '' });
-    const { container } = render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
+    const { container } = render(<CamposEscalacao live={l as never} {...opcoes()} />);
     expect(screen.queryByLabelText('TIME CASA')).toBeNull();
     const campo = screen.getByLabelText('TIME VISITANTE');
     expect(campo.getAttribute('list')).toBe('p-esc-sugestoes');
@@ -67,7 +68,7 @@ describe('campos da ESCALAÇÃO', () => {
 
   it('nome sem cadastro oferece CADASTRAR ELENCO já com o nome', () => {
     const o = opcoes();
-    render(<CamposTela tela="escalacao" live={live({ timeA: 'FLAMENGO' }) as never} escalacao={o} />);
+    render(<CamposEscalacao live={live({ timeA: 'FLAMENGO' }) as never} {...o} />);
     expect(screen.getByText('SEM ELENCO CADASTRADO')).toBeInTheDocument();
     fireEvent.click(screen.getByText('+ CADASTRAR ELENCO'));
     expect(o.aoAbrirTimes).toHaveBeenCalledWith('FLAMENGO');
@@ -75,7 +76,7 @@ describe('campos da ESCALAÇÃO', () => {
 
   it('nome cadastrado (sem ligar pra acento e maiúscula) usa o elenco', () => {
     const o = opcoes();
-    render(<CamposTela tela="escalacao" live={live({ timeA: 'india' }) as never} escalacao={o} />);
+    render(<CamposEscalacao live={live({ timeA: 'india' }) as never} {...o} />);
     expect(screen.getByText('ELENCO CADASTRADO')).toBeInTheDocument();
     fireEvent.click(screen.getByText('EDITAR ELENCO'));
     expect(o.aoAbrirTimes).toHaveBeenCalledWith('ÍNDIA');
@@ -83,14 +84,14 @@ describe('campos da ESCALAÇÃO', () => {
 
   it('time com menos de 11 titulares avisa', () => {
     cadastro = [{ id: 'x', nome: 'INCOMPLETO', sigla: '', tecnico: '', cor: null, jogadores: TIMES_EXEMPLO[0].jogadores.slice(0, 9) }];
-    render(<CamposTela tela="escalacao" live={live({ timeA: 'Incompleto' }) as never} escalacao={opcoes()} />);
+    render(<CamposEscalacao live={live({ timeA: 'Incompleto' }) as never} {...opcoes()} />);
     expect(screen.getByText('ELENCO COM 9/11 TITULARES')).toBeInTheDocument();
   });
 
   it('formação: todas no select; trocar com posição manual pede confirmação e reseta', () => {
     const pos = Array.from({ length: 11 }, () => ({ x: 0.5, y: 0.5 }));
     const l = live({ escModo: 'campo', escPosCasa: pos });
-    render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
+    render(<CamposEscalacao live={l as never} {...opcoes()} />);
     const sel = screen.getByLabelText('FORMAÇÃO CASA');
     expect(within(sel).getAllByRole('option')).toHaveLength(22);
     expect(within(sel).getByText('4-1-2-1-2 (LOSANGO)')).toBeInTheDocument();
@@ -105,7 +106,7 @@ describe('campos da ESCALAÇÃO', () => {
   it('sem posição manual troca a formação direto', () => {
     const l = live();
     const confirmar = vi.spyOn(window, 'confirm');
-    render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
+    render(<CamposEscalacao live={l as never} {...opcoes()} />);
     fireEvent.change(screen.getByLabelText('FORMAÇÃO CASA'), { target: { value: '5-4-1' } });
     expect(confirmar).not.toHaveBeenCalled();
     expect(l.salvar).toHaveBeenCalledWith({ escFormCasa: '5-4-1', escPosCasa: null });
@@ -113,15 +114,46 @@ describe('campos da ESCALAÇÃO', () => {
 
   it('editor de posições e RESETAR FORMAÇÃO só no CAMPO', () => {
     const o = opcoes();
-    const { rerender } = render(<CamposTela tela="escalacao" live={live() as never} escalacao={o} />);
+    const { rerender } = render(<CamposTela tela="futebol" live={live() as never} escalacao={o} />);
     expect(screen.queryByText('EDITAR POSIÇÕES')).toBeNull();
     const l = live({ escModo: 'campo', escTimes: 'ambos', escPosVisit: Array.from({ length: 11 }, () => ({ x: 0.5, y: 0.5 })) });
-    rerender(<CamposTela tela="escalacao" live={l as never} escalacao={o} />);
+    rerender(<CamposTela tela="futebol" live={l as never} escalacao={o} />);
     fireEvent.click(screen.getByText('EDITAR POSIÇÕES'));
     expect(o.aoEditarPosicoes).toHaveBeenCalledWith(true);
     expect((screen.getByText('RESETAR FORMAÇÃO · CASA') as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByText('RESETAR FORMAÇÃO · VISITANTE'));
     expect(l.salvar).toHaveBeenCalledWith({ escPosVisit: null });
+  });
+});
+
+describe('FUTEBOL com a escalação junto', () => {
+  it('resumo à vista; CONFIGURAR ESCALAÇÃO abre o modal com os campos', () => {
+    const l = live({ escTimes: 'ambos', timeA: 'BRASIL', timeB: 'ÍNDIA' });
+    render(<CamposTela tela="futebol" live={l as never} escalacao={opcoes()} />);
+    expect(screen.getByText('LISTA · BRASIL 4-3-3 × ÍNDIA 4-2-3-1 · 4 CÂM')).toBeInTheDocument();
+    expect(screen.queryByLabelText('FORMAÇÃO CASA')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'CONFIGURAR ESCALAÇÃO' }));
+    const modal = screen.getByRole('dialog', { name: 'ESCALAÇÃO' });
+    expect(within(modal).getByLabelText('FORMAÇÃO CASA')).toBeInTheDocument();
+    fireEvent.click(within(modal).getByRole('button', { name: 'FECHAR' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('cadastrar elenco a partir do modal fecha ele e abre o de times', () => {
+    const o = opcoes();
+    render(<CamposTela tela="futebol" live={live({ timeA: 'FLAMENGO' }) as never} escalacao={o} />);
+    fireEvent.click(screen.getByRole('button', { name: 'CONFIGURAR ESCALAÇÃO' }));
+    fireEvent.click(screen.getByText('+ CADASTRAR ELENCO'));
+    expect(o.aoAbrirTimes).toHaveBeenCalledWith('FLAMENGO');
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('câmeras seguem a cena da prévia', () => {
+    const { rerender } = render(<CamposTela tela="futebol" live={live() as never} escalacao={opcoes('futebol')} />);
+    expect(screen.getByRole('button', { name: '1 CÂMERAS' })).toBeInTheDocument();
+    rerender(<CamposTela tela="futebol" live={live() as never} escalacao={opcoes('escalacao')} />);
+    expect(screen.queryByRole('button', { name: '1 CÂMERAS' })).toBeNull();
+    expect(screen.getByRole('button', { name: '6 CÂMERAS' })).toBeInTheDocument();
   });
 });
 

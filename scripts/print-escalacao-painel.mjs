@@ -49,17 +49,31 @@ async function abrir(estado, largura = 1440, altura = 900) {
   await page.goto('http://localhost:5173/painel');
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(1200);
-  await page.getByRole('button', { name: 'ESCALAÇÃO' }).first().click();
+  await page.getByRole('button', { name: 'FUTEBOL' }).first().click();
+  await page.waitForTimeout(500);
+  await page.getByRole('group', { name: 'CENA DA PRÉVIA' }).getByRole('button', { name: 'ESCALAÇÃO' }).click();
   await page.waitForTimeout(800);
   return page;
 }
 
 const lista = await abrir(estadoBase);
 await lista.screenshot({ path: resolve('docs/prints/painel-escalacao-lista.png'), fullPage: true });
+await lista.getByRole('button', { name: 'CONFIGURAR ESCALAÇÃO' }).click();
+await lista.waitForTimeout(400);
+await lista.screenshot({ path: resolve('docs/prints/painel-escalacao-modal.png') });
+await lista.keyboard.press('Escape');
+await lista.getByRole('button', { name: 'AJUSTAR MOLDURAS' }).click();
+await lista.waitForTimeout(400);
+await lista.screenshot({ path: resolve('docs/prints/painel-molduras-modal.png') });
+await lista.keyboard.press('Escape');
+await lista.locator('.p-esc-resumo').scrollIntoViewIfNeeded();
+await lista.waitForTimeout(300);
+await lista.screenshot({ path: resolve('docs/prints/painel-futebol-campos.png') });
 await lista.getByRole('button', { name: 'TIMES', exact: true }).click();
 await lista.getByRole('button', { name: /ÍNDIA/ }).click();
 await lista.waitForTimeout(400);
 await lista.screenshot({ path: resolve('docs/prints/painel-times.png') });
+
 
 const campo = await abrir({ ...estadoBase, escModo: 'campo', escCams: 6 });
 await campo.getByRole('button', { name: 'EDITAR POSIÇÕES' }).click();

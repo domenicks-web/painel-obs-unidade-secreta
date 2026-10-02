@@ -24,6 +24,10 @@ describe('CamposTela', () => {
     expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ jogo: 'OUTRO' });
     fireEvent.click(screen.getByText('MOSTRAR'));
     expect((l as { salvar: ReturnType<typeof vi.fn> }).salvar).toHaveBeenCalledWith({ 'enquete.mostrar': true });
+    // porcentagens no modal
+    fireEvent.click(screen.getByRole('button', { name: '0% · 0% · 0%' }));
+    fireEvent.change(screen.getByLabelText('EMPATE'), { target: { value: '30' } });
+    expect((l as { salvarDepois: ReturnType<typeof vi.fn> }).salvarDepois).toHaveBeenCalledWith({ 'enquete.empate': 30 });
   });
 
   it('futebol: ajuste rápido e tempo exato do relógio', () => {
@@ -91,6 +95,7 @@ describe('CamposTela', () => {
     it('largura com formato travado ajusta a altura; X/Y ficam', () => {
       const l = uma();
       render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.click(screen.getByRole('button', { name: 'AJUSTAR MOLDURAS' }));
       fireEvent.change(screen.getByLabelText('LARGURA'), { target: { value: '1280' } });
       expect(ultimaLista(fns(l).salvarDepois, 'camsFutebol')[0]).toMatchObject({ w: 1280, h: 720, x: 100, y: 800 });
     });
@@ -98,6 +103,7 @@ describe('CamposTela', () => {
     it('livre: altura sozinha; X e Y', () => {
       const l = uma({ formato: 'livre' });
       render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.click(screen.getByRole('button', { name: 'AJUSTAR MOLDURAS' }));
       fireEvent.change(screen.getByLabelText('ALTURA'), { target: { value: '500' } });
       expect(ultimaLista(fns(l).salvarDepois, 'camsFutebol')[0]).toMatchObject({ w: 640, h: 500 });
       fireEvent.change(screen.getByLabelText('X'), { target: { value: '300' } });
@@ -118,6 +124,7 @@ describe('CamposTela', () => {
       });
       const { salvar, salvarDepois } = fns(l);
       render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.click(screen.getByRole('button', { name: 'AJUSTAR MOLDURAS' }));
       fireEvent.click(screen.getAllByRole('button', { name: '1:1' })[0]);
       expect(ultimaLista(salvar, 'camsFutebol')[0]).toMatchObject({ formato: '1:1', w: 640, h: 640 });
       fireEvent.change(screen.getAllByRole('combobox')[1], { target: { value: 'caio' } });
@@ -132,6 +139,7 @@ describe('CamposTela', () => {
     it('etiqueta: esquerda ou direita', () => {
       const l = uma();
       render(<CamposTela tela="futebol" live={l} />);
+      fireEvent.click(screen.getByRole('button', { name: 'AJUSTAR MOLDURAS' }));
       expect(screen.getByRole('button', { name: 'ESQUERDA' }).className).toContain('p-opcao--ativa');
       fireEvent.click(screen.getByRole('button', { name: 'DIREITA' }));
       expect(ultimaLista(fns(l).salvar, 'camsFutebol')[0]).toMatchObject({ etiqueta: 'direita' });
@@ -157,6 +165,7 @@ describe('CamposTela', () => {
     expect(f.salvar).toHaveBeenCalledWith({ golAnimA: false });
     fireEvent.click(screen.getByRole('button', { name: 'REPETIR ANIMAÇÃO' }));
     expect(f.repetirGol).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'AJUSTES' }));
     fireEvent.click(screen.getByRole('button', { name: /SOM DO GOL/ }));
     expect(f.salvar).toHaveBeenCalledWith({ golSom: true });
     const dur = screen.getByLabelText('DURAÇÃO (S)');

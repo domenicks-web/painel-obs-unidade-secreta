@@ -320,6 +320,28 @@
 .p-times__erro { font: 700 13px/1.4 'JetBrains Mono', monospace; color: #FF6B1F; }
 .p-times__excluir { margin-right: auto; }
 
+/* modais genéricos (Modal.tsx) */
+.p-modal--largo { width: min(1040px, 100%); }
+.p-modal__corpo { padding: 6px 22px 16px; display: flex; flex-direction: column; gap: 14px; overflow: auto; min-height: 0; }
+.p-modal__corpo .p-gol { grid-template-columns: auto 150px; }
+.p-modal__corpo .p-enquete { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.p-moldura__titulo { font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .14em; color: #FF6B1F; }
+.p-moldura__titulo span { color: #FFF3E0; }
+
+/* FUTEBOL + ESCALAÇÃO no mesmo item */
+.p-cena { display: flex; gap: 0; margin-right: auto; }
+.p-cena__botao { height: 32px; padding: 0 14px; border: 2px solid #3a3035; background: transparent; color: #8a7f84; font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .12em; cursor: pointer; }
+.p-cena__botao + .p-cena__botao { border-left: 0; }
+.p-cena__botao--ativa { background: #FF6B1F; border-color: #FF6B1F; color: #1A1417; }
+.p-extras { display: flex; gap: 18px; flex-wrap: wrap; }
+.p-extra { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.p-extra .p-rotulo { min-width: 54px; }
+.p-extra .p-botao-contorno, .p-extra .p-chave { height: 46px; }
+.p-esc-resumo { display: flex; flex-direction: column; gap: 10px; padding: 14px; background: #241d21; border-left: 4px solid #8B6CF0; }
+.p-esc-resumo__cabeca { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.p-esc-resumo__texto { font: 700 20px/1.2 'Barlow Condensed', sans-serif; letter-spacing: .04em; color: #FFF3E0; }
+.p-cams-nomes { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+
 @media (max-width: 1599px) {
   .p-topo__barra, .p-topo__sub { display: none; }
   .p-placar { grid-template-columns: minmax(0, 1fr) 210px minmax(0, 1fr); gap: 12px; }
@@ -352,6 +374,7 @@
   .p-enquete .p-chave { grid-column: 1 / -1; }
   .p-direita { border-left: 0; border-top: 2px solid #2A2226; overflow: visible; }
   .p-previa-cabeca { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .p-cena { margin-right: 0; }
   .p-previa-aviso { text-align: left; }
 }
 @media (max-width: 480px) {

@@ -22,6 +22,7 @@ import { gravarSessao, lerSessao } from '../chat/sessao';
 import { mensagemAuto } from '../chat/teste';
 import { useGravarApoiosYouTube } from '../apoios/youtube';
 import { ModalTimes } from '../painel/ModalTimes';
+import type { CenaFutebol } from '../painel/CamposTela';
 import { TimesProvider, useTimes } from '../escalacao/useTimes';
 import { modoEsc, timesEscalados } from '../telas/TelaEscalacao';
 import '../painel/painel.css';
@@ -62,7 +63,14 @@ function Painel() {
   const { times } = useTimes();
   const [editandoPosicoes, setEditandoPosicoes] = useState(false);
   // o editor de posições só vale na ESCALAÇÃO em modo CAMPO
-  const posicoesAtivas = editandoPosicoes && tela === 'escalacao' && modoEsc(live.estado.escModo) === 'campo';
+  // FUTEBOL e ESCALAÇÃO são um item só no painel: cena = qual das duas a prévia e as câmeras mostram
+  const [cena, setCena] = useState<CenaFutebol>('futebol');
+  const telaPrevia: TelaId = tela === 'futebol' ? cena : tela;
+  const posicoesAtivas = editandoPosicoes && telaPrevia === 'escalacao' && modoEsc(live.estado.escModo) === 'campo';
+  const editarPosicoes = useCallback((v: boolean) => {
+    setEditandoPosicoes(v);
+    if (v) setCena('escalacao');
+  }, []);
   const { estado, salvarDepois } = live;
   const label = TELAS.find((t) => t.id === tela)!.label;
 
@@ -95,14 +103,23 @@ function Painel() {
           <div className="p-previa-bloco">
             <div className="p-previa-cabeca">
               <div className="p-previa-titulo">{label}</div>
+              {tela === 'futebol' && (
+                <div className="p-cena" role="group" aria-label="CENA DA PRÉVIA">
+                  {(['futebol', 'escalacao'] as const).map((c) => (
+                    <button key={c} type="button" className={cena === c ? 'p-cena__botao p-cena__botao--ativa' : 'p-cena__botao'} aria-pressed={cena === c} onClick={() => setCena(c)}>
+                      {c === 'futebol' ? 'FUTEBOL' : 'ESCALAÇÃO'}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="p-previa-aviso">PRÉVIA · NÃO É O QUE ESTÁ NO AR</div>
             </div>
             <Previa
-              tela={tela}
+              tela={telaPrevia}
               estado={estado}
               editor={
-                ehTelaCam(tela)
-                  ? { lista: camerasDaTela(estado, tela), aoMudar: (l) => live.salvarDepois(patchCams(tela, l)) }
+                ehTelaCam(telaPrevia)
+                  ? { lista: camerasDaTela(estado, telaPrevia), aoMudar: (l) => live.salvarDepois(patchCams(telaPrevia, l)) }
                   : undefined
               }
               jogadores={
@@ -123,7 +140,7 @@ function Painel() {
             <CamposTela
               tela={tela}
               live={live}
-              escalacao={{ editandoPosicoes: posicoesAtivas, aoEditarPosicoes: setEditandoPosicoes, aoAbrirTimes: (nome) => setTimesAberto({ nome }) }}
+              escalacao={{ cena, aoTrocarCena: setCena, editandoPosicoes: posicoesAtivas, aoEditarPosicoes: editarPosicoes, aoAbrirTimes: (nome) => setTimesAberto({ nome }) }}
             />
             <div className="p-divisor" />
             <div className="p-duas">

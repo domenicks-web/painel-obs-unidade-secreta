@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { TELAS, type TelaId } from '../live/tipos';
+import { TELAS_PAINEL as TELAS, type TelaId } from '../live/tipos';
 
 export function ListaTelas({ atual, aoEscolher }: { atual: TelaId; aoEscolher: (t: TelaId) => void }) {
   // atalhos 1–9 quando o foco não está num campo

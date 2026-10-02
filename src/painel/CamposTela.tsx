@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { useLive } from '../live/useLive';
 import { JOGO_OPCOES, type EstadoLive, type TelaId } from '../live/tipos';
 import {
@@ -21,7 +21,8 @@ import { lerTempo, mascaraTempo, mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
 import { CampoCamera } from './CampoCamera';
-import { CamposEscalacao } from './CamposEscalacao';
+import { CamposEscalacao, PosicoesEscalacao, resumoEscalacao } from './CamposEscalacao';
+import { Modal } from './Modal';
 
 type Live = ReturnType<typeof useLive>;
 
@@ -32,7 +33,12 @@ function classeOpcao(ativa: boolean, extra: string, violeta = false) {
   return `p-opcao ${extra}${ativa ? (violeta ? ' p-opcao--ativa-violeta' : ' p-opcao--ativa') : ''}`;
 }
 
+export type CenaFutebol = 'futebol' | 'escalacao';
+
 export interface OpcoesEscalacao {
+  /** FUTEBOL e ESCALAÇÃO ficam juntas no painel: cena = qual das duas a prévia (e as câmeras) mostram */
+  cena: CenaFutebol;
+  aoTrocarCena: (c: CenaFutebol) => void;
   editandoPosicoes: boolean;
   aoEditarPosicoes: (v: boolean) => void;
   /** nome: abre o cadastro já nesse time (ou num time novo com esse nome) */
@@ -40,11 +46,11 @@ export interface OpcoesEscalacao {
 }
 
 export function CamposTela({ tela, live, escalacao }: { tela: TelaId; live: Live; escalacao?: OpcoesEscalacao }) {
+  const telaCams = tela === 'futebol' && escalacao ? escalacao.cena : tela;
   return (
     <>
-      {tela === 'futebol' && <CamposFutebol live={live} />}
-      {tela === 'escalacao' && escalacao && <CamposEscalacao live={live} {...escalacao} />}
-      {ehTelaCam(tela) && <Cameras tela={tela} live={live} />}
+      {tela === 'futebol' && <CamposFutebol live={live} escalacao={escalacao} />}
+      {ehTelaCam(telaCams) && <Cameras key={telaCams} tela={telaCams} live={live} />}
       {tela === 'host' && (
         <CampoTexto rotulo="PIX LINK" valor={live.estado.pixLink} maiusculo aoMudar={(v) => live.salvarDepois({ pixLink: v })} />
       )}
@@ -68,12 +74,15 @@ const semLado = ({ etiqueta: _, ...c }: Camera): Camera => c;
 
 function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
   const { estado } = live;
+  const [molduras, setMolduras] = useState(false);
+  const fechar = useCallback(() => setMolduras(false), []);
   const lista = camerasDaTela(estado, tela);
   // botão: grava na hora; digitando: espera os 400 ms (o painel já mostra o valor novo)
   const gravar = (nova: Camera[]) => live.salvar(patchCams(tela, nova));
   const gravarDepois = (nova: Camera[]) => live.salvarDepois(patchCams(tela, nova));
   const trocar = (i: number, cam: Camera) => lista.map((c, j) => (j === i ? cam : c));
   const numero = (v: string) => (v.trim() === '' || !Number.isFinite(Number(v)) ? null : Number(v));
+  const ativo = (n: number) => (tela === 'host' && estado.hostCams === String(n)) || (tela === 'escalacao' && estado.escCams === n);
 
   function partida(n: number) {
     // ESCALAÇÃO: a quantidade fica no estado e o layout volta pro automático daquele modo
@@ -85,14 +94,16 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
   return (
     <>
       <div className="p-linha">
-        <div className="p-rotulo p-rotulo--grande">CÂMERAS</div>
+        <div className="p-rotulo p-rotulo--grande">
+          CÂMERAS{tela === 'futebol' ? ' · FUTEBOL' : tela === 'escalacao' ? ' · ESCALAÇÃO' : ''}
+        </div>
         <div className="p-rotulo">PONTO DE PARTIDA</div>
         <div className="p-opcoes">
           {PARTIDAS[tela].map((n) => (
             <button
               key={n}
               type="button"
-              className={classeOpcao((tela === 'host' && estado.hostCams === String(n)) || (tela === 'escalacao' && estado.escCams === n), 'p-opcao--cam')}
+              className={classeOpcao(ativo(n), 'p-opcao--cam')}
               aria-label={`${n} CÂMERAS`}
               title={`Layout automático com ${n} câmera${n > 1 ? 's' : ''}`}
               onClick={() => partida(n)}
@@ -104,48 +115,67 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
         <button type="button" className="p-chave p-cams-adicionar" disabled={lista.length >= MAX_CAMERAS} onClick={() => gravar([...lista, novaCamera(lista)])}>
           + ADICIONAR CÂMERA
         </button>
+        <button type="button" className="p-botao-contorno" onClick={() => setMolduras(true)}>
+          AJUSTAR MOLDURAS
+        </button>
       </div>
-      <div className="p-texto-fraco">X e Y são o canto de baixo à esquerda (tela de 1920×1080). A última da lista fica na frente.</div>
-      <div className="p-molduras">
+      {/* nomes à vista (mudam toda live); tamanho, posição e ordem ficam no modal */}
+      <div className="p-cams-nomes">
         {lista.map((c, i) => (
-          <div key={c.id} className="p-moldura">
-            <CampoCamera numero={i + 1} valor={c.nome} galera={estado.galera} aoMudar={(v) => gravarDepois(trocar(i, { ...c, nome: v }))} />
-            <div className="p-moldura__formatos" role="group" aria-label="FORMATO">
-              {FORMATOS.map((f) => (
-                <button key={f} type="button" className={classeOpcao(c.formato === f, 'p-opcao--formato')} onClick={() => gravar(trocar(i, mudarFormato(c, f)))}>
-                  {f === 'livre' ? 'LIVRE' : f}
-                </button>
-              ))}
-            </div>
-            <div className="p-moldura__etiqueta" role="group" aria-label="ETIQUETA">
-              <div className="p-rotulo">ETIQUETA</div>
-              <button type="button" className={classeOpcao(c.etiqueta !== 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, semLado(c)))}>
-                ESQUERDA
-              </button>
-              <button type="button" className={classeOpcao(c.etiqueta === 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, { ...c, etiqueta: 'direita' }))}>
-                DIREITA
-              </button>
-            </div>
-            <div className="p-moldura__numeros">
-              <CampoTexto rotulo="LARGURA" tipo="number" inputMode="numeric" valor={String(c.w)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { w: n }))); }} />
-              <CampoTexto rotulo="ALTURA" tipo="number" inputMode="numeric" valor={String(c.h)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { h: n }))); }} />
-              <CampoTexto rotulo="X" tipo="number" inputMode="numeric" valor={String(c.x)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarPosicao(c, n, c.y))); }} />
-              <CampoTexto rotulo="Y" tipo="number" inputMode="numeric" valor={String(c.y)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarPosicao(c, c.x, n))); }} />
-            </div>
-            <div className="p-moldura__acoes">
-              <button type="button" className="p-botao-contorno" disabled={i === lista.length - 1} onClick={() => gravar(moverOrdem(lista, i, 1))}>
-                PRA FRENTE
-              </button>
-              <button type="button" className="p-botao-contorno" disabled={i === 0} onClick={() => gravar(moverOrdem(lista, i, -1))}>
-                PRA TRÁS
-              </button>
-              <button type="button" className="p-botao-contorno p-moldura__remover" onClick={() => gravar(lista.filter((_, j) => j !== i))}>
-                REMOVER
-              </button>
-            </div>
-          </div>
+          <CampoCamera key={c.id} numero={i + 1} valor={c.nome} galera={estado.galera} aoMudar={(v) => gravarDepois(trocar(i, { ...c, nome: v }))} />
         ))}
       </div>
+      <div className="p-texto-dica">Dá pra arrastar e redimensionar as molduras direto na prévia.</div>
+
+      {molduras && (
+        <Modal titulo="MOLDURAS" extra={`${lista.length} CÂMERA${lista.length === 1 ? '' : 'S'}`} aoFechar={fechar} largo>
+          <div className="p-texto-dica">X e Y são o canto de baixo à esquerda (tela de 1920×1080). A última da lista fica na frente.</div>
+          <div className="p-molduras">
+            {lista.map((c, i) => (
+              <div key={c.id} className="p-moldura">
+                <div className="p-moldura__titulo">
+                  CÂMERA {String(i + 1).padStart(2, '0')}
+                  {c.nome && <span> · {c.nome}</span>}
+                </div>
+                <div className="p-moldura__formatos" role="group" aria-label="FORMATO">
+                  {FORMATOS.map((f) => (
+                    <button key={f} type="button" className={classeOpcao(c.formato === f, 'p-opcao--formato')} onClick={() => gravar(trocar(i, mudarFormato(c, f)))}>
+                      {f === 'livre' ? 'LIVRE' : f}
+                    </button>
+                  ))}
+                </div>
+                <div className="p-moldura__etiqueta" role="group" aria-label="ETIQUETA">
+                  <div className="p-rotulo">ETIQUETA</div>
+                  <button type="button" className={classeOpcao(c.etiqueta !== 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, semLado(c)))}>
+                    ESQUERDA
+                  </button>
+                  <button type="button" className={classeOpcao(c.etiqueta === 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, { ...c, etiqueta: 'direita' }))}>
+                    DIREITA
+                  </button>
+                </div>
+                <div className="p-moldura__numeros">
+                  <CampoTexto rotulo="LARGURA" tipo="number" inputMode="numeric" valor={String(c.w)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { w: n }))); }} />
+                  <CampoTexto rotulo="ALTURA" tipo="number" inputMode="numeric" valor={String(c.h)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarTamanho(c, { h: n }))); }} />
+                  <CampoTexto rotulo="X" tipo="number" inputMode="numeric" valor={String(c.x)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarPosicao(c, n, c.y))); }} />
+                  <CampoTexto rotulo="Y" tipo="number" inputMode="numeric" valor={String(c.y)} aoMudar={(v) => { const n = numero(v); if (n != null) gravarDepois(trocar(i, mudarPosicao(c, c.x, n))); }} />
+                </div>
+                <div className="p-moldura__acoes">
+                  <button type="button" className="p-botao-contorno" disabled={i === lista.length - 1} onClick={() => gravar(moverOrdem(lista, i, 1))}>
+                    PRA FRENTE
+                  </button>
+                  <button type="button" className="p-botao-contorno" disabled={i === 0} onClick={() => gravar(moverOrdem(lista, i, -1))}>
+                    PRA TRÁS
+                  </button>
+                  <button type="button" className="p-botao-contorno p-moldura__remover" onClick={() => gravar(lista.filter((_, j) => j !== i))}>
+                    REMOVER
+                  </button>
+                </div>
+              </div>
+            ))}
+            {lista.length === 0 && <div className="p-vazio">Nenhuma câmera nessa tela.</div>}
+          </div>
+        </Modal>
+      )}
     </>
   );
 }
@@ -159,9 +189,11 @@ function ChaveAnimacao({ ligada, cor, aoTrocar }: { ligada: boolean; cor: 'a' | 
   );
 }
 
-function CamposFutebol({ live }: { live: Live }) {
+function CamposFutebol({ live, escalacao }: { live: Live; escalacao?: OpcoesEscalacao }) {
   const { estado, salvar, salvarDepois } = live;
   const agora = useAgora(500);
+  const [modal, setModal] = useState<'gol' | 'enquete' | 'escalacao' | null>(null);
+  const fechar = useCallback(() => setModal(null), []);
 
   return (
     <>
@@ -211,32 +243,6 @@ function CamposFutebol({ live }: { live: Live }) {
         </div>
       </div>
 
-      <div className="p-gol">
-        <button type="button" className="p-gol__repetir" disabled={!estado.golEvento} onClick={() => live.repetirGol()}>
-          REPETIR ANIMAÇÃO
-        </button>
-        <button
-          type="button"
-          className={estado.golSom ? 'p-chave p-chave--ligada' : 'p-chave'}
-          aria-pressed={estado.golSom}
-          onClick={() => salvar({ golSom: !estado.golSom })}
-        >
-          {estado.golSom ? '● SOM DO GOL' : '○ SOM DO GOL'}
-        </button>
-        <CampoTexto
-          className="p-input p-input--mono p-gol__duracao"
-          rotulo="DURAÇÃO (S)"
-          tipo="number"
-          inputMode="decimal"
-          title="Duração da animação de gol: 3 a 6 segundos"
-          valor={String(estado.golDuracao)}
-          aoMudar={(v) => {
-            const n = Number(v.replace(',', '.'));
-            if (v.trim() !== '' && Number.isFinite(n)) salvarDepois({ golDuracao: Math.min(6, Math.max(3, n)) });
-          }}
-        />
-      </div>
-
       <div className="p-opcoes" style={{ gap: 8 }}>
         {JOGO_OPCOES.map((j) => (
           <button key={j} type="button" className={classeOpcao(estado.jogo === j, 'p-opcao--tempo', true)} onClick={() => salvar({ jogo: j })}>
@@ -248,12 +254,18 @@ function CamposFutebol({ live }: { live: Live }) {
         <CampoTexto rotulo="TEXTO DO TEMPO" valor={estado.jogoOutro} maiusculo placeholder="EX.: PÊNALTIS" aoMudar={(v) => salvarDepois({ jogoOutro: v })} />
       )}
 
-      <div className="p-campo">
-        <div className="p-rotulo">ENQUETE · QUEM GANHA? (EM %)</div>
-        <div className="p-enquete">
-          <CampoTexto rotulo={estado.timeA} tipo="number" valor={String(estado.enquete.casa)} aoMudar={(v) => salvarDepois({ 'enquete.casa': limitar(v) })} />
-          <CampoTexto rotulo="EMPATE" tipo="number" valor={String(estado.enquete.empate)} aoMudar={(v) => salvarDepois({ 'enquete.empate': limitar(v) })} />
-          <CampoTexto rotulo={estado.timeB} tipo="number" valor={String(estado.enquete.fora)} aoMudar={(v) => salvarDepois({ 'enquete.fora': limitar(v) })} />
+      <div className="p-extras">
+        <div className="p-extra">
+          <div className="p-rotulo">GOL</div>
+          <button type="button" className="p-gol__repetir" disabled={!estado.golEvento} onClick={() => live.repetirGol()}>
+            REPETIR ANIMAÇÃO
+          </button>
+          <button type="button" className="p-botao-contorno" onClick={() => setModal('gol')}>
+            AJUSTES
+          </button>
+        </div>
+        <div className="p-extra">
+          <div className="p-rotulo">ENQUETE</div>
           <button
             type="button"
             className={estado.enquete.mostrar ? 'p-chave p-chave--ligada' : 'p-chave'}
@@ -262,8 +274,79 @@ function CamposFutebol({ live }: { live: Live }) {
           >
             {estado.enquete.mostrar ? 'ESCONDER' : 'MOSTRAR'}
           </button>
+          <button type="button" className="p-botao-contorno" onClick={() => setModal('enquete')}>
+            {estado.enquete.casa}% · {estado.enquete.empate}% · {estado.enquete.fora}%
+          </button>
         </div>
       </div>
+
+      {escalacao && (
+        <div className="p-esc-resumo">
+          <div className="p-esc-resumo__cabeca">
+            <div className="p-rotulo p-rotulo--grande">ESCALAÇÃO</div>
+            <div className="p-esc-resumo__texto">{resumoEscalacao(estado)}</div>
+          </div>
+          <div className="p-linha">
+            <button type="button" className="p-botao" onClick={() => setModal('escalacao')}>
+              CONFIGURAR ESCALAÇÃO
+            </button>
+            <PosicoesEscalacao live={live} editandoPosicoes={escalacao.editandoPosicoes} aoEditarPosicoes={escalacao.aoEditarPosicoes} />
+          </div>
+        </div>
+      )}
+
+      {modal === 'gol' && (
+        <Modal titulo="ANIMAÇÃO DE GOL" aoFechar={fechar}>
+          <div className="p-gol">
+            <button
+              type="button"
+              className={estado.golSom ? 'p-chave p-chave--ligada' : 'p-chave'}
+              aria-pressed={estado.golSom}
+              onClick={() => salvar({ golSom: !estado.golSom })}
+            >
+              {estado.golSom ? '● SOM DO GOL' : '○ SOM DO GOL'}
+            </button>
+            <CampoTexto
+              className="p-input p-input--mono p-gol__duracao"
+              rotulo="DURAÇÃO (S)"
+              tipo="number"
+              inputMode="decimal"
+              title="Duração da animação de gol: 3 a 6 segundos"
+              valor={String(estado.golDuracao)}
+              aoMudar={(v) => {
+                const n = Number(v.replace(',', '.'));
+                if (v.trim() !== '' && Number.isFinite(n)) salvarDepois({ golDuracao: Math.min(6, Math.max(3, n)) });
+              }}
+            />
+          </div>
+          <div className="p-texto-dica">A chave de cada time (no placar) liga ou desliga a animação quando ele marca. Duração de 3 a 6 s.</div>
+        </Modal>
+      )}
+
+      {modal === 'enquete' && (
+        <Modal titulo="ENQUETE" extra="QUEM GANHA? (EM %)" aoFechar={fechar}>
+          <div className="p-enquete">
+            <CampoTexto rotulo={estado.timeA} tipo="number" valor={String(estado.enquete.casa)} aoMudar={(v) => salvarDepois({ 'enquete.casa': limitar(v) })} />
+            <CampoTexto rotulo="EMPATE" tipo="number" valor={String(estado.enquete.empate)} aoMudar={(v) => salvarDepois({ 'enquete.empate': limitar(v) })} />
+            <CampoTexto rotulo={estado.timeB} tipo="number" valor={String(estado.enquete.fora)} aoMudar={(v) => salvarDepois({ 'enquete.fora': limitar(v) })} />
+          </div>
+          <div className="p-texto-dica">Aparece só na cena FUTEBOL, embaixo das câmeras, quando MOSTRAR está ligado.</div>
+        </Modal>
+      )}
+
+      {modal === 'escalacao' && escalacao && (
+        <Modal titulo="ESCALAÇÃO" extra="CENA ESCALAÇÃO" aoFechar={fechar} largo>
+          <CamposEscalacao
+            live={live}
+            editandoPosicoes={escalacao.editandoPosicoes}
+            aoEditarPosicoes={escalacao.aoEditarPosicoes}
+            aoAbrirTimes={(nome) => {
+              setModal(null);
+              escalacao.aoAbrirTimes(nome);
+            }}
+          />
+        </Modal>
+      )}
     </>
   );
 }

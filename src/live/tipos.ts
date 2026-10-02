@@ -5,7 +5,8 @@ export const TELAS = [
   { id: 'inicio', label: 'INÍCIO' },
   { id: 'host', label: 'HOST' },
   { id: 'futebol', label: 'FUTEBOL' },
-  { id: 'escalacao', label: 'ESCALAÇÃO' },
+  // no painel fica dentro de FUTEBOL (seletor de cena na prévia); no OBS é uma URL própria
+  { id: 'escalacao', label: 'ESCALAÇÃO', dentroDe: 'futebol' },
   { id: 'filme', label: 'FILME/SÉRIE' },
   { id: 'mesa', label: 'MESA REDONDA' },
   { id: 'jogo', label: 'JOGO' },
@@ -17,6 +18,9 @@ export const TELAS = [
 ] as const;
 
 export type TelaId = (typeof TELAS)[number]['id'];
+
+/** Telas que aparecem na lista do painel (a ESCALAÇÃO entra pelo FUTEBOL). */
+export const TELAS_PAINEL = TELAS.filter((t) => !('dentroDe' in t));
 
 export const JOGO_OPCOES = ['1º TEMPO', 'INTERVALO', '2º TEMPO', 'PRORROGAÇÃO', 'OUTRO'] as const;
 export type Jogo = (typeof JOGO_OPCOES)[number];

@@ -52,8 +52,12 @@ atuais não leem `times`. Dá pra rodar antes da live sem risco, e o merge pode 
   Os cadastrados aparecem só como sugestão enquanto digita.
 - Cadastro de times é um modal (botão TIMES no topo, como GALERA), não uma tela na lista de telas.
 - `cor` do time ficou no banco mas não é usada: casa é sempre laranja e visitante violeta.
-- ESCALAÇÃO entrou depois de FUTEBOL na lista: os atalhos de teclado do painel de FILME em diante subiram 1
-  (FILME agora é 5, …, FIM é 12, sem atalho).
+- **Painel (2026-10-02, pedido do usuário):** ESCALAÇÃO não é mais um item da lista: fica dentro de FUTEBOL, com
+  o seletor FUTEBOL | ESCALAÇÃO na prévia (as câmeras seguem a cena escolhida). Atalhos voltaram aos de antes.
+  Modais: CONFIGURAR ESCALAÇÃO, AJUSTES do gol (som, duração), porcentagens da enquete e AJUSTAR MOLDURAS
+  (formato, tamanho, X/Y, ordem; em todas as telas). À vista: placar, relógio, tempo, REPETIR, MOSTRAR enquete,
+  resumo da escalação, EDITAR POSIÇÕES e os nomes das câmeras.
+- Relógio do placar (FUTEBOL e ESCALAÇÃO) com tempo completo `67:23`; de 100 min pra cima a fonte cai pra 40 px.
 - Fundo igual ao do FUTEBOL (escuro com listras), como na referência.
 
 **Falta**

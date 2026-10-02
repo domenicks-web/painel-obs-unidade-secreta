@@ -16,8 +16,18 @@ describe('futebol e filme', () => {
     );
     expect(screen.getAllByText('FLA').length).toBeGreaterThan(0);
     expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText("11'")).toBeInTheDocument();
+    // tempo completo: 600 s + 90 s rodando = 11:30
+    expect(screen.getByText('11:30')).toBeInTheDocument();
     expect(screen.getByText('PÊNALTIS')).toBeInTheDocument();
+  });
+
+  it('relógio da prorrogação (100+ min) diminui a fonte pra caber', () => {
+    const { container, rerender } = render(<TelaFutebol estado={{ ...ESTADO_PADRAO, clockAcumulado: 45 * 60 }} />);
+    expect(container.querySelector<HTMLElement>('.t-futebol__relogio')!.style.fontSize).toBe('');
+    rerender(<TelaFutebol estado={{ ...ESTADO_PADRAO, clockAcumulado: 105 * 60 + 7 }} />);
+    const r = container.querySelector<HTMLElement>('.t-futebol__relogio')!;
+    expect(r.textContent).toBe('105:07');
+    expect(r.style.fontSize).toBe('40px');
   });
 
   it('enquete escondida some inteira; mostrada usa os nomes dos times e não promete voto no chat', () => {

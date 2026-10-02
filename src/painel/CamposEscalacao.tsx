@@ -19,8 +19,9 @@ interface Props {
   aoAbrirTimes: (nome?: string) => void;
 }
 
-// Modo, times, formações. Trocar modo ou times volta as câmeras pro layout automático daquele caso.
-export function CamposEscalacao({ live, editandoPosicoes, aoEditarPosicoes, aoAbrirTimes }: Props) {
+// Modo, times, formações (vai no modal CONFIGURAR ESCALAÇÃO). Trocar modo ou times volta as câmeras
+// pro layout automático daquele caso.
+export function CamposEscalacao({ live, aoEditarPosicoes, aoAbrirTimes }: Props) {
   const { estado, salvar, salvarDepois } = live;
   const { times } = useTimes();
   const modo = modoEsc(estado.escModo);
@@ -135,9 +136,31 @@ export function CamposEscalacao({ live, editandoPosicoes, aoEditarPosicoes, aoAb
         <button type="button" className="p-botao-contorno" onClick={() => aoAbrirTimes()}>
           CADASTRO DE TIMES
         </button>
-        <div className="p-texto-dica">Placar e relógio: na tela FUTEBOL (são os mesmos).</div>
       </div>
 
+    </>
+  );
+}
+
+/** Resumo de uma linha da escalação, pra ficar à vista no painel do FUTEBOL. */
+export function resumoEscalacao(estado: Live['estado']): string {
+  const modo = modoEsc(estado.escModo) === 'campo' ? 'CAMPO' : 'LISTA';
+  const quais = timesEsc(estado.escTimes);
+  const fc = formacaoOu(estado.escFormCasa, '4-3-3');
+  const fv = formacaoOu(estado.escFormVisit, '4-2-3-1');
+  const times = quais === 'ambos' ? `${estado.timeA} ${fc} × ${estado.timeB} ${fv}` : quais === 'casa' ? `${estado.timeA} ${fc}` : `${estado.timeB} ${fv}`;
+  return `${modo} · ${times} · ${estado.escCams} CÂM`;
+}
+
+// Fica fora do modal: arrastar as bolinhas precisa da prévia à vista.
+export function PosicoesEscalacao({ live, editandoPosicoes, aoEditarPosicoes }: Omit<Props, 'aoAbrirTimes'>) {
+  const { estado, salvar } = live;
+  const modo = modoEsc(estado.escModo);
+  const quais = timesEsc(estado.escTimes);
+  const lados = (quais === 'ambos' ? ['casa', 'visitante'] : [quais]) as ('casa' | 'visitante')[];
+  const temManual = (lado: 'casa' | 'visitante') => !!(lado === 'casa' ? estado.escPosCasa : estado.escPosVisit);
+  return (
+    <>
       {modo === 'campo' && (
         <div className="p-linha">
           <div className="p-rotulo p-rotulo--grande">JOGADORES</div>
