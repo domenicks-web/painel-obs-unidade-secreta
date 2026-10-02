@@ -50,11 +50,7 @@ input::placeholder{color:#5e5358}
 <div style="font:700 clamp(18px,1.6vw,24px)/1.35 'JetBrains Mono',monospace;letter-spacing:.06em;color:#1A1417;max-width:460px;text-wrap:pretty">Entra pra mexer nas telas, no placar e nos PIX da live.</div>
 <div style="width:220px;height:220px;background:#1A1417;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;box-shadow:12px 12px 0 #FFF3E0;animation:lFloat 6s ease-in-out infinite;margin-top:14px">
 <div style="font:600 146px/.74 'Barlow Condensed',sans-serif;color:#FF6B1F;padding-top:.04em">US</div>
-<div style="display:grid;grid-template-columns:repeat(5,12px);gap:7px">
-<sc-for list="{{ logoDots }}" as="d" hint-placeholder-count="10">
-<div style="width:12px;height:12px;border-radius:50%;background:{{ d.bg }};transition:background .7s ease"></div>
-</sc-for>
-</div>
+<div ref="{{ dotsRef }}" style="display:grid;grid-template-columns:repeat(5,12px);gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div><div style="width:12px;height:12px;border-radius:50%;background:#3a3035"></div></div>
 </div>
 </div>
 
@@ -128,13 +124,23 @@ input::placeholder{color:#5e5358}
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { lit: 0, modal: false, email: '', senha: '', ver: false, lembrar: true, erro: '', shakeN: 0, ok: false, loading: false };
+  dotsRef = React.createRef();
+  state = { modal: false, email: '', senha: '', ver: false, lembrar: true, erro: '', shakeN: 0, ok: false, loading: false };
   componentDidMount() {
-    this.iv = setInterval(() => this.setState((s) => { let n; do { n = Math.floor(Math.random() * 10); } while (n === s.lit); return { lit: n }; }), 1500);
+    let last = -1;
+    const OFF = '#3a3035';
+    const ciclo = () => {
+      const box = this.dotsRef.current; if (!box || this.parado) return;
+      let n; do { n = Math.floor(Math.random() * 10); } while (n === last); last = n;
+      const c = n === 9 ? '#FFF3E0' : '#FF6B1F';
+      this.anim = box.children[n].animate([{ backgroundColor: OFF }, { backgroundColor: c, offset: 0.222 }, { backgroundColor: c, offset: 0.778 }, { backgroundColor: OFF }], { duration: 2700, easing: 'ease-in-out' });
+      this.anim.onfinish = () => { this.tNext = setTimeout(ciclo, 300); };
+    };
+    ciclo();
     this.onKey = (e) => { if (e.key === 'Escape') this.setState({ modal: false }); };
     window.addEventListener('keydown', this.onKey);
   }
-  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); clearInterval(this.iv); window.removeEventListener('keydown', this.onKey); }
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); this.parado = true; clearTimeout(this.tNext); this.anim && this.anim.cancel(); window.removeEventListener('keydown', this.onKey); }
   entrar = (e) => {
     e.preventDefault();
     const { email, senha } = this.state;
@@ -143,7 +149,7 @@ class Component extends DCLogic {
       return;
     }
     this.setState({ erro: '', loading: true });
-    this.t1 = setTimeout(() => this.setState({ ok: true, loading: false }), 700);
+    this.t1 = setTimeout(() => { this.parado = true; this.anim && this.anim.cancel(); const box = this.dotsRef.current; if (box) [...box.children].forEach((d, i) => d.animate([{ backgroundColor: '#3a3035' }, { backgroundColor: i === 9 ? '#FFF3E0' : '#FF6B1F' }], { duration: 300, delay: i * 50, fill: 'forwards' })); this.setState({ ok: true, loading: false }); }, 700);
     this.t2 = setTimeout(() => { location.href = './Painel US.dc.html'; }, 2400);
   };
   renderVals() {
@@ -158,7 +164,7 @@ class Component extends DCLogic {
       esqueci: (e) => { e.preventDefault(); this.setState({ modal: true }); },
       modal: s.modal, fechar: () => this.setState({ modal: false }), parar: (e) => e.stopPropagation(),
       dots: Array.from({ length: 10 }, (_, i) => ({ bg: i < n ? (i === 9 ? '#FFF3E0' : '#FF6B1F') : 'transparent', bd: i < n ? (i === 9 ? '#FFF3E0' : '#FF6B1F') : '#3a3035', anim: i === n - 1 ? 'lPop .3s ease-out' : 'none' })),
-      logoDots: Array.from({ length: 10 }, (_, i) => ({ bg: i === s.lit || s.ok ? (i === 9 ? '#FFF3E0' : '#FF6B1F') : '#3a3035' })),
+      dotsRef: this.dotsRef,
       temErro: !!s.erro, erro: s.erro,
       shake: s.shakeN ? (s.shakeN % 2 ? 'lShake .45s' : 'lShake .451s') : 'none',
       btnLabel: s.loading ? 'VERIFICANDO…' : s.ok ? 'BEM-VINDO' : 'ENTRAR NO QG',
