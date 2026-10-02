@@ -2,7 +2,7 @@
 
 > **Fim do dia 2026-10-01:** tudo pushado e no ar (migrations 0001–0011 rodadas em produção). Feito hoje: parte 4 em produção, relógio do FUTEBOL, permissões, molduras de câmera editáveis (+ etiqueta esquerda/direita), playlist ALERTAS YT, telas JOGO e REACT, Kick no chat, favicon/títulos, animação de gol (fonte `/gol`). O que falta (testes reais, kit OBS, cota do LivePix, trocar ALERTA_CHAVE) está em `PENDENCIAS.md`.
 
-> **2026-10-02 — ESCALAÇÃO no ar** (0012 rodada pelo usuário, merge na main, deploy conferido). Tela `/tela/escalacao`, painel (campos + editor de posições), cadastro de TIMES. Falta: cena no OBS e elencos de verdade. Tudo em `PENDENCIAS.md` (topo). Decisões do usuário: chat continua 440×800 no FUTEBOL/FILME (ignorar o 910/750 do `TELAS-NOVAS.md`, que ficou modificado e sem commit), câmeras 16:9. 448 testes.
+> **Fim do dia 2026-10-02:** tudo pushado e no ar (migrations 0001–0012 em produção, 474 testes, tag `bkp-2026-10-02`). Feito hoje: tela ESCALAÇÃO (lista/campo) + cadastro de TIMES (time digitado = nome do placar), relógio `mm:ss` no placar, FUTEBOL+ESCALAÇÃO num item só com modais, lances (gol/cartões/substituição) e confirmação padrão animada (`Confirmar.tsx`). Relatório completo: `docs/relatorios/2026-10-02.md`. Falta: cena ESCALAÇÃO no OBS, elencos de verdade, teste numa live. `TELAS-NOVAS.md` fica modificado e sem commit de propósito (chat continua 440×800).
 
 Painel web (Vite+React+TS+Supabase) para controlar overlays de OBS em tempo real. Spec original em `PROMPT-CLAUDE-CODE.md`. Referência visual em `referencia/`.
 
