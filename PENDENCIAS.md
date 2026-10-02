@@ -1,5 +1,66 @@
 # Pendências
 
+## ESCALAÇÃO (branch `escalacao`, 2026-10-02) — ESPERANDO A MIGRATION 0012
+
+**Não está na `main` nem no ar.** O painel novo lê as tabelas `times`/`jogadores`, que só existem depois da 0012.
+O Supabase CLI não está linkado nesta máquina, então a migration não foi aplicada. Ordem:
+
+1. Rodar a 0012 em produção. Pelo SQL Editor do Supabase (projeto `yupmxwirknqrdssyievb`): colar o conteúdo
+   inteiro de `supabase/migrations/0012_times.sql` e clicar **Run**. Ou pelo terminal, com a connection string
+   (Project Settings → Database):
+   `psql "postgresql://postgres:SENHA@db.yupmxwirknqrdssyievb.supabase.co:5432/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/0012_times.sql`
+   Conferir depois: `select nome, (select count(*) from jogadores j where j.time_id = t.id) from times t;` → 4 times, 11 cada.
+2. Merge: `git checkout main && git merge --ff-only escalacao && git push` (deploy automático na Vercel).
+3. OBS: cena nova **ESCALAÇÃO** com fonte Navegador 1920×1080 em
+   `https://painel-obs-unidade-secreta.vercel.app/tela/escalacao` (mesmas opções das outras: desmarcar
+   "Desligar fonte quando não visível" e "Atualizar ao ativar cena"). Por cima dela, as mesmas fontes da cena
+   FUTEBOL: câmeras (encaixar nas molduras), chat 440×800 em x=1420 y=150, e `/gol` no topo se quiser a animação.
+
+A 0012 só cria tabelas e funções novas: não mexe em `salas` nem em nada que as telas de hoje usam. As telas
+atuais não leem `times`. Dá pra rodar antes da live sem risco, e o merge pode ficar pra depois.
+
+**O que foi feito**
+- `/tela/escalacao`: LISTA e CAMPO, só casa / casa e visitante / só visitante, 2–6 câmeras. Placar (com o pulo
+  do gol), relógio, chat e letreiro são os componentes do FUTEBOL (`PlacarFutebol`, `ChatFutebol`, `FaixaTicker`).
+  Lógica portada da referência em `src/escalacao/layout.ts` (FORMACOES, linhas, camsLista, camsCampo, posições).
+- Painel → tela ESCALAÇÃO: LISTA|CAMPO, times, time e formação de cada lado em uso (22 formações), câmeras 2–6
+  (botões; o editor de molduras de sempre funciona por cima), EDITAR POSIÇÕES (arrasta as bolinhas na prévia),
+  RESETAR FORMAÇÃO. Botão TIMES no topo (e CADASTRO DE TIMES nos campos).
+- Cadastro de times (modal TIMES): criar/editar/excluir, técnico, elenco com número/nome, titular/reserva,
+  reordenar arrastando (ou ↑↓), contador 9/11, COLAR ELENCO. Grava o time inteiro no SALVAR (`salvar_time`).
+- Banco 0012: `times`, `jogadores` (cascade), leitura pública, escrita só da equipe via `salvar_time`/`excluir_time`
+  (anon sem EXECUTE), Realtime nas duas. Seed: BRASIL, CORINTHIANS, PALMEIRAS (**elencos de exemplo** da
+  referência, editar antes de usar) e ÍNDIA (JOGADOR 1…11, técnico A DEFINIR).
+- Testes: 316 → 448 (formações somam 10, linhas, câmeras dentro do palco/fora do chat e do letreiro em todos os
+  casos, bolinhas dentro do campo inclusive manuais nos limites, espelhamento, 11 titulares, painel e modal).
+  SQL: `supabase/testes/0012.sql`. Prints: `docs/prints/escalacao-lado-a-lado.png` (8 casos × referência,
+  `scripts/comparar-escalacao.mjs`), `painel-escalacao-{lista,campo,celular}.png`, `painel-times{,-celular}.png`.
+
+**Decisões tomadas sozinho (dá pra mudar)**
+- Chat da escalação = o do FUTEBOL (440×800, y=150), não o 440×910 da referência (pedido de 29/09 vale).
+- Câmeras sempre 16:9 (regra do projeto): mesma distribuição da referência, mas a caixa encaixa em 16:9
+  (na referência elas ficam mais quadradas). Ex.: lista só casa com 4 câmeras = 432×243.
+- Ziguezague: ±48 px com 1 time e ±34 com 2 (o `ESCALACAO.md`; a referência usava 46). As alas vão pra frente
+  e o resto alterna a partir delas (em linha de 6, os dois do meio também vão pra frente).
+- Visitante com os dois times em campo gira 180° (x e y): o lateral direito dele fica em cima, como num campo
+  de verdade. Na referência só o x era espelhado, então a ordem de cima pra baixo do visitante muda um pouco.
+- Posições manuais: 0–1 no campo inteiro, de quem ataca pra direita; com 2 times cada um usa a sua metade
+  (mesmo encolhimento do automático). A bolinha e o nome embaixo não saem do campo.
+- Trocar modo, times ou quantidade de câmeras volta as câmeras da escalação pro automático (`camsEscalacao: null`).
+- Escolher o time copia o nome pro placar (`timeA`/`timeB`), que continua editável na tela FUTEBOL.
+  Sem time escolhido, a coluna usa o nome do placar e fica sem jogadores.
+- Time com titulares ≠ 11 aparece desabilitado no select ("9/11 TITULARES").
+- Cadastro de times é um modal (botão TIMES no topo, como GALERA), não uma tela na lista de telas.
+- `cor` do time ficou no banco mas não é usada: casa é sempre laranja e visitante violeta.
+- ESCALAÇÃO entrou depois de FUTEBOL na lista: os atalhos de teclado do painel de FILME em diante subiram 1
+  (FILME agora é 5, …, FIM é 12, sem atalho).
+- Fundo igual ao do FUTEBOL (escuro com listras), como na referência.
+
+**Falta**
+- Rodar a 0012, merge, cena no OBS (acima).
+- Editar os elencos de exemplo de verdade no cadastro.
+- Conferir no OBS com as câmeras de verdade.
+
 ## Próximas funcionalidades
 
 ### Ajuste do relógio no FUTEBOL — no ar desde 2026-10-01

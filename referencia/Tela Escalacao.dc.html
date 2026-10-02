@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f0c0e}
+a{color:#FF6B1F}a:hover{color:#d4530f}
+@keyframes usBlink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes usMarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes usStripe{from{background-position:0 0}to{background-position:104px 0}}
+</style></helmet>
+<sc-for list="{{ turnos }}" as="tu" hint-placeholder-count="2">
+<section style="padding:48px;display:flex;flex-direction:column;gap:20px">
+<div style="font:400 40px/1 'Bungee',sans-serif;color:#FFF3E0">{{ tu.titulo }}</div>
+<div style="font:400 15px/1.5 'JetBrains Mono',monospace;color:#8a7f84;max-width:1100px">{{ tu.desc }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:40px">
+<sc-for list="{{ tu.boards }}" as="b" hint-placeholder-count="4">
+<div id="{{ b.id }}" style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="background:#FF6B1F;color:#1A1417;font:700 16px/1 'JetBrains Mono',monospace;padding:6px 10px">{{ b.id }}</div>
+<div style="font:700 15px/1 'JetBrains Mono',monospace;letter-spacing:.12em;color:#FFF3E0">{{ b.titulo }}</div>
+</div>
+<div style="width:864px;height:486px;overflow:hidden;outline:1px solid #3a3035">
+<div style="width:1920px;height:1080px;transform:scale(.45);transform-origin:0 0;position:relative;overflow:hidden;background:#1A1417">
+<div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,#1d171a 0 120px,#1A1417 120px 240px)"></div>
+<div style="position:absolute;left:60px;top:40px;width:1320px;height:110px;display:flex;align-items:stretch">
+<div style="width:180px;background:#FF6B1F;display:flex;align-items:center;justify-content:center;font:600 76px/1 'Barlow Condensed',sans-serif;color:#1A1417">US</div>
+<div style="flex:1;background:#FFF3E0;display:flex;align-items:center;justify-content:flex-end;padding:0 28px;font:700 60px/1 'Barlow Condensed',sans-serif;color:#1A1417;letter-spacing:.04em">{{ b.timeA }}</div>
+<div style="background:#1A1417;display:flex;align-items:center;gap:22px;padding:0 30px;box-shadow:inset 0 0 0 4px #FF6B1F">
+<div style="font:400 80px/1 'Bungee',sans-serif;color:#FF6B1F">{{ b.golsA }}</div>
+<div style="font:700 30px/1 'JetBrains Mono',monospace;color:#FFF3E0">×</div>
+<div style="font:400 80px/1 'Bungee',sans-serif;color:#FF6B1F">{{ b.golsB }}</div>
+</div>
+<div style="flex:1;background:#FFF3E0;display:flex;align-items:center;padding:0 28px;font:700 60px/1 'Barlow Condensed',sans-serif;color:#1A1417;letter-spacing:.04em">{{ b.timeB }}</div>
+<div style="width:180px;background:#8B6CF0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
+<div style="font:700 50px/1 'JetBrains Mono',monospace;color:#1A1417">67'</div>
+<div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:#1A1417;animation:usBlink 1s infinite"></div><div style="font:700 14px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#1A1417">2º TEMPO</div></div>
+</div>
+</div>
+<sc-if value="{{ b.isLista }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ b.colunas }}" as="t" hint-placeholder-count="1">
+<div style="position:absolute;left:{{ t.x }}px;top:190px;width:{{ t.w }}px;height:780px;background:#241d21;display:flex;flex-direction:column">
+<div style="background:{{ t.cor }};height:76px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 20px;flex-shrink:0">
+<div style="font:700 36px/1 'Barlow Condensed',sans-serif;letter-spacing:.02em;color:#1A1417;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.nome }}</div>
+<div style="font:700 20px/1 'JetBrains Mono',monospace;color:#1A1417;white-space:nowrap;flex-shrink:0">{{ t.esquema }}</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:16px 0">
+<sc-for list="{{ t.linhas }}" as="l" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ l }}" as="j" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:14px;height:42px;padding:0 20px">
+<div style="width:46px;height:38px;background:#1A1417;box-shadow:inset 0 0 0 2px {{ t.cor }};display:flex;align-items:center;justify-content:center;font:400 21px/1 'Bungee',sans-serif;color:{{ t.cor }};flex-shrink:0">{{ j.n }}</div>
+<div style="font:600 28px/1 'Barlow Condensed',sans-serif;letter-spacing:.03em;color:#FFF3E0;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ j.nome }}</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="height:58px;flex-shrink:0;border-top:2px solid #3a3035;display:flex;align-items:center;gap:12px;padding:0 20px">
+<div style="font:700 14px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:{{ t.cor }}">TÉC</div>
+<div style="font:600 26px/1 'Barlow Condensed',sans-serif;color:#FFF3E0;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.tecnico }}</div>
+</div>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ b.isCampo }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ b.faixas }}" as="f" hint-placeholder-count="1">
+<div style="position:absolute;left:{{ f.x }}px;top:172px;width:640px;height:40px;display:flex;align-items:center;gap:14px;justify-content:{{ f.just }}">
+<div style="width:16px;height:16px;background:{{ f.cor }};flex-shrink:0"></div>
+<div style="font:700 34px/1 'Barlow Condensed',sans-serif;letter-spacing:.04em;color:#FFF3E0;white-space:nowrap">{{ f.nome }}</div>
+<div style="font:700 18px/1 'JetBrains Mono',monospace;color:{{ f.cor }};white-space:nowrap">{{ f.esquema }}</div>
+<div style="font:700 14px/1 'JetBrains Mono',monospace;letter-spacing:.12em;color:#8a7f84;white-space:nowrap">TÉC {{ f.tecnico }}</div>
+</div>
+</sc-for>
+<div style="position:absolute;left:60px;top:222px;width:1320px;height:430px;background:repeating-linear-gradient(90deg,#1c2a21 0 110px,#19261e 110px 220px);overflow:hidden">
+<div style="position:absolute;inset:14px;border:3px solid rgba(255,243,224,.26)"></div>
+<div style="position:absolute;left:659px;top:14px;bottom:14px;width:3px;background:rgba(255,243,224,.26)"></div>
+<div style="position:absolute;left:600px;top:155px;width:114px;height:114px;border-radius:50%;border:3px solid rgba(255,243,224,.26)"></div>
+<div style="position:absolute;left:14px;top:100px;width:170px;height:230px;border:3px solid rgba(255,243,224,.26);border-left:none"></div>
+<div style="position:absolute;right:14px;top:100px;width:170px;height:230px;border:3px solid rgba(255,243,224,.26);border-right:none"></div>
+<div style="position:absolute;left:14px;top:160px;width:60px;height:110px;border:3px solid rgba(255,243,224,.26);border-left:none"></div>
+<div style="position:absolute;right:14px;top:160px;width:60px;height:110px;border:3px solid rgba(255,243,224,.26);border-right:none"></div>
+<sc-for list="{{ b.tokens }}" as="k" hint-placeholder-count="11">
+<div style="position:absolute;left:{{ k.x }}px;top:{{ k.y }}px;width:150px;display:flex;flex-direction:column;align-items:center;gap:4px">
+<div style="width:46px;height:46px;border-radius:50%;background:{{ k.cor }};box-shadow:0 0 0 3px #1A1417;display:flex;align-items:center;justify-content:center;font:400 20px/1 'Bungee',sans-serif;color:#1A1417">{{ k.n }}</div>
+<div style="max-width:{{ k.pw }}px;box-sizing:border-box;background:#1A1417;padding:3px 8px;font:600 21px/1 'Barlow Condensed',sans-serif;letter-spacing:.03em;color:#FFF3E0;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.nome }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-for list="{{ b.cams }}" as="c" hint-placeholder-count="4">
+<dc-import name="Slot Camera" nome="{{ c.nome }}" w="{{ c.w }}" h="{{ c.h }}" style="position:absolute;left:{{ c.x }}px;top:{{ c.y }}px;width:{{ c.w }}px;height:{{ c.h }}px" hint-size="300px,200px"></dc-import>
+</sc-for>
+<div style="position:absolute;left:1420px;top:40px;width:440px;height:910px;box-shadow:0 0 0 4px #8B6CF0;background:#241d21;display:flex;align-items:center;justify-content:center;font:700 16px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#4a3f44">CHAT · 440×910</div>
+<div style="position:absolute;left:0;top:1000px;width:1920px;height:56px;background:#FF6B1F;display:flex;align-items:center;overflow:hidden">
+<div style="flex-shrink:0;height:56px;width:180px;background:repeating-linear-gradient(-45deg,#1A1417 0 14px,#FF6B1F 14px 28px);background-size:56px 56px;animation:usStripe 1s linear infinite"></div>
+<div style="flex:1;overflow:hidden;display:flex;align-items:center;height:56px"><div style="display:flex;white-space:nowrap;font:700 32px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;color:#1A1417;animation:usMarq 30s linear infinite;width:max-content"><sc-for list="{{ ticker }}" as="tk" hint-placeholder-count="8"><span style="white-space:nowrap">{{ tk }}<i style="display:inline-block;width:.3em;height:.3em;border-radius:50%;background:currentColor;margin:0 .42em;vertical-align:.2em"></i></span></sc-for></div></div>
+</div>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-for>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;modo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Lista&quot;,&quot;Campo&quot;],&quot;default&quot;:&quot;Campo&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;times&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Só casa&quot;,&quot;Casa e visitante&quot;,&quot;Só visitante&quot;],&quot;default&quot;:&quot;Só casa&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;formacaoCasa&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;4-4-2&quot;,&quot;4-3-3&quot;,&quot;4-2-3-1&quot;,&quot;4-1-4-1&quot;,&quot;4-5-1&quot;,&quot;4-4-1-1&quot;,&quot;4-3-1-2&quot;,&quot;4-1-2-1-2&quot;,&quot;4-2-2-2&quot;,&quot;4-3-2-1&quot;,&quot;4-2-4&quot;,&quot;4-1-3-2&quot;,&quot;3-5-2&quot;,&quot;3-4-3&quot;,&quot;3-4-2-1&quot;,&quot;3-4-1-2&quot;,&quot;3-1-4-2&quot;,&quot;3-6-1&quot;,&quot;5-3-2&quot;,&quot;5-4-1&quot;,&quot;5-2-3&quot;,&quot;5-2-1-2&quot;],&quot;default&quot;:&quot;4-3-3&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;formacaoVisitante&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;4-4-2&quot;,&quot;4-3-3&quot;,&quot;4-2-3-1&quot;,&quot;4-1-4-1&quot;,&quot;4-5-1&quot;,&quot;4-4-1-1&quot;,&quot;4-3-1-2&quot;,&quot;4-1-2-1-2&quot;,&quot;4-2-2-2&quot;,&quot;4-3-2-1&quot;,&quot;4-2-4&quot;,&quot;4-1-3-2&quot;,&quot;3-5-2&quot;,&quot;3-4-3&quot;,&quot;3-4-2-1&quot;,&quot;3-4-1-2&quot;,&quot;3-1-4-2&quot;,&quot;3-6-1&quot;,&quot;5-3-2&quot;,&quot;5-4-1&quot;,&quot;5-2-3&quot;,&quot;5-2-1-2&quot;],&quot;default&quot;:&quot;4-2-3-1&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;cameras&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:2,&quot;max&quot;:6,&quot;step&quot;:1,&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;}}">
+const FORMACOES = {
+  '4-4-2':[4,4,2],'4-3-3':[4,3,3],'4-2-3-1':[4,2,3,1],'4-1-4-1':[4,1,4,1],'4-5-1':[4,5,1],'4-4-1-1':[4,4,1,1],
+  '4-3-1-2':[4,3,1,2],'4-1-2-1-2':[4,1,2,1,2],'4-2-2-2':[4,2,2,2],'4-3-2-1':[4,3,2,1],'4-2-4':[4,2,4],'4-1-3-2':[4,1,3,2],
+  '3-5-2':[3,5,2],'3-4-3':[3,4,3],'3-4-2-1':[3,4,2,1],'3-4-1-2':[3,4,1,2],'3-1-4-2':[3,1,4,2],'3-6-1':[3,6,1],
+  '5-3-2':[5,3,2],'5-4-1':[5,4,1],'5-2-3':[5,2,3],'5-2-1-2':[5,2,1,2],
+};
+const J = (s) => s.split(',').map(x => { const [n, ...r] = x.trim().split(' '); return { n, nome: r.join(' ') }; });
+const TIMES = {
+  BRASIL: { tecnico: 'Carlo Ancelotti', elenco: J('1 Alisson,2 Vanderson,4 Marquinhos,3 Gabriel,6 Alex Sandro,5 Casemiro,8 Bruno G.,20 Paquetá,7 Raphinha,10 Rodrygo,11 Vini Jr.') },
+  CORINTHIANS: { tecnico: 'Dorival Júnior', elenco: J('1 Hugo Souza,2 Matheuzinho,13 G. Henrique,5 A. Ramalho,46 Hugo,7 Raniele,70 J. Martínez,19 Carrillo,10 Garro,94 Memphis,9 Yuri Alberto') },
+  PALMEIRAS: { tecnico: 'Abel Ferreira', elenco: J('21 Weverton,4 Giay,15 G. Gómez,26 Murilo,22 Piquerez,5 A. Moreno,8 Andreas,23 Veiga,17 F. Torres,9 Vitor Roque,18 Maurício') },
+};
+const NOMES = ['CAIO', 'LIPE', 'DUDA', 'TETÊ', 'GUI', 'NANDO'];
+const TICKER = ['ESCALAÇÃO CONFIRMADA', 'MANDA O PIX PELO QR CODE', 'COMENTA SEU PALPITE NO CHAT', 'INSCREVA-SE NA UNIDADE SECRETA'];
+const COR = { casa: '#FF6B1F', visitante: '#8B6CF0' };
+
+const linhas = (elenco, f) => { const out = [[elenco[0]]]; let i = 1; for (const c of FORMACOES[f]) { out.push(elenco.slice(i, i + c)); i += c; } return out; };
+
+function camsLista(n, x0, W) {
+  const cols = n <= 2 ? 1 : W > 800 && n > 4 ? 3 : 2;
+  const rows = Math.ceil(n / cols), gx = 36, gy = 64, label = 50, y0 = 190, H = 780;
+  const cw = Math.floor((W - (cols - 1) * gx) / cols);
+  let ch = Math.floor((H - label - (rows - 1) * gy) / rows);
+  ch = Math.min(ch, Math.round(cw * (cols === 1 ? .5625 : 1)));
+  const top = y0 + Math.floor((H - (rows * ch + (rows - 1) * gy + label)) / 2);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const r = Math.floor(i / cols), inRow = Math.min(cols, n - r * cols), c = i % cols;
+    const rowW = inRow * cw + (inRow - 1) * gx;
+    out.push({ nome: NOMES[i], w: cw, h: ch, x: x0 + Math.floor((W - rowW) / 2) + c * (cw + gx), y: top + r * (ch + gy) });
+  }
+  return out;
+}
+function camsCampo(n) {
+  const gap = 24, W = 1320;
+  let cw = Math.floor((W - (n - 1) * gap) / n);
+  const ch = Math.min(210, cw);
+  cw = Math.min(cw, Math.round(ch * 16 / 9));
+  const x0 = 60 + Math.floor((W - (n * cw + (n - 1) * gap)) / 2);
+  return Array.from({ length: n }, (_, i) => ({ nome: NOMES[i], w: cw, h: ch, x: x0 + i * (cw + gap), y: 690 }));
+}
+function tokens(time, f, lado, ambos, cor) {
+  const FW = 1320, FH = 430, ls = linhas(time.elenco, f), out = [], nL = ls.length - 1;
+  ls.forEach((linha, li) => {
+    let x = li === 0 ? .05 : .24 + (nL === 1 ? 0 : (li - 1) / (nL - 1)) * .68;
+    if (ambos) x = .02 + x * .44;
+    if (lado === 'visitante') x = 1 - x;
+    const ordem = lado === 'visitante' ? linha : [...linha].reverse();
+    const k = ordem.length, zig = k >= 5 ? (ambos ? 46 : 48) : 0, pw = ambos ? 112 : 150;
+    ordem.forEach((j, i) => {
+      const y = 30 + ((i + .5) / k) * (FH - 60);
+      const dx = zig ? (i % 2 === 0 ? zig : -zig) * (lado === 'visitante' ? -1 : 1) : 0;
+      out.push({ ...j, cor, pw, x: Math.round(x * FW - 75 + dx), y: Math.round(y - 23) });
+    });
+  });
+  return out;
+}
+
+function board(id, cfg) {
+  const { modo, times, fA, fB, n, jogo } = cfg;
+  const [nA, nB, gA, gB] = jogo;
+  const A = { ...TIMES[nA], nome: nA, esquema: fA, cor: COR.casa, lado: 'casa' };
+  const B = { ...TIMES[nB], nome: nB, esquema: fB, cor: COR.visitante, lado: 'visitante' };
+  const ambos = times === 'ambos';
+  const lista = ambos ? [A, B] : times === 'casa' ? [A] : [B];
+  const b = { id, timeA: nA, timeB: nB, golsA: gA, golsB: gB, isLista: modo === 'lista', isCampo: modo === 'campo', colunas: [], faixas: [], tokens: [] };
+  const rot = { casa: 'SÓ CASA', visitante: 'SÓ VISITANTE', ambos: 'CASA + VISITANTE' }[times];
+  b.titulo = `${modo.toUpperCase()} · ${rot} · ${n} CÂMERAS`;
+  if (b.isLista) {
+    b.colunas = lista.map((t, i) => ({ ...t, linhas: linhas(t.elenco, t.esquema), x: ambos && i === 1 ? 1050 : 60, w: ambos ? 330 : 380 }));
+    b.cams = ambos ? camsLista(n, 426, 588) : camsLista(n, 476, 904);
+  } else {
+    b.faixas = lista.map(t => ({ ...t, x: ambos && t.lado === 'visitante' ? 740 : 60, just: ambos && t.lado === 'visitante' ? 'flex-end' : 'flex-start' }));
+    b.tokens = lista.flatMap(t => tokens(t, t.esquema, ambos ? t.lado : 'casa', ambos, t.cor));
+    b.cams = camsCampo(n);
+  }
+  return b;
+}
+
+const BR = ['BRASIL', 'ÍNDIA', 2, 0], DERBI = ['CORINTHIANS', 'PALMEIRAS', 1, 1];
+
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const modo = (p.modo ?? 'Campo').toLowerCase();
+    const times = { 'Só casa': 'casa', 'Casa e visitante': 'ambos', 'Só visitante': 'visitante' }[p.times ?? 'Só casa'] || 'casa';
+    const n = Math.max(2, Math.min(6, p.cameras ?? 4));
+    const fA = FORMACOES[p.formacaoCasa] ? p.formacaoCasa : '4-3-3';
+    const fB = FORMACOES[p.formacaoVisitante] ? p.formacaoVisitante : '4-2-3-1';
+    return {
+      turnos: [
+        { titulo: 'ESCALAÇÃO · CAMPO', desc: 'Câmeras embaixo, campo em cima com a formação. 2a muda pelos Tweaks (modo, times, formações, câmeras).', boards: [
+          board('2a', { modo, times, fA, fB, n, jogo: times === 'ambos' ? DERBI : BR }),
+          board('2b', { modo: 'campo', times: 'ambos', fA: '4-2-3-1', fB: '3-5-2', n: 6, jogo: DERBI }),
+          board('2c', { modo: 'campo', times: 'visitante', fA: '4-4-2', fB: '5-3-2', n: 5, jogo: DERBI }),
+          board('2d', { modo: 'lista', times: 'visitante', fA: '4-4-2', fB: '4-3-3', n: 4, jogo: DERBI }),
+        ] },
+        { titulo: 'ESCALAÇÃO · LISTA', desc: 'Variação da cena FUTEBOL. A enquete sai pra dar espaço; placar, chat e ticker ficam iguais.', boards: [
+          board('1a', { modo: 'lista', times: 'casa', fA: '4-3-3', fB: '4-3-3', n: 4, jogo: BR }),
+          board('1b', { modo: 'lista', times: 'casa', fA: '4-3-3', fB: '4-3-3', n: 6, jogo: BR }),
+          board('1c', { modo: 'lista', times: 'ambos', fA: '4-2-3-1', fB: '4-3-3', n: 4, jogo: DERBI }),
+          board('1d', { modo: 'lista', times: 'ambos', fA: '4-2-3-1', fB: '4-3-3', n: 6, jogo: DERBI }),
+        ] },
+      ],
+      ticker: [...TICKER, ...TICKER],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ Painel web para controlar os overlays de OBS da Unidade Secreta em tempo real, d
 
 ## Como funciona
 
-- `/tela/:id` — as 9 telas (`inicio`, `host`, `futebol`, `filme`, `mesa`, `intervalo`, `lower`, `tecnico`, `fim`). É a URL que entra na fonte Navegador do OBS. Fundo transparente.
+- `/tela/:id` — as telas (`inicio`, `host`, `futebol`, `escalacao`, `filme`, `mesa`, `jogo`, `react`, `intervalo`, `lower`, `tecnico`, `fim`). É a URL que entra na fonte Navegador do OBS. Fundo transparente.
 - `/chat?sessao=ID` — o chat (YouTube, Twitch e TikTok juntos, via Social Stream Ninja), fonte Navegador acima das telas. Fundo transparente. `/chat?teste=1` abre a página de teste com mensagens fictícias.
 - `/alerta?sessao=ID&chave=K` — alerta de superchat, super sticker e membro novo do YouTube, por cima de tudo (o de PIX é o widget do LivePix). `/alerta?teste=1` abre a página de teste.
 - `/painel` — onde a galera edita as infos das telas, os apoios (PIX, superchat, membro) e a galera (precisa de login). A troca de cena é no OBS.
@@ -38,7 +38,7 @@ Depois crie o login: Authentication → Users → **Add user → Create new user
 
 ## 4. Configurar no OBS
 
-1. Crie uma cena para cada tela e adicione uma fonte **Navegador** com `https://SEU-DOMINIO.vercel.app/tela/ID` (troque ID por `inicio`, `host`, `futebol`, `filme`, `mesa`, `intervalo`, `lower`, `tecnico` ou `fim`).
+1. Crie uma cena para cada tela e adicione uma fonte **Navegador** com `https://SEU-DOMINIO.vercel.app/tela/ID` (troque ID por `inicio`, `host`, `futebol`, `escalacao`, `filme`, `mesa`, `jogo`, `react`, `intervalo`, `lower`, `tecnico` ou `fim`).
 2. Largura 1920, altura 1080. Deixe **desmarcado** "Atualizar navegador quando a cena ficar ativa": o que muda no painel chega sozinho, e os relógios seguem a hora do servidor (abrir a fonte no meio da contagem mostra o mesmo tempo das outras).
 3. Câmeras, chat e QR code do PIX entram como fontes **acima** da tela, encaixadas nas molduras. No OBS as molduras aparecem vazias (o texto "CÂMERA · 928×522" só aparece na prévia do painel). Tamanhos e posições (em 1920×1080):
 
@@ -103,6 +103,13 @@ Tudo cai na tabela `apoios` e aparece na lista **APOIOS** do painel (× para nã
 2. No OBS, fonte Navegador `https://SEU-DOMINIO.vercel.app/alerta?sessao=ID&chave=K` (ID do SSN e a `ALERTA_CHAVE`), 1920×1080, no topo das cenas.
 3. Um alerta por vez (0,5 s entrando, 6 s na tela, 0,5 s saindo). No primeiro da fila o LivePix é **pausado**, e quando a fila acaba é **retomado**. Se a equipe já tinha pausado o LivePix, o alerta não mexe; se alguém pausar no meio, ele fica pausado. Sem `chave=` na URL, o alerta toca mas não pausa o LivePix.
 4. Não mostre essa URL na live (tem o ID do chat e a chave).
+
+## 4.4 Escalação e cadastro de times
+
+Precisa da migration `0012_times.sql` (tabelas `times` e `jogadores`, já com 4 times de exemplo). No painel, o
+botão **TIMES** abre o cadastro (elenco, titulares, COLAR ELENCO no formato `numero nome`, uma linha por
+jogador). Só time com exatamente 11 titulares pode ser escolhido na tela **ESCALAÇÃO**. No OBS, a cena
+ESCALAÇÃO usa `/tela/escalacao` (1920×1080) com as mesmas fontes de câmera, chat e `/gol` da cena FUTEBOL.
 
 ## 5. Convidar o resto da galera
 
