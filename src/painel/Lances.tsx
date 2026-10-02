@@ -18,6 +18,7 @@ import {
 } from '../escalacao/lances';
 import { COR_AMARELO, COR_VERMELHO, SeloCartao, SeloGol, SeloSub } from '../escalacao/Selos';
 import { Modal } from './Modal';
+import { useConfirmar } from './Confirmar';
 
 type Live = ReturnType<typeof useLive>;
 
@@ -36,14 +37,35 @@ export function Lances({ live }: { live: Live }) {
   const [tipo, setTipo] = useState<TipoLance | null>(null);
   const fechar = useCallback(() => setTipo(null), []);
   const lances = sanitizarLances(estado.escLances);
+  const confirmar = useConfirmar();
 
-  function desfazer(l: Lance) {
+  async function desfazer(l: Lance) {
     if (l.tipo === 'gol') {
       const time = l.lado === 'casa' ? estado.timeA : estado.timeB;
-      if (window.confirm(`Tirar esse gol? Também tira 1 do placar do ${time}.`)) live.gol(l.lado === 'casa' ? 'A' : 'B', -1);
-      else return;
+      const ok = await confirmar({
+        titulo: 'TIRAR ESSE GOL?',
+        texto: (
+          <>
+            <b>{textoLance(l)}</b> sai da lista e o placar do <b>{time}</b> perde 1.
+          </>
+        ),
+        sim: 'TIRAR GOL',
+        tom: 'perigo',
+      });
+      if (!ok) return;
+      live.gol(l.lado === 'casa' ? 'A' : 'B', -1);
     }
     salvar({ escLances: lances.filter((x) => x.id !== l.id) });
+  }
+
+  async function limpar() {
+    const ok = await confirmar({
+      titulo: 'LIMPAR LANCES?',
+      texto: 'Todos os gols, cartões e substituições somem da escalação (novo jogo). O placar não muda.',
+      sim: 'LIMPAR',
+      tom: 'perigo',
+    });
+    if (ok) salvar({ escLances: [] });
   }
 
   return (
@@ -77,7 +99,7 @@ export function Lances({ live }: { live: Live }) {
           <button
             type="button"
             className="p-botao-contorno p-lances__limpar"
-            onClick={() => window.confirm('Limpar todos os lances (novo jogo)? O placar não muda.') && salvar({ escLances: [] })}
+            onClick={limpar}
           >
             LIMPAR LANCES
           </button>
@@ -105,6 +127,7 @@ function ModalLance({ tipo, live, aoFechar }: { tipo: TipoLance; live: Live; aoF
   // os dois times sempre (dá pra registrar lance de quem não está na escalação)
   const escalados = timesEscalados({ ...estado, escTimes: 'ambos' }, times);
   const lances = sanitizarLances(estado.escLances);
+  const confirmar = useConfirmar();
 
   function registrar(e: Escolha, entra?: Pessoa) {
     const agora = Date.now() + offset;
@@ -125,9 +148,34 @@ function ModalLance({ tipo, live, aoFechar }: { tipo: TipoLance; live: Live; aoF
     aoFechar();
   }
 
-  function escolher(e: Escolha) {
-    if (tipo === 'sub') setSaindo(e);
-    else registrar(e);
+  async function escolher(e: Escolha) {
+    if (tipo === 'sub') return setSaindo(e);
+    const time = e.lado === 'casa' ? estado.timeA : estado.timeB;
+    const quem = (
+      <b>
+        {e.pessoa.numero} {e.pessoa.nome.toUpperCase()}
+      </b>
+    );
+    // gol e vermelho mexem no jogo (placar, expulsão): confirma antes
+    if (tipo === 'gol') {
+      const ok = await confirmar({
+        titulo: `GOL DO ${time || 'TIME'}?`,
+        texto: somar ? <>Gol de {quem}. Soma 1 no placar e toca a animação.</> : <>Gol de {quem}. O placar não muda.</>,
+        sim: 'É GOL!',
+        tom: 'gol',
+      });
+      if (!ok) return;
+    }
+    if (tipo === 'vermelho') {
+      const ok = await confirmar({
+        titulo: 'CARTÃO VERMELHO?',
+        texto: <>{quem} ({time}) é expulso e fica apagado na escalação.</>,
+        sim: 'EXPULSAR',
+        tom: 'cartao',
+      });
+      if (!ok) return;
+    }
+    registrar(e);
   }
 
   const minuto = estado.clockRodando || Number(estado.clockAcumulado) ? `${minutoDoJogo(segundosJogo(estado, Date.now() + offset))}'` : 'SEM RELÓGIO';

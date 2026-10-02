@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render as renderCru, screen, within } from '@testing-library/react';
 import { ESTADO_PADRAO, type EstadoLive } from '../live/tipos';
 import { TIMES_EXEMPLO } from '../escalacao/exemplo';
 import type { Time } from '../escalacao/times';
@@ -20,6 +20,11 @@ import { ArrastarJogadores } from './ArrastarJogadores';
 import { TelaEscalacao, timesEscalados } from '../telas/TelaEscalacao';
 import { centrosNoCampo, CAMPO } from '../escalacao/layout';
 import { Lances } from './Lances';
+import { ConfirmarProvider } from './Confirmar';
+
+// tudo dentro do provider da confirmação, como no painel
+const render = (ui: React.ReactElement) => renderCru(<ConfirmarProvider>{ui}</ConfirmarProvider>, { wrapper: undefined });
+const confirmacao = () => screen.findByRole('alertdialog');
 import type { Lance } from '../escalacao/lances';
 
 function live(extra: Partial<EstadoLive> = {}) {
@@ -91,41 +96,47 @@ describe('campos da ESCALAÇÃO', () => {
     expect(screen.getByText('ELENCO COM 9/11 TITULARES')).toBeInTheDocument();
   });
 
-  it('formação: todas no select; trocar com posição manual pede confirmação e reseta', () => {
+  it('formação: todas no select; trocar com posição manual pede confirmação e reseta', async () => {
     const pos = Array.from({ length: 11 }, () => ({ x: 0.5, y: 0.5 }));
     const l = live({ escModo: 'campo', escPosCasa: pos });
     render(<CamposEscalacao live={l as never} {...opcoes()} />);
     const sel = screen.getByLabelText('FORMAÇÃO CASA');
     expect(within(sel).getAllByRole('option')).toHaveLength(22);
     expect(within(sel).getByText('4-1-2-1-2 (LOSANGO)')).toBeInTheDocument();
-    const confirmar = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     fireEvent.change(sel, { target: { value: '3-5-2' } });
+    fireEvent.click(within(await confirmacao()).getByRole('button', { name: 'CANCELAR' }));
+    await vi.waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
     expect(l.salvar).not.toHaveBeenCalled();
     fireEvent.change(sel, { target: { value: '3-5-2' } });
-    expect(confirmar).toHaveBeenCalledTimes(2);
-    expect(l.salvar).toHaveBeenCalledWith({ escFormCasa: '3-5-2', escPosCasa: null });
+    const caixa = await confirmacao();
+    expect(caixa.textContent).toContain('TROCAR FORMAÇÃO?');
+    fireEvent.click(within(caixa).getByRole('button', { name: 'TROCAR' }));
+    await vi.waitFor(() => expect(l.salvar).toHaveBeenCalledWith({ escFormCasa: '3-5-2', escPosCasa: null }));
   });
 
-  it('sem posição manual troca a formação direto', () => {
+  it('sem posição manual troca a formação direto', async () => {
     const l = live();
-    const confirmar = vi.spyOn(window, 'confirm');
     render(<CamposEscalacao live={l as never} {...opcoes()} />);
     fireEvent.change(screen.getByLabelText('FORMAÇÃO CASA'), { target: { value: '5-4-1' } });
-    expect(confirmar).not.toHaveBeenCalled();
-    expect(l.salvar).toHaveBeenCalledWith({ escFormCasa: '5-4-1', escPosCasa: null });
+    await vi.waitFor(() => expect(l.salvar).toHaveBeenCalledWith({ escFormCasa: '5-4-1', escPosCasa: null }));
+    expect(screen.queryByRole('alertdialog')).toBeNull();
   });
 
-  it('editor de posições e RESETAR FORMAÇÃO só no CAMPO', () => {
+  it('editor de posições e RESETAR FORMAÇÃO só no CAMPO', async () => {
     const o = opcoes();
     const { rerender } = render(<CamposTela tela="futebol" live={live() as never} escalacao={o} />);
     expect(screen.queryByText('EDITAR POSIÇÕES')).toBeNull();
     const l = live({ escModo: 'campo', escTimes: 'ambos', escPosVisit: Array.from({ length: 11 }, () => ({ x: 0.5, y: 0.5 })) });
-    rerender(<CamposTela tela="futebol" live={l as never} escalacao={o} />);
+    rerender(<ConfirmarProvider><CamposTela tela="futebol" live={l as never} escalacao={o} /></ConfirmarProvider>);
     fireEvent.click(screen.getByText('EDITAR POSIÇÕES'));
     expect(o.aoEditarPosicoes).toHaveBeenCalledWith(true);
     expect((screen.getByText('RESETAR FORMAÇÃO · CASA') as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByText('RESETAR FORMAÇÃO · VISITANTE'));
-    expect(l.salvar).toHaveBeenCalledWith({ escPosVisit: null });
+    const caixa = await confirmacao();
+    expect(caixa.textContent).toContain('RESETAR FORMAÇÃO?');
+    expect(l.salvar).not.toHaveBeenCalled();
+    fireEvent.click(within(caixa).getByRole('button', { name: 'RESETAR' }));
+    await vi.waitFor(() => expect(l.salvar).toHaveBeenCalledWith({ escPosVisit: null }));
   });
 });
 
@@ -154,7 +165,7 @@ describe('FUTEBOL com a escalação junto', () => {
   it('câmeras seguem a cena da prévia', () => {
     const { rerender } = render(<CamposTela tela="futebol" live={live() as never} escalacao={opcoes('futebol')} />);
     expect(screen.getByRole('button', { name: '1 CÂMERAS' })).toBeInTheDocument();
-    rerender(<CamposTela tela="futebol" live={live() as never} escalacao={opcoes('escalacao')} />);
+    rerender(<ConfirmarProvider><CamposTela tela="futebol" live={live() as never} escalacao={opcoes('escalacao')} /></ConfirmarProvider>);
     expect(screen.queryByRole('button', { name: '1 CÂMERAS' })).toBeNull();
     expect(screen.getByRole('button', { name: '6 CÂMERAS' })).toBeInTheDocument();
   });
@@ -236,16 +247,18 @@ describe('tela ESCALAÇÃO', () => {
 });
 
 describe('cadastro de TIMES', () => {
-  it('lista os times com o contador de titulares e abre o elenco', () => {
+  it('lista os times com o contador de titulares e abre o elenco', async () => {
     render(<ModalTimes aoFechar={vi.fn()} />);
     fireEvent.click(screen.getByText('BRASIL'));
+    await screen.findByLabelText('NOME 1');
     expect(screen.getByLabelText('TITULARES').textContent).toBe('11/11 TITULARES');
     expect((screen.getByLabelText('NOME 1') as HTMLInputElement).value).toBe('Alisson');
   });
 
-  it('desmarcar titular mostra 10/11 e não deixa marcar o 12º', () => {
+  it('desmarcar titular mostra 10/11 e não deixa marcar o 12º', async () => {
     render(<ModalTimes aoFechar={vi.fn()} />);
     fireEvent.click(screen.getByText('BRASIL'));
+    await screen.findByLabelText('NOME 1');
     fireEvent.click(screen.getByText('+ JOGADOR'));
     const botoes = screen.getAllByRole('button', { name: /TITULAR|RESERVA/ });
     expect((botoes[11] as HTMLButtonElement).disabled).toBe(true);
@@ -256,6 +269,7 @@ describe('cadastro de TIMES', () => {
   it('COLAR ELENCO troca o elenco e SALVAR manda o time inteiro', async () => {
     render(<ModalTimes aoFechar={vi.fn()} />);
     fireEvent.click(screen.getByText('+ NOVO TIME'));
+    await screen.findByLabelText('NOME');
     fireEvent.change(screen.getByLabelText('NOME'), { target: { value: 'santos' } });
     fireEvent.change(screen.getByLabelText('TÉCNICO'), { target: { value: 'Fulano' } });
     fireEvent.click(screen.getByText('COLAR ELENCO'));
@@ -273,21 +287,22 @@ describe('cadastro de TIMES', () => {
     expect(t.jogadores.filter((j) => j.titular)).toHaveLength(11);
   });
 
-  it('reordenar com as setas muda a ordem dos titulares', () => {
+  it('reordenar com as setas muda a ordem dos titulares', async () => {
     render(<ModalTimes aoFechar={vi.fn()} />);
     fireEvent.click(screen.getByText('BRASIL'));
+    await screen.findByLabelText('NOME 1');
     fireEvent.click(screen.getByLabelText('Descer Alisson'));
     expect((screen.getByLabelText('NOME 1') as HTMLInputElement).value).toBe('Vanderson');
     expect((screen.getByLabelText('NOME 2') as HTMLInputElement).value).toBe('Alisson');
   });
 
-  it('aberto pela escalação com nome novo: time novo já preenchido e pronto pra salvar', () => {
+  it('aberto pela escalação com nome novo: time novo já preenchido e pronto pra salvar', async () => {
     render(<ModalTimes aoFechar={vi.fn()} abrirNome="flamengo" />);
     expect((screen.getByLabelText('NOME') as HTMLInputElement).value).toBe('FLAMENGO');
     expect((screen.getByText('SALVAR') as HTMLButtonElement).disabled).toBe(false);
   });
 
-  it('aberto pela escalação com nome cadastrado: abre o elenco dele', () => {
+  it('aberto pela escalação com nome cadastrado: abre o elenco dele', async () => {
     render(<ModalTimes aoFechar={vi.fn()} abrirNome="Palmeiras" />);
     expect((screen.getByLabelText('NOME 1') as HTMLInputElement).value).toBe('Weverton');
   });
@@ -295,6 +310,7 @@ describe('cadastro de TIMES', () => {
   it('não salva sem nome', async () => {
     render(<ModalTimes aoFechar={vi.fn()} />);
     fireEvent.click(screen.getByText('+ NOVO TIME'));
+    await screen.findByLabelText('NOME');
     fireEvent.change(screen.getByLabelText('TÉCNICO'), { target: { value: 'x' } });
     fireEvent.click(screen.getByText('SALVAR'));
     expect(screen.getByRole('alert').textContent).toMatch(/nome/);
@@ -306,26 +322,35 @@ describe('lances', () => {
   const base = { timeA: 'BRASIL', timeB: 'PALMEIRAS', clockAcumulado: 66 * 60 + 10 };
   const ultimo = (f: ReturnType<typeof vi.fn>) => f.mock.calls.at(-1)![0].escLances as Lance[];
 
-  it('GOL: escolhe quem fez, grava o lance com o minuto e soma no placar', () => {
+  it('GOL: escolhe quem fez, confirma no alerta, grava o lance com o minuto e soma no placar', async () => {
     const l = live(base);
     render(<Lances live={l as never} />);
     fireEvent.click(screen.getByRole('button', { name: /^GOL$/ }));
     const modal = screen.getByRole('dialog', { name: 'GOL' });
     expect(within(modal).getByText("67'")).toBeInTheDocument();
     fireEvent.click(within(modal).getByRole('button', { name: /11\s*Vini Jr\./ }));
+    const caixa = await confirmacao();
+    expect(caixa.textContent).toContain('GOL DO BRASIL?');
+    expect(l.salvar).not.toHaveBeenCalled();
+    fireEvent.click(within(caixa).getByRole('button', { name: 'É GOL!' }));
+    await vi.waitFor(() => expect(l.salvar).toHaveBeenCalled());
     const [lance] = ultimo(l.salvar);
     expect(lance).toMatchObject({ tipo: 'gol', lado: 'casa', slot: 10, numero: 11, nome: 'Vini Jr.', minuto: 67 });
     expect(l.gol).toHaveBeenCalledWith('A', 1);
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('GOL sem somar no placar; jogador sem cadastro pelo OUTRO JOGADOR', () => {
+  it('GOL sem somar no placar; jogador sem cadastro pelo OUTRO JOGADOR', async () => {
     const l = live({ ...base, timeB: 'FLAMENGO' });
     render(<Lances live={l as never} />);
     fireEvent.click(screen.getByRole('button', { name: /^GOL$/ }));
     fireEvent.click(screen.getByRole('button', { name: /SOMA 1 NO PLACAR/ }));
     fireEvent.change(screen.getByLabelText('OUTRO JOGADOR · FLAMENGO'), { target: { value: '9 Pedro' } });
     fireEvent.click(screen.getAllByRole('button', { name: 'OK' })[1]);
+    const caixa = await confirmacao();
+    expect(caixa.textContent).toContain('O placar não muda');
+    fireEvent.click(within(caixa).getByRole('button', { name: 'É GOL!' }));
+    await vi.waitFor(() => expect(l.salvar).toHaveBeenCalled());
     expect(ultimo(l.salvar)[0]).toMatchObject({ lado: 'visitante', slot: -1, numero: 9, nome: 'Pedro' });
     expect(l.gol).not.toHaveBeenCalled();
   });
@@ -341,7 +366,7 @@ describe('lances', () => {
     expect(ultimo(l.salvar)[0]).toMatchObject({ tipo: 'sub', slot: 9, numero: 10, entra: { numero: 9, nome: 'Endrick' } });
   });
 
-  it('expulso não pode receber lance; desfazer gol pergunta e tira do placar', () => {
+  it('expulso não pode receber lance; desfazer gol pergunta e tira do placar', async () => {
     const lances: Lance[] = [
       { id: 'a', lado: 'casa', tipo: 'vermelho', slot: 5, numero: 5, nome: 'Casemiro', minuto: 30, em: 0 },
       { id: 'b', lado: 'casa', tipo: 'gol', slot: 10, numero: 11, nome: 'Vini Jr.', minuto: 40, em: 0 },
@@ -349,12 +374,38 @@ describe('lances', () => {
     const l = live({ ...base, escLances: lances });
     render(<Lances live={l as never} />);
     expect(screen.getByText("40' GOL · VINI JR.")).toBeInTheDocument();
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     fireEvent.click(screen.getByRole('button', { name: "Desfazer 40' GOL · VINI JR." }));
-    expect(l.gol).toHaveBeenCalledWith('A', -1);
+    fireEvent.click(within(await confirmacao()).getByRole('button', { name: 'TIRAR GOL' }));
+    await vi.waitFor(() => expect(l.gol).toHaveBeenCalledWith('A', -1));
     expect(ultimo(l.salvar).map((x) => x.id)).toEqual(['a']);
     fireEvent.click(screen.getByRole('button', { name: /AMARELO/ }));
     expect((screen.getByRole('button', { name: /5\s*Casemiro/ }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('VERMELHO pede confirmação; cancelar não registra', async () => {
+    const l = live(base);
+    render(<Lances live={l as never} />);
+    fireEvent.click(screen.getByRole('button', { name: 'VERMELHO' }));
+    fireEvent.click(screen.getByRole('button', { name: /5\s*Casemiro/ }));
+    const caixa = await confirmacao();
+    expect(caixa.textContent).toContain('CARTÃO VERMELHO?');
+    fireEvent.keyDown(window, { key: 'Escape' });
+    await vi.waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
+    expect(l.salvar).not.toHaveBeenCalled();
+    // o modal do lance continua aberto (Esc fechou só a confirmação)
+    expect(screen.getByRole('dialog', { name: 'CARTÃO VERMELHO' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /5\s*Casemiro/ }));
+    fireEvent.click(within(await confirmacao()).getByRole('button', { name: 'EXPULSAR' }));
+    await vi.waitFor(() => expect(ultimo(l.salvar)[0]).toMatchObject({ tipo: 'vermelho', numero: 5 }));
+  });
+
+  it('AMARELO e SUBSTITUIÇÃO não pedem confirmação', () => {
+    const l = live(base);
+    render(<Lances live={l as never} />);
+    fireEvent.click(screen.getByRole('button', { name: 'AMARELO' }));
+    fireEvent.click(screen.getByRole('button', { name: /5\s*Casemiro/ }));
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+    expect(ultimo(l.salvar)[0]).toMatchObject({ tipo: 'amarelo' });
   });
 
   it('tela: selos nas bolinhas, substituto no lugar, expulso apagado e aviso do lance novo', () => {

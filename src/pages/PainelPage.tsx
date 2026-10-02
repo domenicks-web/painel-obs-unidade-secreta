@@ -23,6 +23,7 @@ import { mensagemAuto } from '../chat/teste';
 import { useGravarApoiosYouTube } from '../apoios/youtube';
 import { ModalTimes } from '../painel/ModalTimes';
 import type { CenaFutebol } from '../painel/CamposTela';
+import { ConfirmarProvider } from '../painel/Confirmar';
 import { TimesProvider, useTimes } from '../escalacao/useTimes';
 import { modoEsc, timesEscalados } from '../telas/TelaEscalacao';
 import '../painel/painel.css';
@@ -31,7 +32,9 @@ export function PainelPage() {
   return (
     <RelogioServidorProvider>
       <TimesProvider>
-        <Painel />
+        <ConfirmarProvider>
+          <Painel />
+        </ConfirmarProvider>
       </TimesProvider>
     </RelogioServidorProvider>
   );

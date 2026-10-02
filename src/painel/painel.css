@@ -427,3 +427,27 @@
   .p-lance-times { grid-template-columns: minmax(0, 1fr); }
 }
 .p-lance-botao__icone { display: flex; line-height: 0; }
+
+/* confirmação padrão (Confirmar.tsx) */
+.p-confirmar-fundo { position: fixed; inset: 0; z-index: 80; background: rgba(15, 12, 14, .78); display: flex; align-items: center; justify-content: center; padding: 16px; animation: pFade .18s ease both; }
+.p-confirmar { position: relative; width: min(460px, 100%); background: #1A1417; box-shadow: 0 0 0 3px #FF6B1F, 12px 12px 0 3px #8B6CF0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 26px 24px; animation: pPulo .42s cubic-bezier(.2, 1.4, .4, 1) both; }
+.p-confirmar--perigo, .p-confirmar--cartao { box-shadow: 0 0 0 3px #E5383B, 12px 12px 0 3px #8B6CF0; }
+.p-confirmar__listra { align-self: stretch; margin: 0 -26px; height: 12px; background: repeating-linear-gradient(-45deg, #1A1417 0 10px, #FF6B1F 10px 20px); background-size: 56px 12px; animation: pStripe 1.2s linear infinite; }
+.p-confirmar--perigo .p-confirmar__listra, .p-confirmar--cartao .p-confirmar__listra { background-image: repeating-linear-gradient(-45deg, #1A1417 0 10px, #E5383B 10px 20px); }
+.p-confirmar__icone { margin: 22px 0 12px; line-height: 0; animation: pIcone .6s .12s cubic-bezier(.2, 1.6, .4, 1) both; }
+.p-confirmar--gol .p-confirmar__icone svg { animation: pGira 1.2s .2s ease-out both; }
+.p-confirmar--cartao .p-confirmar__icone svg { transform: rotate(10deg); }
+.p-confirmar__titulo { font: 400 28px/1.1 'Bungee', sans-serif; color: #FFF3E0; }
+.p-confirmar__texto { margin-top: 10px; font: 600 22px/1.3 'Barlow Condensed', sans-serif; letter-spacing: .02em; color: #b3a9ad; }
+.p-confirmar__texto b { color: #FFF3E0; font-weight: 700; }
+.p-confirmar__botoes { display: flex; gap: 10px; margin-top: 22px; width: 100%; }
+.p-confirmar__botoes .p-botao { flex: 1; height: 50px; }
+.p-confirmar--perigo .p-confirmar__sim, .p-confirmar--cartao .p-confirmar__sim { background: #E5383B; color: #FFF3E0; }
+.p-confirmar__sim:focus-visible { outline: 3px solid #FFF3E0; outline-offset: 3px; }
+@keyframes pFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pPulo { 0% { opacity: 0; transform: translateY(18px) scale(.92); } 100% { opacity: 1; transform: none; } }
+@keyframes pIcone { 0% { opacity: 0; transform: scale(.3) rotate(-25deg); } 100% { opacity: 1; transform: none; } }
+@keyframes pGira { from { transform: rotate(-200deg); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .p-confirmar, .p-confirmar__icone, .p-confirmar--gol .p-confirmar__icone svg, .p-confirmar-fundo { animation: none; }
+}

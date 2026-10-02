@@ -68,7 +68,7 @@ const lista = await abrir('/tela/escalacao', estado({ escModo: 'lista', escLance
 await lista.addStyleTag({ content: 'html,body{background:#0f0c0e!important}' });
 await lista.screenshot({ path: resolve('docs/prints/escalacao-lances-lista.png') });
 
-const painel = await abrir('/painel', estado({ escLances: lances.map((l) => ({ ...l, em: 0 })) }), 1440, 900);
+const painel = await abrir('/painel', estado({ escLances: lances.map((l) => ({ ...l, em: 0 })), escPosCasa: Array.from({ length: 11 }, (_, i) => ({ x: 0.1 + i * 0.07, y: 0.5 })) }), 1440, 900);
 await painel.getByRole('button', { name: 'FUTEBOL' }).first().click();
 await painel.waitForTimeout(500);
 await painel.locator('.p-lances').scrollIntoViewIfNeeded();
@@ -76,5 +76,22 @@ await painel.screenshot({ path: resolve('docs/prints/painel-lances.png') });
 await painel.getByRole('button', { name: /^GOL$/ }).click();
 await painel.waitForTimeout(400);
 await painel.screenshot({ path: resolve('docs/prints/painel-lance-gol.png') });
+// confirmações (alerta padrão do painel)
+await painel.getByRole('dialog', { name: 'GOL' }).getByRole('button', { name: /Yuri Alberto/ }).click();
+await painel.waitForTimeout(1500);
+await painel.screenshot({ path: resolve('docs/prints/confirmar-gol.png') });
+await painel.keyboard.press('Escape');
+await painel.keyboard.press('Escape');
+await painel.waitForTimeout(300);
+await painel.getByRole('button', { name: 'VERMELHO' }).click();
+await painel.getByRole('dialog', { name: 'CARTÃO VERMELHO' }).getByRole('button', { name: /Garro/ }).click();
+await painel.waitForTimeout(1500);
+await painel.screenshot({ path: resolve('docs/prints/confirmar-vermelho.png') });
+await painel.keyboard.press('Escape');
+await painel.keyboard.press('Escape');
+await painel.waitForTimeout(300);
+await painel.getByRole('button', { name: /RESETAR FORMAÇÃO · CASA/ }).click().catch(() => {});
+await painel.waitForTimeout(1500);
+await painel.screenshot({ path: resolve('docs/prints/confirmar-resetar.png') });
 console.log('ok');
 await browser.close();

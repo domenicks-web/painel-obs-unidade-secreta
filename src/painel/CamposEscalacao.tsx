@@ -2,6 +2,7 @@ import type { useLive } from '../live/useLive';
 import { useTimes } from '../escalacao/useTimes';
 import { acharTime, titulares } from '../escalacao/times';
 import { CampoTexto } from './CampoTexto';
+import { useConfirmar } from './Confirmar';
 import { LISTA_FORMACOES, ROTULO_FORMACAO, formacaoOu, type EscModo, type EscTimes, type Formacao } from '../escalacao/layout';
 import { modoEsc, timesEsc } from '../telas/TelaEscalacao';
 
@@ -10,7 +11,6 @@ type Live = ReturnType<typeof useLive>;
 const MODOS: [EscModo, string][] = [['lista', 'LISTA'], ['campo', 'CAMPO']];
 const TIMES: [EscTimes, string][] = [['casa', 'SÓ CASA'], ['ambos', 'CASA E VISITANTE'], ['visitante', 'SÓ VISITANTE']];
 
-const AVISO_FORMACAO = 'Trocar a formação volta as posições arrastadas à mão para as da formação nova. Continuar?';
 
 interface Props {
   live: Live;
@@ -24,13 +24,25 @@ interface Props {
 export function CamposEscalacao({ live, aoEditarPosicoes, aoAbrirTimes }: Props) {
   const { estado, salvar, salvarDepois } = live;
   const { times } = useTimes();
+  const confirmar = useConfirmar();
   const modo = modoEsc(estado.escModo);
   const quais = timesEsc(estado.escTimes);
   const lados = (quais === 'ambos' ? ['casa', 'visitante'] : [quais]) as ('casa' | 'visitante')[];
   const temManual = (lado: 'casa' | 'visitante') => !!(lado === 'casa' ? estado.escPosCasa : estado.escPosVisit);
 
-  function escolherFormacao(lado: 'casa' | 'visitante', f: Formacao) {
-    if (temManual(lado) && !window.confirm(AVISO_FORMACAO)) return;
+  async function escolherFormacao(lado: 'casa' | 'visitante', f: Formacao) {
+    const ok =
+      !temManual(lado) ||
+      (await confirmar({
+        titulo: 'TROCAR FORMAÇÃO?',
+        texto: (
+          <>
+            As posições arrastadas à mão do <b>{lado === 'casa' ? estado.timeA : estado.timeB}</b> voltam para as da <b>{f}</b>.
+          </>
+        ),
+        sim: 'TROCAR',
+      }));
+    if (!ok) return;
     salvar(lado === 'casa' ? { escFormCasa: f, escPosCasa: null } : { escFormVisit: f, escPosVisit: null });
   }
 
@@ -155,6 +167,21 @@ export function resumoEscalacao(estado: Live['estado']): string {
 // Fica fora do modal: arrastar as bolinhas precisa da prévia à vista.
 export function PosicoesEscalacao({ live, editandoPosicoes, aoEditarPosicoes }: Omit<Props, 'aoAbrirTimes'>) {
   const { estado, salvar } = live;
+  const confirmar = useConfirmar();
+  async function resetar(lado: 'casa' | 'visitante') {
+    const nome = lado === 'casa' ? estado.timeA : estado.timeB;
+    const ok = await confirmar({
+      titulo: 'RESETAR FORMAÇÃO?',
+      texto: (
+        <>
+          As bolinhas do <b>{nome}</b> voltam para as posições da formação. O que foi arrastado à mão se perde.
+        </>
+      ),
+      sim: 'RESETAR',
+      tom: 'perigo',
+    });
+    if (ok) salvar(lado === 'casa' ? { escPosCasa: null } : { escPosVisit: null });
+  }
   const modo = modoEsc(estado.escModo);
   const quais = timesEsc(estado.escTimes);
   const lados = (quais === 'ambos' ? ['casa', 'visitante'] : [quais]) as ('casa' | 'visitante')[];
@@ -178,7 +205,7 @@ export function PosicoesEscalacao({ live, editandoPosicoes, aoEditarPosicoes }: 
               type="button"
               className="p-botao-contorno"
               disabled={!temManual(lado)}
-              onClick={() => salvar(lado === 'casa' ? { escPosCasa: null } : { escPosVisit: null })}
+              onClick={() => resetar(lado)}
             >
               RESETAR FORMAÇÃO{lados.length === 2 ? (lado === 'casa' ? ' · CASA' : ' · VISITANTE') : ''}
             </button>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTimes } from '../escalacao/useTimes';
+import { useConfirmar } from './Confirmar';
 import { MAX_ELENCO, TITULARES, acharTime, lerElenco, renumerar, type Jogador, type Time } from '../escalacao/times';
 
 type Rascunho = Omit<Time, 'id'> & { id: string | null };
@@ -29,14 +30,17 @@ export function ModalTimes({ aoFechar, abrirNome }: { aoFechar: () => void; abri
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  const descartar = () => !mexido || window.confirm('Tem mudança sem salvar nesse time. Descartar?');
+  const confirmar = useConfirmar();
+  const descartar = async () =>
+    !mexido ||
+    confirmar({ titulo: 'DESCARTAR MUDANÇAS?', texto: 'Tem mudança sem salvar nesse time.', sim: 'DESCARTAR', nao: 'CONTINUAR EDITANDO', tom: 'perigo' });
 
-  function fechar() {
-    if (descartar()) aoFechar();
+  async function fechar() {
+    if (await descartar()) aoFechar();
   }
 
-  function abrir(t: Rascunho) {
-    if (!descartar()) return;
+  async function abrir(t: Rascunho) {
+    if (!(await descartar())) return;
     setRascunho({ ...t, jogadores: renumerar(t.jogadores) });
     setMexido(false);
     setErro('');
@@ -76,7 +80,18 @@ export function ModalTimes({ aoFechar, abrirNome }: { aoFechar: () => void; abri
   }
 
   async function excluir() {
-    if (!rascunho?.id || !window.confirm(`Excluir ${rascunho.nome} e o elenco inteiro?`)) return;
+    if (!rascunho?.id) return;
+    const ok = await confirmar({
+      titulo: 'EXCLUIR TIME?',
+      texto: (
+        <>
+          <b>{rascunho.nome}</b> e o elenco inteiro somem do cadastro. Não dá pra desfazer.
+        </>
+      ),
+      sim: 'EXCLUIR',
+      tom: 'perigo',
+    });
+    if (!ok) return;
     const falha = await excluirTime(rascunho.id);
     if (falha) return setErro(falha);
     setMexido(false);

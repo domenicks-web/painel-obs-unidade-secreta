@@ -65,6 +65,10 @@ atuais não leem `times`. Dá pra rodar antes da live sem risco, e o merge pode 
   expulso (vermelho ou 2 amarelos) fica apagado, a bolinha do lance novo pulsa e um aviso aparece 8 s no topo do
   campo. LISTA mostra os mesmos selos. Ficam no estado (`escLances`, sem migration); LIMPAR LANCES pro próximo jogo.
   Prints: `docs/prints/escalacao-lances-{campo,lista}.png`, `painel-lances.png`, `painel-lance-gol.png`.
+- **Confirmação padrão do painel** (`src/painel/Confirmar.tsx`, no lugar do `window.confirm`): cartão animado com
+  ícone (bola, cartão vermelho, aviso), Enter confirma, Esc cancela só ela. Usada em GOL e VERMELHO (antes de
+  registrar), RESETAR FORMAÇÃO, trocar formação com posições manuais, tirar gol, LIMPAR LANCES, descartar/excluir
+  time. Prints `docs/prints/confirmar-{gol,vermelho,resetar}.png`.
 - Relógio do placar (FUTEBOL e ESCALAÇÃO) com tempo completo `67:23`; de 100 min pra cima a fonte cai pra 40 px.
 - Fundo igual ao do FUTEBOL (escuro com listras), como na referência.
 
