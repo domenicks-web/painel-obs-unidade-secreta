@@ -1,9 +1,11 @@
 import type { Camera } from '../telas/cameras';
 import type { GolEvento } from '../gol/useGolAoVivo';
+import type { EscModo, EscTimes, Formacao, Ponto } from '../escalacao/layout';
 export const TELAS = [
   { id: 'inicio', label: 'INÍCIO' },
   { id: 'host', label: 'HOST' },
   { id: 'futebol', label: 'FUTEBOL' },
+  { id: 'escalacao', label: 'ESCALAÇÃO' },
   { id: 'filme', label: 'FILME/SÉRIE' },
   { id: 'mesa', label: 'MESA REDONDA' },
   { id: 'jogo', label: 'JOGO' },
@@ -54,6 +56,18 @@ export interface EstadoLive {
   camsFutebol: Camera[] | null;
   camsJogo: Camera[] | null;
   camsReact: Camera[] | null;
+  camsEscalacao: Camera[] | null;
+  // ESCALAÇÃO (cena Futebol): times vêm do cadastro (tabelas times/jogadores, 0012)
+  escModo: EscModo;
+  escTimes: EscTimes;
+  escTimeCasaId: string | null;
+  escTimeVisitId: string | null;
+  escFormCasa: Formacao;
+  escFormVisit: Formacao;
+  /** posições arrastadas à mão: 11 pontos 0–1, de quem ataca pra direita; null = calculadas */
+  escPosCasa: Ponto[] | null;
+  escPosVisit: Ponto[] | null;
+  escCams: number;
   // animação de gol (FUTEBOL): chave por time, som, duração (3–6 s); o evento é gravado pelo banco
   golAnimA: boolean;
   golAnimB: boolean;
@@ -139,6 +153,16 @@ export const ESTADO_PADRAO: EstadoLive = {
   camsFutebol: null,
   camsJogo: null,
   camsReact: null,
+  camsEscalacao: null,
+  escModo: 'lista',
+  escTimes: 'casa',
+  escTimeCasaId: null,
+  escTimeVisitId: null,
+  escFormCasa: '4-3-3',
+  escFormVisit: '4-2-3-1',
+  escPosCasa: null,
+  escPosVisit: null,
+  escCams: 4,
   golAnimA: true,
   golAnimB: false,
   golSom: false,

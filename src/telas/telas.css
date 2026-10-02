@@ -219,3 +219,36 @@
 .t-filme__episodio { font: 700 30px/1 'JetBrains Mono', monospace; color: #8B6CF0; }
 .t-filme__progresso { flex: 1; height: 6px; background: #2A2226; position: relative; overflow: hidden; }
 .t-filme__progresso > div { position: absolute; inset: 0; background: #FF6B1F; transform-origin: 0 50%; animation: usGrow 90s linear infinite; }
+
+/* ESCALAÇÃO (referencia/Tela Escalacao.dc.html): mesmo fundo, placar, chat e letreiro do FUTEBOL */
+.t-esc-coluna { position: absolute; top: 190px; height: 780px; background: #241d21; display: flex; flex-direction: column; }
+.t-esc-coluna__cabeca { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 20px; flex-shrink: 0; }
+.t-esc-coluna__nome { font: 700 36px/1 'Barlow Condensed', sans-serif; letter-spacing: .02em; color: #1A1417; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-esc-coluna__esquema { font: 700 20px/1 'JetBrains Mono', monospace; color: #1A1417; white-space: nowrap; flex-shrink: 0; }
+.t-esc-coluna__linhas { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 16px 0; min-height: 0; }
+.t-esc-coluna__linha { display: flex; flex-direction: column; gap: 2px; }
+.t-esc-jogador { display: flex; align-items: center; gap: 14px; height: 42px; padding: 0 20px; }
+.t-esc-jogador__num { width: 46px; height: 38px; background: #1A1417; display: flex; align-items: center; justify-content: center; font: 400 21px/1 'Bungee', sans-serif; flex-shrink: 0; }
+.t-esc-jogador__nome { min-width: 0; font: 600 28px/1 'Barlow Condensed', sans-serif; letter-spacing: .03em; color: #FFF3E0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-esc-coluna__tec { height: 58px; flex-shrink: 0; border-top: 2px solid #3a3035; display: flex; align-items: center; gap: 12px; padding: 0 20px; }
+.t-esc-coluna__tec-rotulo { font: 700 14px/1 'JetBrains Mono', monospace; letter-spacing: .14em; flex-shrink: 0; }
+.t-esc-coluna__tec-nome { min-width: 0; font: 600 26px/1 'Barlow Condensed', sans-serif; color: #FFF3E0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.t-esc-faixa { position: absolute; top: 172px; width: 640px; height: 40px; display: flex; align-items: center; gap: 14px; justify-content: flex-start; }
+.t-esc-faixa--direita { justify-content: flex-end; }
+.t-esc-faixa__cor { width: 16px; height: 16px; flex-shrink: 0; }
+.t-esc-faixa__nome { min-width: 0; font: 700 34px/1 'Barlow Condensed', sans-serif; letter-spacing: .04em; color: #FFF3E0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-esc-faixa__esquema { font: 700 18px/1 'JetBrains Mono', monospace; white-space: nowrap; flex-shrink: 0; }
+.t-esc-faixa__tec { font: 700 14px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #8a7f84; white-space: nowrap; flex-shrink: 0; }
+
+.t-esc-campo { position: absolute; background: repeating-linear-gradient(90deg, #1c2a21 0 110px, #19261e 110px 220px); overflow: hidden; }
+.t-esc-campo__borda { position: absolute; inset: 14px; border: 3px solid rgba(255,243,224,.26); }
+.t-esc-campo__meio { position: absolute; left: 659px; top: 14px; bottom: 14px; width: 3px; background: rgba(255,243,224,.26); }
+.t-esc-campo__circulo { position: absolute; left: 600px; top: 155px; width: 114px; height: 114px; border-radius: 50%; border: 3px solid rgba(255,243,224,.26); }
+.t-esc-campo__area { position: absolute; top: 100px; width: 170px; height: 230px; border: 3px solid rgba(255,243,224,.26); }
+.t-esc-campo__pequena { position: absolute; top: 160px; width: 60px; height: 110px; border: 3px solid rgba(255,243,224,.26); }
+.t-esc-campo__area--esq, .t-esc-campo__pequena--esq { left: 14px; border-left: none; }
+.t-esc-campo__area--dir, .t-esc-campo__pequena--dir { right: 14px; border-right: none; }
+.t-esc-token { position: absolute; width: 150px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.t-esc-token__bola { width: 46px; height: 46px; border-radius: 50%; box-shadow: 0 0 0 3px #1A1417; display: flex; align-items: center; justify-content: center; font: 400 20px/1 'Bungee', sans-serif; color: #1A1417; flex-shrink: 0; }
+.t-esc-token__nome { box-sizing: border-box; background: #1A1417; padding: 3px 8px; font: 600 21px/1 'Barlow Condensed', sans-serif; letter-spacing: .03em; color: #FFF3E0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }

@@ -9,6 +9,7 @@ import { TelaHost } from './TelaHost';
 import { TelaMesa } from './TelaMesa';
 import { TelaLower } from './TelaLower';
 import { TelaFutebol } from './TelaFutebol';
+import { TelaEscalacao } from './TelaEscalacao';
 import { TelaFilme } from './TelaFilme';
 import { TelaJogo } from './TelaJogo';
 import { TelaReact } from './TelaReact';
@@ -24,6 +25,7 @@ export const TELA_COMPONENTE: Record<TelaId, (p: PropsTela) => JSX.Element> = {
   mesa: TelaMesa,
   lower: TelaLower,
   futebol: TelaFutebol,
+  escalacao: TelaEscalacao,
   filme: TelaFilme,
   jogo: TelaJogo,
   react: TelaReact,
