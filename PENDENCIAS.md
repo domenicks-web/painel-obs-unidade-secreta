@@ -1,9 +1,8 @@
 # Pendências
 
-## ESCALAÇÃO (branch `escalacao`, 2026-10-02) — ESPERANDO A MIGRATION 0012
+## ESCALAÇÃO — no ar desde 2026-10-02 (0012 rodada, merge feito)
 
-**Não está na `main` nem no ar.** O painel novo lê as tabelas `times`/`jogadores`, que só existem depois da 0012.
-O Supabase CLI não está linkado nesta máquina, então a migration não foi aplicada. Ordem:
+Passos 1 e 2 feitos (conferido: 4 times × 11 jogadores em produção, telas sem erro). Falta o passo 3 (OBS). Histórico:
 
 1. Rodar a 0012 em produção. Pelo SQL Editor do Supabase (projeto `yupmxwirknqrdssyievb`): colar o conteúdo
    inteiro de `supabase/migrations/0012_times.sql` e clicar **Run**. Ou pelo terminal, com a connection string
