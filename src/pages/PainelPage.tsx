@@ -21,12 +21,17 @@ import { useChat } from '../chat/useChat';
 import { gravarSessao, lerSessao } from '../chat/sessao';
 import { mensagemAuto } from '../chat/teste';
 import { useGravarApoiosYouTube } from '../apoios/youtube';
+import { ModalTimes } from '../painel/ModalTimes';
+import { TimesProvider, useTimes } from '../escalacao/useTimes';
+import { modoEsc, timesEscalados } from '../telas/TelaEscalacao';
 import '../painel/painel.css';
 
 export function PainelPage() {
   return (
     <RelogioServidorProvider>
-      <Painel />
+      <TimesProvider>
+        <Painel />
+      </TimesProvider>
     </RelogioServidorProvider>
   );
 }
@@ -51,6 +56,12 @@ function Painel() {
   const [tela, setTela] = useState<TelaId>('host');
   const [galeraAberta, setGaleraAberta] = useState(false);
   const fecharGalera = useCallback(() => setGaleraAberta(false), []);
+  const [timesAberto, setTimesAberto] = useState(false);
+  const fecharTimes = useCallback(() => setTimesAberto(false), []);
+  const { times } = useTimes();
+  const [editandoPosicoes, setEditandoPosicoes] = useState(false);
+  // o editor de posições só vale na ESCALAÇÃO em modo CAMPO
+  const posicoesAtivas = editandoPosicoes && tela === 'escalacao' && modoEsc(live.estado.escModo) === 'campo';
   const { estado, salvarDepois } = live;
   const label = TELAS.find((t) => t.id === tela)!.label;
 
@@ -70,6 +81,7 @@ function Painel() {
         editadoEm={live.editadoEm}
         ehAdmin={papel === 'admin'}
         aoAbrirGalera={() => setGaleraAberta(true)}
+        aoAbrirTimes={() => setTimesAberto(true)}
         livepix={livepix.status}
         livepixUltimo={livepix.ultimo}
         chat={chat.status}
@@ -92,6 +104,14 @@ function Painel() {
                   ? { lista: camerasDaTela(estado, tela), aoMudar: (l) => live.salvarDepois(patchCams(tela, l)) }
                   : undefined
               }
+              jogadores={
+                posicoesAtivas
+                  ? {
+                      escalados: timesEscalados(estado, times),
+                      aoMudar: (lado, pontos) => salvarDepois(lado === 'casa' ? { escPosCasa: pontos } : { escPosVisit: pontos }),
+                    }
+                  : undefined
+              }
             />
           </div>
           <section className="p-infos">
@@ -99,7 +119,11 @@ function Painel() {
               <div className="p-selo">INFOS DA TELA</div>
               <div className="p-infos-sub">ATUALIZA NO OBS NA HORA</div>
             </div>
-            <CamposTela tela={tela} live={live} />
+            <CamposTela
+              tela={tela}
+              live={live}
+              escalacao={{ editandoPosicoes: posicoesAtivas, aoEditarPosicoes: setEditandoPosicoes, aoAbrirTimes: () => setTimesAberto(true) }}
+            />
             <div className="p-divisor" />
             <div className="p-duas">
               <CampoTexto rotulo="TÍTULO DA LIVE · TODAS AS CENAS" valor={estado.titulo} maiusculo aoMudar={(v) => salvarDepois({ titulo: v })} />
@@ -120,6 +144,7 @@ function Painel() {
           />
         </aside>
       </div>
+      {timesAberto && <ModalTimes aoFechar={fecharTimes} />}
       {galeraAberta && <ModalGalera galera={estado.galera} aoSalvar={(g) => salvarDepois({ galera: g })} aoFechar={fecharGalera} />}
     </div>
   );

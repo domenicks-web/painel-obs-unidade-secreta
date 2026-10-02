@@ -17,12 +17,12 @@ vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ papel: 'admin', sessao: {
 import { PainelPage } from './PainelPage';
 
 describe('PainelPage', () => {
-  it('mostra as 11 telas, o aviso de prévia, status e editado por', () => {
+  it('mostra as 12 telas, o aviso de prévia, status e editado por', () => {
     render(<MemoryRouter><PainelPage /></MemoryRouter>);
     expect(screen.getByText('PRÉVIA · NÃO É O QUE ESTÁ NO AR')).toBeInTheDocument();
     expect(screen.getByText('TELAS SINCRONIZADAS')).toBeInTheDocument();
     expect(screen.getByText(/editado por Ana/)).toBeInTheDocument();
-    ['INÍCIO', 'HOST', 'FUTEBOL', 'FILME/SÉRIE', 'MESA REDONDA', 'JOGO', 'REACT', 'INTERVALO', 'LOWER THIRD', 'TÉCNICO', 'FIM'].forEach((t) =>
+    ['INÍCIO', 'HOST', 'FUTEBOL', 'ESCALAÇÃO', 'FILME/SÉRIE', 'MESA REDONDA', 'JOGO', 'REACT', 'INTERVALO', 'LOWER THIRD', 'TÉCNICO', 'FIM'].forEach((t) =>
       expect(screen.getAllByText(t).length).toBeGreaterThan(0),
     );
     expect(screen.getByText('ADMIN')).toBeInTheDocument();

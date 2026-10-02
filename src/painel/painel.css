@@ -275,6 +275,51 @@
 .p-vazio { font: 400 13px/1.5 'JetBrains Mono', monospace; color: #6d6368; padding: 10px 0; }
 
 /* ===== Telas de notebook: o topo ganhou GALERA/ADMIN/SAIR, então o subtítulo sai ===== */
+/* ESCALAÇÃO */
+.p-esc-linha { display: flex; gap: 18px; flex-wrap: wrap; }
+.p-opcao--esc { height: 44px; padding: 0 14px; font: 700 12px/1 'JetBrains Mono', monospace !important; letter-spacing: .1em; }
+.p-esc-times { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.p-esc-times--dois { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.p-esc-time { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 8px; padding-left: 10px; border-left: 4px solid #FF6B1F; }
+.p-esc-time--visitante { border-left-color: #8B6CF0; }
+.p-select { cursor: pointer; font-size: 18px; padding: 9px 8px; }
+.p-select option:disabled { color: #6d6368; }
+.p-arraste__jogador { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; cursor: grab; touch-action: none; box-shadow: 0 0 0 2px #FFF3E0; }
+.p-arraste__jogador:hover, .p-arraste__jogador:active { background: rgba(255, 243, 224, .25); cursor: grabbing; }
+
+/* cadastro de TIMES */
+.p-modal--times { width: min(1040px, 100%); }
+.p-times { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 18px; padding: 6px 22px 14px; min-height: 0; overflow: hidden; flex: 1; }
+.p-times__lista { display: flex; flex-direction: column; gap: 6px; overflow: auto; min-height: 0; }
+.p-times__item { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 42px; padding: 0 12px; border: 0; background: #241d21; color: #FFF3E0; cursor: pointer; font: 700 20px/1 'Barlow Condensed', sans-serif; letter-spacing: .04em; text-align: left; }
+.p-times__item--ativo { box-shadow: inset 4px 0 0 #FF6B1F; background: #2e2529; }
+.p-times__item-nome { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-times__item-conta { font: 700 11px/1 'JetBrains Mono', monospace; color: #8a7f84; flex-shrink: 0; }
+.p-times__item-conta--falta { color: #FF6B1F; }
+.p-times__editor { display: flex; flex-direction: column; gap: 10px; overflow: auto; min-height: 0; padding-right: 4px; }
+.p-times__dados { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.p-input--livre { text-transform: none; }
+.p-times__elenco-cabeca { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.p-times__conta { font: 400 18px/1 'Bungee', sans-serif; color: #FFF3E0; }
+.p-times__conta--falta { color: #FF6B1F; }
+.p-times__colar { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.p-times__textarea { min-height: 160px; font: 400 15px/1.4 'JetBrains Mono', monospace; resize: vertical; }
+.p-times__jogadores { display: flex; flex-direction: column; gap: 4px; }
+.p-times__jogador { display: grid; grid-template-columns: 22px 40px 64px minmax(0, 1fr) 92px 36px 36px 36px; gap: 6px; align-items: center; padding: 3px 0; }
+.p-times__jogador--arrastando { opacity: .4; }
+.p-times__jogador .p-input { font-size: 18px; padding: 6px 8px; }
+.p-times__jogador .p-botao-icone { height: 36px; padding: 0; }
+.p-times__jogador .p-botao-icone:disabled { opacity: .3; cursor: default; border-color: #3a3035; color: #FFF3E0; }
+.p-times__alca { cursor: grab; color: #6d6368; font: 700 14px/1 'JetBrains Mono', monospace; text-align: center; user-select: none; }
+.p-times__pos { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .08em; color: #8a7f84; text-align: center; }
+.p-times__jogador--titular .p-times__pos { color: #FF6B1F; }
+.p-times__numero { text-align: center; font-family: 'Bungee', sans-serif !important; }
+.p-times__tit { height: 36px; border: 0; cursor: pointer; background: #241d21; color: #8a7f84; font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .08em; }
+.p-times__tit--sim { background: #FF6B1F; color: #1A1417; }
+.p-times__tit:disabled { opacity: .35; cursor: default; }
+.p-times__erro { font: 700 13px/1.4 'JetBrains Mono', monospace; color: #FF6B1F; }
+.p-times__excluir { margin-right: auto; }
+
 @media (max-width: 1599px) {
   .p-topo__barra, .p-topo__sub { display: none; }
   .p-placar { grid-template-columns: minmax(0, 1fr) 210px minmax(0, 1fr); gap: 12px; }
@@ -315,4 +360,12 @@
   .p-gol { grid-template-columns: 1fr 1fr; }
   .p-gol .p-campo { grid-column: 1 / -1; }
   .p-pix__campos, .p-pix__rotulos { grid-template-columns: minmax(0, 1fr) 80px 80px; }
+}
+
+@media (max-width: 760px) {
+  .p-times { grid-template-columns: minmax(0, 1fr); overflow: auto; }
+  .p-times__lista { max-height: 180px; }
+  .p-times__dados, .p-esc-times--dois, .p-esc-time { grid-template-columns: minmax(0, 1fr); }
+  .p-times__jogador { grid-template-columns: 42px minmax(0, 1fr) 64px 30px 30px 30px; gap: 4px; }
+  .p-times__alca, .p-times__pos { display: none; }
 }

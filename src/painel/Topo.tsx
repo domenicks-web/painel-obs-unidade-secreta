@@ -12,6 +12,7 @@ interface Props {
   editadoEm: string | null;
   ehAdmin: boolean;
   aoAbrirGalera: () => void;
+  aoAbrirTimes?: () => void;
   livepix: StatusLivePix;
   livepixUltimo?: UltimoComando | null;
   chat: StatusChat;
@@ -43,7 +44,7 @@ const EXTRA_CHAT: Record<StatusChat, string> = {
   sem_sessao: 'SEM SESSÃO',
 };
 
-export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, livepix, livepixUltimo, chat, erro, aoFecharErro }: Props) {
+export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, aoAbrirTimes, livepix, livepixUltimo, chat, erro, aoFecharErro }: Props) {
   const agora = useAgora(15000);
   const indicadores = [
     { label: 'TELAS SINCRONIZADAS', aceso: status === 'ao_vivo', extra: status === 'reconectando' ? 'RECONECTANDO…' : '' },
@@ -85,6 +86,11 @@ export function Topo({ status, editadoPor, editadoEm, ehAdmin, aoAbrirGalera, li
         <button type="button" className="p-topo__botao p-topo__botao--galera" onClick={aoAbrirGalera}>
           GALERA
         </button>
+        {aoAbrirTimes && (
+          <button type="button" className="p-topo__botao" onClick={aoAbrirTimes}>
+            TIMES
+          </button>
+        )}
         {ehAdmin && (
           <Link to="/admin" className="p-topo__botao">
             ADMIN

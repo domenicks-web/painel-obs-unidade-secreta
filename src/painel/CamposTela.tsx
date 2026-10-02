@@ -21,6 +21,7 @@ import { lerTempo, mascaraTempo, mmss, segundosJogo } from '../live/relogios';
 import { useAgora } from '../live/relogioServidor';
 import { CampoTexto } from './CampoTexto';
 import { CampoCamera } from './CampoCamera';
+import { CamposEscalacao } from './CamposEscalacao';
 
 type Live = ReturnType<typeof useLive>;
 
@@ -31,10 +32,17 @@ function classeOpcao(ativa: boolean, extra: string, violeta = false) {
   return `p-opcao ${extra}${ativa ? (violeta ? ' p-opcao--ativa-violeta' : ' p-opcao--ativa') : ''}`;
 }
 
-export function CamposTela({ tela, live }: { tela: TelaId; live: Live }) {
+export interface OpcoesEscalacao {
+  editandoPosicoes: boolean;
+  aoEditarPosicoes: (v: boolean) => void;
+  aoAbrirTimes: () => void;
+}
+
+export function CamposTela({ tela, live, escalacao }: { tela: TelaId; live: Live; escalacao?: OpcoesEscalacao }) {
   return (
     <>
       {tela === 'futebol' && <CamposFutebol live={live} />}
+      {tela === 'escalacao' && escalacao && <CamposEscalacao live={live} {...escalacao} />}
       {ehTelaCam(tela) && <Cameras tela={tela} live={live} />}
       {tela === 'host' && (
         <CampoTexto rotulo="PIX LINK" valor={live.estado.pixLink} maiusculo aoMudar={(v) => live.salvarDepois({ pixLink: v })} />
@@ -67,6 +75,8 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
   const numero = (v: string) => (v.trim() === '' || !Number.isFinite(Number(v)) ? null : Number(v));
 
   function partida(n: number) {
+    // ESCALAÇÃO: a quantidade fica no estado e o layout volta pro automático daquele modo
+    if (tela === 'escalacao') return live.salvar({ escCams: n, camsEscalacao: null });
     const nova = layoutAutomatico(tela, n, estado);
     live.salvar(tela === 'host' ? { hostCams: String(n) as EstadoLive['hostCams'], ...patchCams(tela, nova) } : patchCams(tela, nova));
   }
@@ -81,7 +91,7 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
             <button
               key={n}
               type="button"
-              className={classeOpcao(tela === 'host' && estado.hostCams === String(n), 'p-opcao--cam')}
+              className={classeOpcao((tela === 'host' && estado.hostCams === String(n)) || (tela === 'escalacao' && estado.escCams === n), 'p-opcao--cam')}
               aria-label={`${n} CÂMERAS`}
               title={`Layout automático com ${n} câmera${n > 1 ? 's' : ''}`}
               onClick={() => partida(n)}
