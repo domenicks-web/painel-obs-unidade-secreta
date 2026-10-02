@@ -85,3 +85,13 @@ export function normalizarTime(bruto: {
     ),
   };
 }
+
+/** Nome comparável: sem espaço sobrando, maiúsculo e sem acento ("índia " = "INDIA"). */
+export const chaveNome = (nome: string) =>
+  nome.normalize('NFD').replace(/\p{M}/gu, '').trim().replace(/\s+/g, ' ').toUpperCase();
+
+/** Time cadastrado com o nome digitado no placar (ou undefined). */
+export function acharTime(times: Time[], nome: string): Time | undefined {
+  const k = chaveNome(nome);
+  return k ? times.find((t) => chaveNome(t.nome) === k) : undefined;
+}

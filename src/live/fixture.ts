@@ -31,8 +31,6 @@ export function escalacaoDaUrl(texto: string | null): Partial<EstadoLive> {
     escCams: Number(cams) || 4,
     ...(ehFormacao(fA) ? { escFormCasa: fA } : {}),
     ...(ehFormacao(fB) ? { escFormVisit: fB } : {}),
-    escTimeCasaId: derbi ? 'corinthians' : 'brasil',
-    escTimeVisitId: derbi ? 'palmeiras' : 'india',
     timeA: derbi ? 'CORINTHIANS' : 'BRASIL',
     timeB: derbi ? 'PALMEIRAS' : 'ÍNDIA',
     golsA: derbi ? 1 : 2,

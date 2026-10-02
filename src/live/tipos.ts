@@ -57,11 +57,10 @@ export interface EstadoLive {
   camsJogo: Camera[] | null;
   camsReact: Camera[] | null;
   camsEscalacao: Camera[] | null;
-  // ESCALAÇÃO (cena Futebol): times vêm do cadastro (tabelas times/jogadores, 0012)
+  // ESCALAÇÃO (cena Futebol): o time é o nome do placar (timeA/timeB); o elenco vem do cadastro
+  // com o mesmo nome (tabelas times/jogadores, 0012)
   escModo: EscModo;
   escTimes: EscTimes;
-  escTimeCasaId: string | null;
-  escTimeVisitId: string | null;
   escFormCasa: Formacao;
   escFormVisit: Formacao;
   /** posições arrastadas à mão: 11 pontos 0–1, de quem ataca pra direita; null = calculadas */
@@ -156,8 +155,6 @@ export const ESTADO_PADRAO: EstadoLive = {
   camsEscalacao: null,
   escModo: 'lista',
   escTimes: 'casa',
-  escTimeCasaId: null,
-  escTimeVisitId: null,
   escFormCasa: '4-3-3',
   escFormVisit: '4-2-3-1',
   escPosCasa: null,

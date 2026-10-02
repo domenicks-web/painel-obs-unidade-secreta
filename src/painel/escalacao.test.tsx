@@ -54,20 +54,37 @@ describe('campos da ESCALAÇÃO', () => {
     expect(l.salvar).toHaveBeenCalledWith({ escCams: 6, camsEscalacao: null });
   });
 
-  it('só aparece o lado em uso; escolher o time leva o nome pro placar', () => {
-    const l = live({ escTimes: 'visitante' });
-    render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
+  it('time é texto livre: digitar grava o nome do placar, com sugestão dos cadastrados', () => {
+    const l = live({ escTimes: 'visitante', timeB: '' });
+    const { container } = render(<CamposTela tela="escalacao" live={l as never} escalacao={opcoes()} />);
     expect(screen.queryByLabelText('TIME CASA')).toBeNull();
-    fireEvent.change(screen.getByLabelText('TIME VISITANTE'), { target: { value: 'palmeiras' } });
-    expect(l.salvar).toHaveBeenCalledWith({ escTimeVisitId: 'palmeiras', timeB: 'PALMEIRAS' });
+    const campo = screen.getByLabelText('TIME VISITANTE');
+    expect(campo.getAttribute('list')).toBe('p-esc-sugestoes');
+    expect(container.querySelectorAll('#p-esc-sugestoes option')).toHaveLength(TIMES_EXEMPLO.length);
+    fireEvent.change(campo, { target: { value: 'flamengo' } });
+    expect(l.salvarDepois).toHaveBeenCalledWith({ timeB: 'FLAMENGO' });
   });
 
-  it('time sem 11 titulares fica desabilitado no select', () => {
-    cadastro = [...TIMES_EXEMPLO, { id: 'x', nome: 'INCOMPLETO', sigla: '', tecnico: '', cor: null, jogadores: TIMES_EXEMPLO[0].jogadores.slice(0, 9) }];
-    render(<CamposTela tela="escalacao" live={live() as never} escalacao={opcoes()} />);
-    const opcao = within(screen.getByLabelText('TIME CASA')).getByText(/INCOMPLETO/) as HTMLOptionElement;
-    expect(opcao.disabled).toBe(true);
-    expect(opcao.textContent).toContain('9/11');
+  it('nome sem cadastro oferece CADASTRAR ELENCO já com o nome', () => {
+    const o = opcoes();
+    render(<CamposTela tela="escalacao" live={live({ timeA: 'FLAMENGO' }) as never} escalacao={o} />);
+    expect(screen.getByText('SEM ELENCO CADASTRADO')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('+ CADASTRAR ELENCO'));
+    expect(o.aoAbrirTimes).toHaveBeenCalledWith('FLAMENGO');
+  });
+
+  it('nome cadastrado (sem ligar pra acento e maiúscula) usa o elenco', () => {
+    const o = opcoes();
+    render(<CamposTela tela="escalacao" live={live({ timeA: 'india' }) as never} escalacao={o} />);
+    expect(screen.getByText('ELENCO CADASTRADO')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('EDITAR ELENCO'));
+    expect(o.aoAbrirTimes).toHaveBeenCalledWith('ÍNDIA');
+  });
+
+  it('time com menos de 11 titulares avisa', () => {
+    cadastro = [{ id: 'x', nome: 'INCOMPLETO', sigla: '', tecnico: '', cor: null, jogadores: TIMES_EXEMPLO[0].jogadores.slice(0, 9) }];
+    render(<CamposTela tela="escalacao" live={live({ timeA: 'Incompleto' }) as never} escalacao={opcoes()} />);
+    expect(screen.getByText('ELENCO COM 9/11 TITULARES')).toBeInTheDocument();
   });
 
   it('formação: todas no select; trocar com posição manual pede confirmação e reseta', () => {
@@ -110,7 +127,7 @@ describe('campos da ESCALAÇÃO', () => {
 
 describe('arrastar jogadores', () => {
   it('arrastar grava as 11 posições do time, a partir da formação', () => {
-    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, escTimeCasaId: 'brasil' };
+    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, timeA: 'BRASIL' };
     const escalados = timesEscalados(estado, TIMES_EXEMPLO);
     const aoMudar = vi.fn();
     render(<ArrastarJogadores escalados={escalados} escala={0.5} aoMudar={aoMudar} />);
@@ -129,7 +146,7 @@ describe('arrastar jogadores', () => {
   });
 
   it('não deixa sair do campo', () => {
-    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, escTimes: 'ambos' as const, escTimeCasaId: 'corinthians', escTimeVisitId: 'palmeiras' };
+    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, escTimes: 'ambos' as const, timeA: 'CORINTHIANS', timeB: 'PALMEIRAS' };
     const aoMudar = vi.fn();
     render(<ArrastarJogadores escalados={timesEscalados(estado, TIMES_EXEMPLO)} escala={0.5} aoMudar={aoMudar} />);
     const bola = screen.getByLabelText('Mover 21 Weverton');
@@ -148,7 +165,7 @@ describe('arrastar jogadores', () => {
 
 describe('tela ESCALAÇÃO', () => {
   it('LISTA com 2 times: colunas, técnico, formação e as câmeras', () => {
-    const estado = { ...ESTADO_PADRAO, escTimes: 'ambos' as const, escTimeCasaId: 'corinthians', escTimeVisitId: 'palmeiras', escFormCasa: '4-2-3-1' as const, escFormVisit: '4-3-3' as const, escCams: 6 };
+    const estado = { ...ESTADO_PADRAO, escTimes: 'ambos' as const, timeA: 'Corinthians', timeB: 'PALMEIRAS', escFormCasa: '4-2-3-1' as const, escFormVisit: '4-3-3' as const, escCams: 6 };
     const { container } = render(<TelaEscalacao estado={estado} previa />);
     expect(container.querySelectorAll('.t-esc-coluna')).toHaveLength(2);
     expect(screen.getByText('Dorival Júnior')).toBeInTheDocument();
@@ -159,7 +176,7 @@ describe('tela ESCALAÇÃO', () => {
   });
 
   it('CAMPO só visitante: violeta, 11 bolinhas atacando pra direita', () => {
-    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, escTimes: 'visitante' as const, escTimeVisitId: 'palmeiras', escCams: 5 };
+    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, escTimes: 'visitante' as const, timeB: 'PALMEIRAS', escCams: 5 };
     const { container } = render(<TelaEscalacao estado={estado} />);
     const bolas = container.querySelectorAll<HTMLElement>('.t-esc-token__bola');
     expect(bolas).toHaveLength(11);
@@ -169,7 +186,7 @@ describe('tela ESCALAÇÃO', () => {
     expect(container.querySelectorAll('.t-slot')).toHaveLength(5);
   });
 
-  it('sem time escolhido usa o nome do placar e não quebra', () => {
+  it('time sem cadastro: mostra o nome digitado, sem jogadores', () => {
     const { container } = render(<TelaEscalacao estado={{ ...ESTADO_PADRAO, timeA: 'CASA X' }} />);
     expect(container.querySelector('.t-esc-coluna__nome')?.textContent).toBe('CASA X');
     expect(container.querySelectorAll('.t-esc-jogador')).toHaveLength(0);
@@ -227,6 +244,17 @@ describe('cadastro de TIMES', () => {
     fireEvent.click(screen.getByLabelText('Descer Alisson'));
     expect((screen.getByLabelText('NOME 1') as HTMLInputElement).value).toBe('Vanderson');
     expect((screen.getByLabelText('NOME 2') as HTMLInputElement).value).toBe('Alisson');
+  });
+
+  it('aberto pela escalação com nome novo: time novo já preenchido e pronto pra salvar', () => {
+    render(<ModalTimes aoFechar={vi.fn()} abrirNome="flamengo" />);
+    expect((screen.getByLabelText('NOME') as HTMLInputElement).value).toBe('FLAMENGO');
+    expect((screen.getByText('SALVAR') as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it('aberto pela escalação com nome cadastrado: abre o elenco dele', () => {
+    render(<ModalTimes aoFechar={vi.fn()} abrirNome="Palmeiras" />);
+    expect((screen.getByLabelText('NOME 1') as HTMLInputElement).value).toBe('Weverton');
   });
 
   it('não salva sem nome', async () => {

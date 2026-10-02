@@ -369,3 +369,7 @@
   .p-times__jogador { grid-template-columns: 42px minmax(0, 1fr) 64px 30px 30px 30px; gap: 4px; }
   .p-times__alca, .p-times__pos { display: none; }
 }
+.p-esc-elenco { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 34px; }
+.p-esc-elenco__ok { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #8a7f84; }
+.p-esc-elenco__falta { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #FF6B1F; }
+.p-esc-elenco__botao { height: 34px; padding: 0 12px; }

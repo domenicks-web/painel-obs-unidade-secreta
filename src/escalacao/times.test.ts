@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lerElenco, normalizarTime, ordenarElenco, prontoParaEscalar, renumerar, titulares, type Jogador } from './times';
+import { acharTime, chaveNome, lerElenco, normalizarTime, ordenarElenco, prontoParaEscalar, renumerar, titulares, type Jogador } from './times';
 
 const j = (numero: number, titular: boolean, ordem: number): Jogador => ({ numero, nome: `J${numero}`, titular, ordem });
 
@@ -37,5 +37,14 @@ describe('times', () => {
   it('normalizarTime aguenta campos nulos e numeric em texto', () => {
     const t = normalizarTime({ id: 'a', nome: 'X', sigla: null, tecnico: null, jogadores: [{ numero: '7' as unknown as number, nome: 'A', titular: true, ordem: 1 }] });
     expect(t).toEqual({ id: 'a', nome: 'X', sigla: '', tecnico: '', cor: null, jogadores: [{ numero: 7, nome: 'A', titular: true, ordem: 1 }] });
+  });
+
+  it('acha o time pelo nome, sem ligar pra acento, maiúscula e espaço', () => {
+    const times = [normalizarTime({ id: 'i', nome: 'ÍNDIA' }), normalizarTime({ id: 's', nome: 'SÃO PAULO' })];
+    expect(chaveNome('  são   paulo ')).toBe('SAO PAULO');
+    expect(acharTime(times, 'india')?.id).toBe('i');
+    expect(acharTime(times, 'Sao Paulo')?.id).toBe('s');
+    expect(acharTime(times, 'FLAMENGO')).toBeUndefined();
+    expect(acharTime(times, '  ')).toBeUndefined();
   });
 });

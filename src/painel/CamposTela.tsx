@@ -35,7 +35,8 @@ function classeOpcao(ativa: boolean, extra: string, violeta = false) {
 export interface OpcoesEscalacao {
   editandoPosicoes: boolean;
   aoEditarPosicoes: (v: boolean) => void;
-  aoAbrirTimes: () => void;
+  /** nome: abre o cadastro já nesse time (ou num time novo com esse nome) */
+  aoAbrirTimes: (nome?: string) => void;
 }
 
 export function CamposTela({ tela, live, escalacao }: { tela: TelaId; live: Live; escalacao?: OpcoesEscalacao }) {

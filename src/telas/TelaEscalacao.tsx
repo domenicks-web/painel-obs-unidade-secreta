@@ -4,7 +4,7 @@ import { Molduras } from './SlotCamera';
 import { FaixaTicker } from './FaixaTicker';
 import { ChatFutebol, PlacarFutebol } from './PlacarFutebol';
 import { useTimes } from '../escalacao/useTimes';
-import { titulares, type Jogador, type Time } from '../escalacao/times';
+import { acharTime, titulares, type Jogador, type Time } from '../escalacao/times';
 import {
   CAMPO,
   COR_CASA,
@@ -43,10 +43,11 @@ export function timesEscalados(estado: EstadoLive, cadastro: Time[]): TimeEscala
   const lados: Lado[] = quais === 'ambos' ? ['casa', 'visitante'] : [quais];
   return lados.map((lado) => {
     const casa = lado === 'casa';
-    const time = cadastro.find((t) => t.id === (casa ? estado.escTimeCasaId : estado.escTimeVisitId));
+    const nome = casa ? estado.timeA : estado.timeB;
+    const time = acharTime(cadastro, nome);
     return {
       lado,
-      nome: time?.nome ?? (casa ? estado.timeA : estado.timeB),
+      nome,
       tecnico: time?.tecnico ?? '',
       cor: casa ? COR_CASA : COR_VISITANTE,
       formacao: formacaoOu(casa ? estado.escFormCasa : estado.escFormVisit, casa ? '4-3-3' : '4-2-3-1'),

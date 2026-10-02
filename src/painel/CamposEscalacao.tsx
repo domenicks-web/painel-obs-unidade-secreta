@@ -1,7 +1,7 @@
 import type { useLive } from '../live/useLive';
-import type { PatchLive } from '../live/tipos';
 import { useTimes } from '../escalacao/useTimes';
-import { prontoParaEscalar, titulares } from '../escalacao/times';
+import { acharTime, titulares } from '../escalacao/times';
+import { CampoTexto } from './CampoTexto';
 import { LISTA_FORMACOES, ROTULO_FORMACAO, formacaoOu, type EscModo, type EscTimes, type Formacao } from '../escalacao/layout';
 import { modoEsc, timesEsc } from '../telas/TelaEscalacao';
 
@@ -16,25 +16,17 @@ interface Props {
   live: Live;
   editandoPosicoes: boolean;
   aoEditarPosicoes: (v: boolean) => void;
-  aoAbrirTimes: () => void;
+  aoAbrirTimes: (nome?: string) => void;
 }
 
 // Modo, times, formações. Trocar modo ou times volta as câmeras pro layout automático daquele caso.
 export function CamposEscalacao({ live, editandoPosicoes, aoEditarPosicoes, aoAbrirTimes }: Props) {
-  const { estado, salvar } = live;
+  const { estado, salvar, salvarDepois } = live;
   const { times } = useTimes();
   const modo = modoEsc(estado.escModo);
   const quais = timesEsc(estado.escTimes);
   const lados = (quais === 'ambos' ? ['casa', 'visitante'] : [quais]) as ('casa' | 'visitante')[];
   const temManual = (lado: 'casa' | 'visitante') => !!(lado === 'casa' ? estado.escPosCasa : estado.escPosVisit);
-
-  function escolherTime(lado: 'casa' | 'visitante', id: string) {
-    const t = times.find((x) => x.id === id);
-    const patch: PatchLive = lado === 'casa' ? { escTimeCasaId: id || null } : { escTimeVisitId: id || null };
-    // o placar segue o nome do time escolhido (continua editável na tela FUTEBOL)
-    if (t) Object.assign(patch, lado === 'casa' ? { timeA: t.nome } : { timeB: t.nome });
-    salvar(patch);
-  }
 
   function escolherFormacao(lado: 'casa' | 'visitante', f: Formacao) {
     if (temManual(lado) && !window.confirm(AVISO_FORMACAO)) return;
@@ -84,26 +76,21 @@ export function CamposEscalacao({ live, editandoPosicoes, aoEditarPosicoes, aoAb
       <div className={lados.length === 2 ? 'p-esc-times p-esc-times--dois' : 'p-esc-times'}>
         {lados.map((lado) => {
           const casa = lado === 'casa';
-          const id = (casa ? estado.escTimeCasaId : estado.escTimeVisitId) ?? '';
+          const nome = casa ? estado.timeA : estado.timeB;
+          const time = acharTime(times, nome);
+          const nTit = time ? titulares(time).length : 0;
           const form = formacaoOu(casa ? estado.escFormCasa : estado.escFormVisit, casa ? '4-3-3' : '4-2-3-1');
           const sufixo = casa ? 'CASA' : 'VISITANTE';
           return (
             <div key={lado} className={`p-esc-time p-esc-time--${lado}`}>
-              <label className="p-campo">
-                <span className="p-rotulo">TIME {sufixo}</span>
-                <select className="p-input p-select" value={id} onChange={(e) => escolherTime(lado, e.target.value)}>
-                  <option value="">— ESCOLHA —</option>
-                  {times.map((t) => {
-                    const pronto = prontoParaEscalar(t);
-                    return (
-                      <option key={t.id} value={t.id} disabled={!pronto}>
-                        {t.nome}
-                        {pronto ? '' : ` (${titulares(t).length}/11 TITULARES)`}
-                      </option>
-                    );
-                  })}
-                </select>
-              </label>
+              <CampoTexto
+                rotulo={`TIME ${sufixo}`}
+                valor={nome}
+                maiusculo
+                sugestoes="p-esc-sugestoes"
+                placeholder="DIGITA O NOME"
+                aoMudar={(v) => salvarDepois(casa ? { timeA: v } : { timeB: v })}
+              />
               <label className="p-campo">
                 <span className="p-rotulo">FORMAÇÃO</span>
                 <select className="p-input p-select" aria-label={`FORMAÇÃO ${sufixo}`} value={form} onChange={(e) => escolherFormacao(lado, e.target.value as Formacao)}>
@@ -114,12 +101,38 @@ export function CamposEscalacao({ live, editandoPosicoes, aoEditarPosicoes, aoAb
                   ))}
                 </select>
               </label>
+              <div className="p-esc-elenco">
+                {!nome.trim() ? (
+                  <span className="p-texto-dica">Escreve o nome do time (vai pro placar também).</span>
+                ) : time ? (
+                  <>
+                    <span className={nTit === 11 ? 'p-esc-elenco__ok' : 'p-esc-elenco__falta'}>
+                      {nTit === 11 ? 'ELENCO CADASTRADO' : `ELENCO COM ${nTit}/11 TITULARES`}
+                    </span>
+                    <button type="button" className="p-botao-contorno p-esc-elenco__botao" onClick={() => aoAbrirTimes(time.nome)}>
+                      EDITAR ELENCO
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span className="p-esc-elenco__falta">SEM ELENCO CADASTRADO</span>
+                    <button type="button" className="p-botao-contorno p-esc-elenco__botao" onClick={() => aoAbrirTimes(nome)}>
+                      + CADASTRAR ELENCO
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           );
         })}
       </div>
+      <datalist id="p-esc-sugestoes">
+        {times.map((t) => (
+          <option key={t.id} value={t.nome} />
+        ))}
+      </datalist>
       <div className="p-linha">
-        <button type="button" className="p-botao-contorno" onClick={aoAbrirTimes}>
+        <button type="button" className="p-botao-contorno" onClick={() => aoAbrirTimes()}>
           CADASTRO DE TIMES
         </button>
         <div className="p-texto-dica">Placar e relógio: na tela FUTEBOL (são os mesmos).</div>

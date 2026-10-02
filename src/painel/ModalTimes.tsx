@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTimes } from '../escalacao/useTimes';
-import { MAX_ELENCO, TITULARES, lerElenco, renumerar, type Jogador, type Time } from '../escalacao/times';
+import { MAX_ELENCO, TITULARES, acharTime, lerElenco, renumerar, type Jogador, type Time } from '../escalacao/times';
 
 type Rascunho = Omit<Time, 'id'> & { id: string | null };
 
@@ -8,10 +8,16 @@ const NOVO: Rascunho = { id: null, nome: '', sigla: '', tecnico: '', cor: null, 
 
 // Cadastro de times: a lista à esquerda, o time aberto à direita. O time é gravado inteiro no
 // SALVAR (nome, técnico e elenco numa transação só), não a cada tecla.
-export function ModalTimes({ aoFechar }: { aoFechar: () => void }) {
+// abrirNome: vem da ESCALAÇÃO — abre o time com esse nome, ou um time novo já com o nome preenchido.
+export function ModalTimes({ aoFechar, abrirNome }: { aoFechar: () => void; abrirNome?: string }) {
   const { times, salvarTime, excluirTime } = useTimes();
-  const [rascunho, setRascunho] = useState<Rascunho | null>(null);
-  const [mexido, setMexido] = useState(false);
+  const [inicial] = useState(() => {
+    if (!abrirNome?.trim()) return null;
+    const t = acharTime(times, abrirNome);
+    return t ? { r: { ...t, jogadores: renumerar(t.jogadores) }, novo: false } : { r: { ...NOVO, nome: abrirNome.trim().toUpperCase() }, novo: true };
+  });
+  const [rascunho, setRascunho] = useState<Rascunho | null>(inicial?.r ?? null);
+  const [mexido, setMexido] = useState(!!inicial?.novo);
   const [erro, setErro] = useState('');
   const [gravando, setGravando] = useState(false);
   const [colando, setColando] = useState<string | null>(null);

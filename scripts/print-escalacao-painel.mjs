@@ -21,8 +21,8 @@ const times = [
 const estadoBase = {
   titulo: 'OPERAÇÃO AO VIVO', ticker: 'ESCALAÇÃO CONFIRMADA ● MANDA O PIX PELO QR CODE',
   nomes: ['CAIO', 'LIPE', 'DUDA', 'TETÊ', 'GUI', 'NANDO'], galera: [],
-  timeA: 'CORINTHIANS', timeB: 'PALMEIRAS', golsA: 1, golsB: 1, jogo: '2º TEMPO', clockAcumulado: 4020,
-  escModo: 'lista', escTimes: 'ambos', escTimeCasaId: 'corinthians', escTimeVisitId: 'palmeiras', escFormCasa: '4-2-3-1', escFormVisit: '4-3-3', escCams: 4,
+  timeA: 'CORINTHIANS', timeB: 'FLAMENGO', golsA: 1, golsB: 1, jogo: '2º TEMPO', clockAcumulado: 4020,
+  escModo: 'lista', escTimes: 'ambos', escFormCasa: '4-2-3-1', escFormVisit: '4-3-3', escCams: 4,
 };
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 const exp = Math.floor(Date.now() / 1000) + 86400;

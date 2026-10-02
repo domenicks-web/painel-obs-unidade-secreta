@@ -56,8 +56,9 @@ function Painel() {
   const [tela, setTela] = useState<TelaId>('host');
   const [galeraAberta, setGaleraAberta] = useState(false);
   const fecharGalera = useCallback(() => setGaleraAberta(false), []);
-  const [timesAberto, setTimesAberto] = useState(false);
-  const fecharTimes = useCallback(() => setTimesAberto(false), []);
+  // aberto: { nome } abre direto no time com esse nome (ou num novo); {} abre a lista
+  const [timesAberto, setTimesAberto] = useState<{ nome?: string } | null>(null);
+  const fecharTimes = useCallback(() => setTimesAberto(null), []);
   const { times } = useTimes();
   const [editandoPosicoes, setEditandoPosicoes] = useState(false);
   // o editor de posições só vale na ESCALAÇÃO em modo CAMPO
@@ -81,7 +82,7 @@ function Painel() {
         editadoEm={live.editadoEm}
         ehAdmin={papel === 'admin'}
         aoAbrirGalera={() => setGaleraAberta(true)}
-        aoAbrirTimes={() => setTimesAberto(true)}
+        aoAbrirTimes={() => setTimesAberto({})}
         livepix={livepix.status}
         livepixUltimo={livepix.ultimo}
         chat={chat.status}
@@ -122,7 +123,7 @@ function Painel() {
             <CamposTela
               tela={tela}
               live={live}
-              escalacao={{ editandoPosicoes: posicoesAtivas, aoEditarPosicoes: setEditandoPosicoes, aoAbrirTimes: () => setTimesAberto(true) }}
+              escalacao={{ editandoPosicoes: posicoesAtivas, aoEditarPosicoes: setEditandoPosicoes, aoAbrirTimes: (nome) => setTimesAberto({ nome }) }}
             />
             <div className="p-divisor" />
             <div className="p-duas">
@@ -144,7 +145,7 @@ function Painel() {
           />
         </aside>
       </div>
-      {timesAberto && <ModalTimes aoFechar={fecharTimes} />}
+      {timesAberto && <ModalTimes aoFechar={fecharTimes} abrirNome={timesAberto.nome} />}
       {galeraAberta && <ModalGalera galera={estado.galera} aoSalvar={(g) => salvarDepois({ galera: g })} aoFechar={fecharGalera} />}
     </div>
   );

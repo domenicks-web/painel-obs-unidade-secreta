@@ -46,9 +46,10 @@ atuais não leem `times`. Dá pra rodar antes da live sem risco, e o merge pode 
 - Posições manuais: 0–1 no campo inteiro, de quem ataca pra direita; com 2 times cada um usa a sua metade
   (mesmo encolhimento do automático). A bolinha e o nome embaixo não saem do campo.
 - Trocar modo, times ou quantidade de câmeras volta as câmeras da escalação pro automático (`camsEscalacao: null`).
-- Escolher o time copia o nome pro placar (`timeA`/`timeB`), que continua editável na tela FUTEBOL.
-  Sem time escolhido, a coluna usa o nome do placar e fica sem jogadores.
-- Time com titulares ≠ 11 aparece desabilitado no select ("9/11 TITULARES").
+- **Time é texto livre** (pedido do usuário, 2026-10-02): o campo TIME CASA/VISITANTE é o próprio nome do placar
+  (`timeA`/`timeB`). Se o nome bater com um time cadastrado (sem ligar pra acento/maiúscula), a escalação usa o
+  elenco dele; se não, mostra só o nome e o painel oferece "+ CADASTRAR ELENCO" já com o nome preenchido.
+  Os cadastrados aparecem só como sugestão enquanto digita.
 - Cadastro de times é um modal (botão TIMES no topo, como GALERA), não uma tela na lista de telas.
 - `cor` do time ficou no banco mas não é usada: casa é sempre laranja e visitante violeta.
 - ESCALAÇÃO entrou depois de FUTEBOL na lista: os atalhos de teclado do painel de FILME em diante subiram 1
