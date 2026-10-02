@@ -23,6 +23,7 @@ import { CampoTexto } from './CampoTexto';
 import { CampoCamera } from './CampoCamera';
 import { CamposEscalacao, PosicoesEscalacao, resumoEscalacao } from './CamposEscalacao';
 import { Modal } from './Modal';
+import { Lances } from './Lances';
 
 type Live = ReturnType<typeof useLive>;
 
@@ -279,6 +280,8 @@ function CamposFutebol({ live, escalacao }: { live: Live; escalacao?: OpcoesEsca
           </button>
         </div>
       </div>
+
+      <Lances live={live} />
 
       {escalacao && (
         <div className="p-esc-resumo">

@@ -19,13 +19,16 @@ import { ModalTimes } from './ModalTimes';
 import { ArrastarJogadores } from './ArrastarJogadores';
 import { TelaEscalacao, timesEscalados } from '../telas/TelaEscalacao';
 import { centrosNoCampo, CAMPO } from '../escalacao/layout';
+import { Lances } from './Lances';
+import type { Lance } from '../escalacao/lances';
 
 function live(extra: Partial<EstadoLive> = {}) {
   return {
     estado: { ...ESTADO_PADRAO, ...extra },
     salvar: vi.fn(),
     salvarDepois: vi.fn(),
-  } as never as { estado: EstadoLive; salvar: ReturnType<typeof vi.fn>; salvarDepois: ReturnType<typeof vi.fn> };
+    gol: vi.fn(),
+  } as never as { estado: EstadoLive; salvar: ReturnType<typeof vi.fn>; salvarDepois: ReturnType<typeof vi.fn>; gol: ReturnType<typeof vi.fn> };
 }
 
 const opcoes = (cena: 'futebol' | 'escalacao' = 'futebol') => ({ cena, aoTrocarCena: vi.fn(), editandoPosicoes: false, aoEditarPosicoes: vi.fn(), aoAbrirTimes: vi.fn() });
@@ -296,5 +299,88 @@ describe('cadastro de TIMES', () => {
     fireEvent.click(screen.getByText('SALVAR'));
     expect(screen.getByRole('alert').textContent).toMatch(/nome/);
     expect(salvarTime).not.toHaveBeenCalled();
+  });
+});
+
+describe('lances', () => {
+  const base = { timeA: 'BRASIL', timeB: 'PALMEIRAS', clockAcumulado: 66 * 60 + 10 };
+  const ultimo = (f: ReturnType<typeof vi.fn>) => f.mock.calls.at(-1)![0].escLances as Lance[];
+
+  it('GOL: escolhe quem fez, grava o lance com o minuto e soma no placar', () => {
+    const l = live(base);
+    render(<Lances live={l as never} />);
+    fireEvent.click(screen.getByRole('button', { name: /^GOL$/ }));
+    const modal = screen.getByRole('dialog', { name: 'GOL' });
+    expect(within(modal).getByText("67'")).toBeInTheDocument();
+    fireEvent.click(within(modal).getByRole('button', { name: /11\s*Vini Jr\./ }));
+    const [lance] = ultimo(l.salvar);
+    expect(lance).toMatchObject({ tipo: 'gol', lado: 'casa', slot: 10, numero: 11, nome: 'Vini Jr.', minuto: 67 });
+    expect(l.gol).toHaveBeenCalledWith('A', 1);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('GOL sem somar no placar; jogador sem cadastro pelo OUTRO JOGADOR', () => {
+    const l = live({ ...base, timeB: 'FLAMENGO' });
+    render(<Lances live={l as never} />);
+    fireEvent.click(screen.getByRole('button', { name: /^GOL$/ }));
+    fireEvent.click(screen.getByRole('button', { name: /SOMA 1 NO PLACAR/ }));
+    fireEvent.change(screen.getByLabelText('OUTRO JOGADOR · FLAMENGO'), { target: { value: '9 Pedro' } });
+    fireEvent.click(screen.getAllByRole('button', { name: 'OK' })[1]);
+    expect(ultimo(l.salvar)[0]).toMatchObject({ lado: 'visitante', slot: -1, numero: 9, nome: 'Pedro' });
+    expect(l.gol).not.toHaveBeenCalled();
+  });
+
+  it('SUBSTITUIÇÃO: quem sai, depois quem entra (reserva do cadastro)', () => {
+    cadastro = [{ ...TIMES_EXEMPLO[0], jogadores: [...TIMES_EXEMPLO[0].jogadores, { numero: 9, nome: 'Endrick', titular: false, ordem: 12 }] }];
+    const l = live(base);
+    render(<Lances live={l as never} />);
+    fireEvent.click(screen.getByRole('button', { name: /SUBSTITUIÇÃO/ }));
+    fireEvent.click(screen.getByRole('button', { name: /10\s*Rodrygo/ }));
+    expect(screen.getByText(/SAI 10 RODRYGO/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /9\s*Endrick/ }));
+    expect(ultimo(l.salvar)[0]).toMatchObject({ tipo: 'sub', slot: 9, numero: 10, entra: { numero: 9, nome: 'Endrick' } });
+  });
+
+  it('expulso não pode receber lance; desfazer gol pergunta e tira do placar', () => {
+    const lances: Lance[] = [
+      { id: 'a', lado: 'casa', tipo: 'vermelho', slot: 5, numero: 5, nome: 'Casemiro', minuto: 30, em: 0 },
+      { id: 'b', lado: 'casa', tipo: 'gol', slot: 10, numero: 11, nome: 'Vini Jr.', minuto: 40, em: 0 },
+    ];
+    const l = live({ ...base, escLances: lances });
+    render(<Lances live={l as never} />);
+    expect(screen.getByText("40' GOL · VINI JR.")).toBeInTheDocument();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    fireEvent.click(screen.getByRole('button', { name: "Desfazer 40' GOL · VINI JR." }));
+    expect(l.gol).toHaveBeenCalledWith('A', -1);
+    expect(ultimo(l.salvar).map((x) => x.id)).toEqual(['a']);
+    fireEvent.click(screen.getByRole('button', { name: /AMARELO/ }));
+    expect((screen.getByRole('button', { name: /5\s*Casemiro/ }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('tela: selos nas bolinhas, substituto no lugar, expulso apagado e aviso do lance novo', () => {
+    const agora = Date.now();
+    const lances: Lance[] = [
+      { id: 'a', lado: 'casa', tipo: 'amarelo', slot: 5, numero: 5, nome: 'Casemiro', minuto: 20, em: 0 },
+      { id: 'b', lado: 'casa', tipo: 'amarelo', slot: 5, numero: 5, nome: 'Casemiro', minuto: 50, em: 0 },
+      { id: 'c', lado: 'casa', tipo: 'sub', slot: 9, numero: 10, nome: 'Rodrygo', entra: { numero: 9, nome: 'Endrick' }, minuto: 60, em: 0 },
+      { id: 'd', lado: 'casa', tipo: 'gol', slot: 10, numero: 11, nome: 'Vini Jr.', minuto: 67, em: agora - 1000 },
+    ];
+    const estado = { ...ESTADO_PADRAO, escModo: 'campo' as const, timeA: 'BRASIL', escLances: lances };
+    const { container } = render(<TelaEscalacao estado={estado} />);
+    const tokens = container.querySelectorAll('.t-esc-token');
+    expect(tokens[5].className).toContain('t-esc-token--expulso');
+    expect(tokens[5].querySelectorAll('[aria-label="cartão vermelho"]')).toHaveLength(1);
+    expect(tokens[9].textContent).toContain('Endrick');
+    expect(tokens[9].querySelector('[aria-label="entrou"]')).not.toBeNull();
+    expect(tokens[10].className).toContain('t-esc-token--lance');
+    expect(tokens[10].querySelector('[aria-label="gol"]')).not.toBeNull();
+    expect(container.querySelector('.t-esc-aviso')?.textContent).toBe("67' GOL · VINI JR.");
+  });
+
+  it('tela: lance antigo não mostra aviso; LISTA também mostra os selos', () => {
+    const lances: Lance[] = [{ id: 'd', lado: 'casa', tipo: 'gol', slot: 10, numero: 11, nome: 'Vini Jr.', minuto: 67, em: 1 }];
+    const { container } = render(<TelaEscalacao estado={{ ...ESTADO_PADRAO, timeA: 'BRASIL', escLances: lances }} />);
+    expect(container.querySelector('.t-esc-aviso')).toBeNull();
+    expect(container.querySelectorAll('.t-esc-jogador__selos [aria-label="gol"]')).toHaveLength(1);
   });
 });

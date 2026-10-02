@@ -396,3 +396,34 @@
 .p-esc-elenco__ok { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #8a7f84; }
 .p-esc-elenco__falta { font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: .12em; color: #FF6B1F; }
 .p-esc-elenco__botao { height: 34px; padding: 0 12px; }
+/* lances (gol, cartão, substituição) */
+.p-lances { display: flex; flex-direction: column; gap: 10px; }
+.p-lances__cabeca { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.p-lances__botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.p-lance-botao { height: 46px; display: flex; align-items: center; gap: 8px; padding: 0 14px; border: 0; background: #241d21; color: #FFF3E0; font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .1em; cursor: pointer; }
+.p-lance-botao:hover { box-shadow: inset 0 0 0 2px #FF6B1F; }
+.p-lances__lista { display: flex; flex-direction: column; gap: 4px; max-height: 210px; overflow: auto; }
+.p-lance { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 10px; background: #241d21; border-left: 4px solid #FF6B1F; }
+.p-lance--visitante { border-left-color: #8B6CF0; }
+.p-lance__texto { flex: 1; min-width: 0; font: 700 18px/1.1 'Barlow Condensed', sans-serif; letter-spacing: .04em; color: #FFF3E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-lance__tirar { width: 30px; height: 30px; border: 2px solid #3a3035; background: transparent; color: #FFF3E0; cursor: pointer; font: 700 16px/1 'JetBrains Mono', monospace; }
+.p-lance__tirar:hover { border-color: #FF6B1F; color: #FF6B1F; }
+.p-lances__limpar { align-self: flex-start; height: 34px; margin-top: 4px; }
+.p-lance-times { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.p-lance-time { display: flex; flex-direction: column; gap: 10px; padding-left: 12px; border-left: 4px solid #FF6B1F; min-width: 0; }
+.p-lance-time--visitante { border-left-color: #8B6CF0; }
+.p-lance-time__nome { font: 400 20px/1.1 'Bungee', sans-serif; color: #FFF3E0; }
+.p-lance-time__jogadores { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.p-lance-jogador { display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 8px; border: 0; background: #241d21; color: #FFF3E0; cursor: pointer; text-align: left; min-width: 0; }
+.p-lance-jogador:hover:not(:disabled) { box-shadow: inset 0 0 0 2px #FF6B1F; }
+.p-lance-time--visitante .p-lance-jogador:hover:not(:disabled) { box-shadow: inset 0 0 0 2px #8B6CF0; }
+.p-lance-jogador:disabled { opacity: .35; cursor: default; }
+.p-lance-jogador__num { font: 400 16px/1 'Bungee', sans-serif; color: #FF6B1F; min-width: 26px; text-align: center; }
+.p-lance-time--visitante .p-lance-jogador__num { color: #8B6CF0; }
+.p-lance-jogador__nome { font: 700 18px/1 'Barlow Condensed', sans-serif; letter-spacing: .03em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-lance-outro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+.p-lance-outro .p-input { font-size: 18px; padding: 8px 10px; }
+@media (max-width: 760px) {
+  .p-lance-times { grid-template-columns: minmax(0, 1fr); }
+}
+.p-lance-botao__icone { display: flex; line-height: 0; }

@@ -57,6 +57,14 @@ atuais não leem `times`. Dá pra rodar antes da live sem risco, e o merge pode 
   Modais: CONFIGURAR ESCALAÇÃO, AJUSTES do gol (som, duração), porcentagens da enquete e AJUSTAR MOLDURAS
   (formato, tamanho, X/Y, ordem; em todas as telas). À vista: placar, relógio, tempo, REPETIR, MOSTRAR enquete,
   resumo da escalação, EDITAR POSIÇÕES e os nomes das câmeras.
+- **Lances (2026-10-02, pedido do usuário):** gol, amarelo, vermelho e substituição. Painel → FUTEBOL → LANCES:
+  botão por tipo abre um modal com os jogadores em campo dos dois times (ou OUTRO JOGADOR, "9 Pedro"); o minuto
+  sai do relógio. GOL soma 1 no placar com a animação (dá pra desligar no modal); desfazer um gol pergunta e tira
+  1 do placar. Substituição: quem sai, depois quem entra (reservas do cadastro ou digitado). Na ESCALAÇÃO: selos
+  na bolinha (bola de gol com ×2, cartões, seta de quem entrou), quem entrou ocupa a bolinha de quem saiu,
+  expulso (vermelho ou 2 amarelos) fica apagado, a bolinha do lance novo pulsa e um aviso aparece 8 s no topo do
+  campo. LISTA mostra os mesmos selos. Ficam no estado (`escLances`, sem migration); LIMPAR LANCES pro próximo jogo.
+  Prints: `docs/prints/escalacao-lances-{campo,lista}.png`, `painel-lances.png`, `painel-lance-gol.png`.
 - Relógio do placar (FUTEBOL e ESCALAÇÃO) com tempo completo `67:23`; de 100 min pra cima a fonte cai pra 40 px.
 - Fundo igual ao do FUTEBOL (escuro com listras), como na referência.
 

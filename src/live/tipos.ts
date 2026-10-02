@@ -1,6 +1,7 @@
 import type { Camera } from '../telas/cameras';
 import type { GolEvento } from '../gol/useGolAoVivo';
 import type { EscModo, EscTimes, Formacao, Ponto } from '../escalacao/layout';
+import type { Lance } from '../escalacao/lances';
 export const TELAS = [
   { id: 'inicio', label: 'INÍCIO' },
   { id: 'host', label: 'HOST' },
@@ -71,6 +72,8 @@ export interface EstadoLive {
   escPosCasa: Ponto[] | null;
   escPosVisit: Ponto[] | null;
   escCams: number;
+  /** gols, cartões e substituições do jogo, na ordem (src/escalacao/lances.ts) */
+  escLances: Lance[];
   // animação de gol (FUTEBOL): chave por time, som, duração (3–6 s); o evento é gravado pelo banco
   golAnimA: boolean;
   golAnimB: boolean;
@@ -164,6 +167,7 @@ export const ESTADO_PADRAO: EstadoLive = {
   escPosCasa: null,
   escPosVisit: null,
   escCams: 4,
+  escLances: [],
   golAnimA: true,
   golAnimB: false,
   golSom: false,
