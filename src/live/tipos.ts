@@ -1,3 +1,4 @@
+import { CANAIS_VAZIOS, type Canais } from '../chat/canais';
 import type { Camera } from '../telas/cameras';
 import type { GolEvento } from '../gol/useGolAoVivo';
 import type { EscModo, EscTimes, Formacao, Ponto } from '../escalacao/layout';
@@ -105,6 +106,8 @@ export interface EstadoLive {
   funcao: string;
   proximo: string;
   chatPin: ChatPin | null;
+  /** canais pra abrir os chats originais (reserva do SSN) */
+  canais: Canais;
 }
 
 export type CampoSoDoBanco =
@@ -198,6 +201,7 @@ export const ESTADO_PADRAO: EstadoLive = {
   funcao: 'UNIDADE SECRETA',
   proximo: 'SEXTA, 21H',
   chatPin: null,
+  canais: CANAIS_VAZIOS,
 };
 
 export type TipoApoio = 'pix' | 'superchat' | 'sticker' | 'membro';

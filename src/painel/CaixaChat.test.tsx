@@ -15,6 +15,7 @@ function montar(extra: Partial<Parameters<typeof CaixaChat>[0]> = {}) {
     aoTrocarSessao: vi.fn(),
     pin: null,
     aoDestacar: vi.fn(),
+    aoAbrirOriginais: vi.fn(),
     ...extra,
   };
   render(<CaixaChat {...props} />);
@@ -51,5 +52,21 @@ describe('CaixaChat', () => {
     montar();
     fireEvent.click(screen.getByRole('button', { name: 'TROCAR' }));
     expect(screen.getByLabelText('ID DA SESSÃO DO SOCIAL STREAM NINJA')).toHaveValue('abc');
+  });
+
+  it('reserva: abre o chat em janela e os chats originais', () => {
+    const abrir = vi.spyOn(window, 'open').mockReturnValue(null);
+    const p = montar();
+    fireEvent.click(screen.getByRole('button', { name: 'ABRIR EM JANELA' }));
+    expect(abrir).toHaveBeenCalledWith('/painel/chat', 'us-chat-painel', expect.stringContaining('popup'));
+    fireEvent.click(screen.getByRole('button', { name: 'CHATS ORIGINAIS' }));
+    expect(p.aoAbrirOriginais).toHaveBeenCalled();
+    abrir.mockRestore();
+  });
+
+  it('na janela separada não tem o botão de abrir janela', () => {
+    montar({ janela: true });
+    expect(screen.queryByRole('button', { name: 'ABRIR EM JANELA' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'CHATS ORIGINAIS' })).toBeTruthy();
   });
 });

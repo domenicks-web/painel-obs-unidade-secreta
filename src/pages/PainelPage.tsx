@@ -15,6 +15,7 @@ import { CamposTela } from '../painel/CamposTela';
 import { ColunaPix } from '../painel/ColunaPix';
 import { CaixaChat } from '../painel/CaixaChat';
 import { ModalGalera } from '../painel/ModalGalera';
+import { ModalChatsOriginais } from '../painel/ModalChatsOriginais';
 import { useApoios } from '../live/useApoios';
 import { useControlesLivePix } from '../live/useControlesLivePix';
 import { useChat } from '../chat/useChat';
@@ -60,6 +61,8 @@ function Painel() {
   const [tela, setTela] = useState<TelaId>('host');
   const [galeraAberta, setGaleraAberta] = useState(false);
   const fecharGalera = useCallback(() => setGaleraAberta(false), []);
+  const [originaisAberto, setOriginaisAberto] = useState(false);
+  const fecharOriginais = useCallback(() => setOriginaisAberto(false), []);
   // aberto: { nome } abre direto no time com esse nome (ou num novo); {} abre a lista
   const [timesAberto, setTimesAberto] = useState<{ nome?: string } | null>(null);
   const fecharTimes = useCallback(() => setTimesAberto(null), []);
@@ -162,10 +165,12 @@ function Painel() {
             aoTrocarSessao={trocarSessao}
             pin={estado.chatPin}
             aoDestacar={(pin) => live.salvar({ chatPin: pin })}
+            aoAbrirOriginais={() => setOriginaisAberto(true)}
           />
         </aside>
       </div>
       {timesAberto && <ModalTimes aoFechar={fecharTimes} abrirNome={timesAberto.nome} />}
+      {originaisAberto && <ModalChatsOriginais canais={estado.canais} aoMudar={(c) => salvarDepois({ canais: c })} aoFechar={fecharOriginais} />}
       {galeraAberta && <ModalGalera galera={estado.galera} aoSalvar={(g) => salvarDepois({ galera: g })} aoFechar={fecharGalera} />}
     </div>
   );

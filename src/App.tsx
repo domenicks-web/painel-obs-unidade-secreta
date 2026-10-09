@@ -10,6 +10,7 @@ import { useTituloDaPagina } from './tituloDaPagina';
 // Painel, admin e login vêm sob demanda: as telas do OBS baixam só o que usam.
 const LoginPage = lazy(() => import('./pages/LoginPage').then((m) => ({ default: m.LoginPage })));
 const PainelPage = lazy(() => import('./pages/PainelPage').then((m) => ({ default: m.PainelPage })));
+const PainelChatPage = lazy(() => import('./pages/PainelChatPage').then((m) => ({ default: m.PainelChatPage })));
 const AdminPage = lazy(() => import('./pages/AdminPage').then((m) => ({ default: m.AdminPage })));
 
 export default function App() {
@@ -27,6 +28,14 @@ export default function App() {
           element={
             <RotaProtegida>
               <PainelPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/painel/chat"
+          element={
+            <RotaProtegida>
+              <PainelChatPage />
             </RotaProtegida>
           }
         />

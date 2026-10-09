@@ -1,6 +1,7 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import type { ChatPin } from '../live/tipos';
 import type { StatusChat } from '../chat/useChat';
+import { abrirJanela } from '../chat/canais';
 import { corNoPainel, PLATAFORMAS, type MsgChat, type Plataforma } from '../chat/tipos';
 
 interface Props {
@@ -10,19 +11,23 @@ interface Props {
   aoTrocarSessao: (sessao: string) => void;
   pin: ChatPin | null;
   aoDestacar: (pin: ChatPin | null) => void;
+  aoAbrirOriginais: () => void;
+  /** aberto na janela separada (/painel/chat): mais mensagens e sem o botão de abrir janela */
+  janela?: boolean;
 }
 
 const MOSTRAR = 14;
+const MOSTRAR_JANELA = 60;
 const TODAS: Record<Plataforma, boolean> = { yt: true, tw: true, tt: true, kk: true };
 
-export function CaixaChat({ msgs, status, sessao, aoTrocarSessao, pin, aoDestacar }: Props) {
+export function CaixaChat({ msgs, status, sessao, aoTrocarSessao, pin, aoDestacar, aoAbrirOriginais, janela }: Props) {
   const [fontes, setFontes] = useState(TODAS);
   const [editando, setEditando] = useState(false);
   const pedirSessao = status !== 'teste' && (!sessao || editando);
-  const lista = msgs.filter((m) => fontes[m.plataforma]).slice(-MOSTRAR).reverse();
+  const lista = msgs.filter((m) => fontes[m.plataforma]).slice(-(janela ? MOSTRAR_JANELA : MOSTRAR)).reverse();
 
   return (
-    <section className="p-chat">
+    <section className={janela ? 'p-chat p-chat--janela' : 'p-chat'}>
       <div className="p-bloco-cabeca">
         <div className="p-bloco-titulo">CHAT</div>
         <div className="p-chat__fontes">
@@ -93,6 +98,17 @@ export function CaixaChat({ msgs, status, sessao, aoTrocarSessao, pin, aoDestaca
           ))}
         </div>
       )}
+
+      <div className="p-chat__reserva">
+        {!janela && (
+          <button type="button" className="p-chat__reserva-botao" onClick={() => abrirJanela('/painel/chat', 'us-chat-painel', 460, 820)}>
+            ABRIR EM JANELA
+          </button>
+        )}
+        <button type="button" className="p-chat__reserva-botao" onClick={aoAbrirOriginais}>
+          CHATS ORIGINAIS
+        </button>
+      </div>
 
       <div className="p-chat__rodape">
         via Social Stream Ninja · YouTube, Twitch e TikTok juntos

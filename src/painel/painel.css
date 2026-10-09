@@ -451,3 +451,16 @@
 @media (prefers-reduced-motion: reduce) {
   .p-confirmar, .p-confirmar__icone, .p-confirmar--gol .p-confirmar__icone svg, .p-confirmar-fundo { animation: none; }
 }
+
+/* reserva do chat: janela separada e chats originais */
+.p-chat__reserva { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; }
+.p-chat__reserva-botao { height: 32px; border: 2px solid #3a3035; background: transparent; color: #FFF3E0; cursor: pointer; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .1em; }
+.p-chat__reserva-botao:hover, .p-chat__reserva-botao:focus-visible { border-color: #FF6B1F; color: #FF6B1F; }
+.p-painel.p-janela-chat { display: flex; height: 100vh; }
+.p-chat--janela { flex: 1; height: 100vh; box-sizing: border-box; }
+.p-originais { display: flex; flex-direction: column; gap: 12px; }
+.p-originais__linha { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+.p-originais__tag { padding: 0; height: 48px; display: flex; align-items: center; justify-content: center; }
+.p-originais__input { text-transform: none; font: 700 15px/1.6 'JetBrains Mono', monospace; }
+.p-originais__abrir { height: 48px; }
+.p-originais__abrir:disabled { opacity: .3; cursor: default; }
