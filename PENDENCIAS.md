@@ -1,5 +1,7 @@
 # Pendências
 
+> **2026-10-09: nada pendente.** O usuário conferiu tudo: cena ESCALAÇÃO no OBS, elencos de verdade, testes numa live (chat, gol, relógio, lances), PIX real somando na meta e tocando na live, ALERTA_CHAVE e senha do admin trocadas, kit OBS feito. O resto do arquivo fica como histórico das decisões.
+
 ## ESCALAÇÃO — no ar desde 2026-10-02 (0012 rodada, merge feito)
 
 Passos 1 e 2 feitos (conferido: 4 times × 11 jogadores em produção, telas sem erro). Falta o passo 3 (OBS). Histórico:
@@ -112,16 +114,6 @@ Painel: chave por time (casa ligada, fora desligada), REPETIR ANIMAÇÃO, SOM DO
 `repetir_gol`). O /alerta segura a fila e o LivePix enquanto o gol está na tela.
 Falta: teste num jogo de verdade (fonte /gol no topo da cena, "Controlar áudio via OBS" pro apito).
 
-### Kit OBS
-Pasta `kit-obs/` com:
-- a coleção de cenas e o perfil do OBS exportados, **sem caminhos absolutos** e **sem o ID de sessão do chat**;
-- um `LEIA.md` com o passo a passo para outra pessoa configurar do zero.
-
-## Testes
-
-- **Chat com mensagens reais** numa live de teste (chat em pop-up + Social Stream Ninja). As mensagens de teste do SSN já chegaram no `/chat`; falta YouTube/Twitch/TikTok de verdade, DESTACAR/TIRAR e filtros no painel.
-- **Serrilhado do quadro US no OBS**: se ainda aparecer depois da correção de 2026-09-29 (logo girando dentro do SVG, `bd719ab`), investigar de novo. Conferir no projetor em tela cheia, não na prévia.
-
 ## Problemas menores (revisão da parte 1)
 
 Todos corrigidos. Em 2026-10-01: gravação recusada mostra "NÃO GRAVOU: motivo" em vez de RECONECTANDO;
@@ -133,7 +125,3 @@ Já corrigidos (2026-09-29, ledger `.superpowers/sdd/2026-09-28-telas-novas-part
 - **Reconexão**: estado e lista de PIX recarregam ao reconectar o Realtime, quando a internet volta e quando a aba volta a ficar visível.
 - **META vazia**: apagar o campo não grava mais R$ 1.
 - **Flush ao sair da página**: o que estava esperando os 400 ms é gravado na hora ao esconder/fechar a aba.
-
-## Arrumação
-
-- Trocar a `ALERTA_CHAVE` (foi colada no chat): Vercel + redeploy + URL da fonte no OBS.
