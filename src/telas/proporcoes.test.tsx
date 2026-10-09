@@ -81,6 +81,14 @@ describe('molduras editadas no painel', () => {
     expect(esq.firstElementChild!.className).toBe('t-slot__led-box');
   });
 
+  it('etiqueta "nenhuma": moldura sem a etiqueta do nome', () => {
+    const base = { formato: '16:9' as const, w: 640, h: 360, x: 0, y: 500, nome: 'ANA' };
+    const { container } = render(<TelaMesa estado={{ ...ESTADO_PADRAO, camsMesa: [{ ...base, id: 'a', etiqueta: 'nenhuma' }, { ...base, id: 'b' }] }} />);
+    const els = container.querySelectorAll('.t-slot');
+    expect(els[0].querySelector('.t-slot__tag')).toBeNull();
+    expect(els[1].querySelector('.t-slot__tag')).not.toBeNull();
+  });
+
   it('lista vazia: nenhuma moldura, o resto da tela fica', () => {
     const { container } = render(<TelaHost estado={{ ...ESTADO_PADRAO, camsHost: [] }} />);
     expect(container.querySelectorAll('.t-slot')).toHaveLength(0);

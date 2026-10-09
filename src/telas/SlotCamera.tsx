@@ -8,7 +8,7 @@ interface Props {
   x: number;
   y: number;
   previa?: boolean;
-  etiqueta?: 'direita';
+  etiqueta?: 'direita' | 'nenhuma';
 }
 
 export function SlotCamera({ nome, w, h, x, y, previa, etiqueta }: Props) {
@@ -22,7 +22,7 @@ export function SlotCamera({ nome, w, h, x, y, previa, etiqueta }: Props) {
     <div className="t-slot" style={{ left: x, top: y, width: w, height: h }}>
       {previa && <div className="t-slot__placeholder">CÂMERA · {w}×{h}</div>}
       {/* etiqueta com tamanho fixo, presa embaixo: não estica com a moldura */}
-      {nome && (
+      {nome && etiqueta !== 'nenhuma' && (
         // na direita: presa no canto de baixo à direita, nome e depois o ícone
         <div className={etiqueta === 'direita' ? 't-slot__tag t-slot__tag--direita' : 't-slot__tag'}>
           {etiqueta === 'direita' ? (

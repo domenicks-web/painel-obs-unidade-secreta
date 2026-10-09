@@ -34,6 +34,16 @@ function decodificar(s: string) {
   return new DOMParser().parseFromString(`<body>${s}</body>`, 'text/html').body.textContent ?? s;
 }
 
+// O chat do YouTube mostra o @ do canal, não o nome. Quem nunca escolheu um @ ganha um automático
+// com sufixo aleatório ("@gustavosilva-ig7on"): tira o @ e esse sufixo (letras e números misturados,
+// 3 a 6 caracteres depois do último hífen). "@joao-silva" e "@time-1990" ficam como estão.
+export function nomeYoutube(nick: string): string {
+  const semArroba = nick.replace(/^@/, '');
+  const m = /^(.+)-([a-z0-9]{3,6})$/i.exec(semArroba);
+  if (m && /\d/.test(m[2]) && /[a-z]/i.test(m[2])) return m[1];
+  return semArroba;
+}
+
 let semId = 0;
 
 type Bruto = Record<string, unknown>;
@@ -43,7 +53,8 @@ export function normalizarSsn(dado: unknown): MsgChat | null {
   const m = dado as Bruto;
   const plataforma = PLATAFORMA_DO_TIPO[String(m.type ?? '').toLowerCase()];
   if (!plataforma) return null;
-  const autor = textoPuro(m.chatname);
+  const nick = textoPuro(m.chatname);
+  const autor = plataforma === 'yt' ? nomeYoutube(nick) : nick;
   if (!autor) return null;
   const txt = textoPuro(m.chatmessage, m.textonly !== true);
   const evento = typeof m.event === 'string' ? m.event : '';

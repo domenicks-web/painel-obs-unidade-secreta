@@ -144,7 +144,7 @@
 .p-moldura__formatos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
 .p-opcao--formato { height: 32px; padding: 0; font: 700 11px/1 'JetBrains Mono', monospace !important; letter-spacing: .04em; }
 .p-moldura .p-opcao:not(.p-opcao--ativa) { background: #120e10; }
-.p-moldura__etiqueta { display: grid; grid-template-columns: auto 1fr 1fr; gap: 4px; align-items: center; }
+.p-moldura__etiqueta { display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 4px; align-items: center; }
 .p-moldura__etiqueta .p-rotulo { margin-right: 6px; }
 .p-moldura__numeros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .p-moldura__numeros .p-input { font: 700 16px/1 'JetBrains Mono', monospace; padding: 8px 6px; }

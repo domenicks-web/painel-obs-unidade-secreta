@@ -136,13 +136,15 @@ describe('CamposTela', () => {
       expect(ultimaLista(salvar, 'camsFutebol').map((c) => c.id)).toEqual(['b']);
     });
 
-    it('etiqueta: esquerda ou direita', () => {
+    it('etiqueta: esquerda, direita ou sem', () => {
       const l = uma();
       render(<CamposTela tela="futebol" live={l} />);
       fireEvent.click(screen.getByRole('button', { name: 'AJUSTAR MOLDURAS' }));
       expect(screen.getByRole('button', { name: 'ESQUERDA' }).className).toContain('p-opcao--ativa');
       fireEvent.click(screen.getByRole('button', { name: 'DIREITA' }));
       expect(ultimaLista(fns(l).salvar, 'camsFutebol')[0]).toMatchObject({ etiqueta: 'direita' });
+      fireEvent.click(screen.getByRole('button', { name: 'SEM' }));
+      expect(ultimaLista(fns(l).salvar, 'camsFutebol')[0]).toMatchObject({ etiqueta: 'nenhuma' });
     });
 
     it('no máximo 12 câmeras', () => {

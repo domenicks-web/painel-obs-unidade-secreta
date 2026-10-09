@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizarSsn, textoPuro, urlSsn } from './ssn';
+import { nomeYoutube, normalizarSsn, textoPuro, urlSsn } from './ssn';
 
 describe('urlSsn', () => {
   it('canal 4 do servidor de API', () => {
@@ -84,5 +84,22 @@ describe('Kick', () => {
     for (const event of ['new_subscriber', 'resub', 'subscription_gift'])
       expect(normalizarSsn({ type: 'kick', id: event, chatname: 'zeca', chatmessage: '', event })).toMatchObject({ plataforma: 'kk', tipo: 'membro' });
     expect(normalizarSsn({ type: 'kick', id: 'f', chatname: 'zeca', chatmessage: '', event: 'new_follower' })).toBeNull();
+  });
+});
+
+describe('nomeYoutube', () => {
+  it('tira o @ e o sufixo aleatório do @ automático do YouTube', () => {
+    expect(nomeYoutube('@gustavosilva-ig7on')).toBe('gustavosilva');
+    expect(nomeYoutube('@user-x7k2q9')).toBe('user');
+    expect(nomeYoutube('@Fulano')).toBe('Fulano');
+  });
+  it('não mexe em @ escolhido com hífen', () => {
+    expect(nomeYoutube('@joao-silva')).toBe('joao-silva');
+    expect(nomeYoutube('@time-1990')).toBe('time-1990');
+    expect(nomeYoutube('@canal-do-ze')).toBe('canal-do-ze');
+  });
+  it('vale só pro YouTube', () => {
+    expect(normalizarSsn({ type: 'youtube', chatname: '@gustavosilva-ig7on', chatmessage: 'oi' })?.autor).toBe('gustavosilva');
+    expect(normalizarSsn({ type: 'twitch', chatname: 'ana-b2c3', chatmessage: 'oi' })?.autor).toBe('ana-b2c3');
   });
 });

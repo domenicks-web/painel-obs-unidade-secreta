@@ -147,11 +147,14 @@ function Cameras({ tela, live }: { tela: TelaCam; live: Live }) {
                 </div>
                 <div className="p-moldura__etiqueta" role="group" aria-label="ETIQUETA">
                   <div className="p-rotulo">ETIQUETA</div>
-                  <button type="button" className={classeOpcao(c.etiqueta !== 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, semLado(c)))}>
+                  <button type="button" className={classeOpcao(!c.etiqueta, 'p-opcao--formato')} onClick={() => gravar(trocar(i, semLado(c)))}>
                     ESQUERDA
                   </button>
                   <button type="button" className={classeOpcao(c.etiqueta === 'direita', 'p-opcao--formato')} onClick={() => gravar(trocar(i, { ...c, etiqueta: 'direita' }))}>
                     DIREITA
+                  </button>
+                  <button type="button" className={classeOpcao(c.etiqueta === 'nenhuma', 'p-opcao--formato')} onClick={() => gravar(trocar(i, { ...c, etiqueta: 'nenhuma' }))}>
+                    SEM
                   </button>
                 </div>
                 <div className="p-moldura__numeros">
